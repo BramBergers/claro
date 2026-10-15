@@ -59,50 +59,6 @@
     body.classList.add('is-ready');
   }
 
-  /* ---------- De rand van het overgangsscherm: organische verfklodders (gooey) ---------- */
-  const edgeH = () => Math.round(clamp(innerHeight * 0.2, 100, 220));
-  function buildEdges() {
-    if (!curtain) return;
-    const E = edgeH(), W = innerWidth;
-    curtain.style.setProperty('--edge', E + 'px');
-    $$('.curtain__edge', curtain).forEach((n) => n.remove());
-    let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-    const NS = 'http://www.w3.org/2000/svg';
-    for (const side of ['top', 'bottom']) {
-      const up = side === 'top', id = 'goo-' + side;
-      const y0 = up ? E * 0.62 : E * 0.38;          // basislijn waar de rand aan het scherm vastzit
-      let shapes = `<rect class="base" x="-80" y="${up ? y0 : -4}" width="${W + 160}" height="${up ? E - y0 + 4 : y0 + 4}" fill="var(--c-light)"/>`;
-      const n = Math.ceil(W / (up ? 70 : 62));
-      for (let i = 0; i <= n; i++) {
-        const cx = (i + (rnd() - 0.5) * 0.7) * (W / n);
-        const r = E * (up ? 0.14 + rnd() * 0.17 : 0.07 + rnd() * 0.1);
-        const reach = E * (up ? 0.1 + rnd() * 0.5 : 0.18 + rnd() * 0.55);   // hoe ver de klodder uitsteekt
-        const t = (1.2 + rnd() * 1.4).toFixed(2), d = (-rnd() * 2).toFixed(2), a = Math.round(4 + rnd() * 12);
-        if (up) shapes += `<circle class="blob" cx="${cx.toFixed(1)}" cy="${(y0 - reach + r).toFixed(1)}" r="${r.toFixed(1)}" style="--t:${t}s;--d:${d}s;--a:${a}"/>`;
-        else {
-          // druppel: lange smalle ellips met een dikke druppelkop
-          const len = reach, rx = r * 0.7;
-          shapes += `<g class="blob" style="--t:${t}s;--d:${d}s;--a:${Math.round(a * 0.6)}"><ellipse cx="${cx.toFixed(1)}" cy="${(y0 + len / 2).toFixed(1)}" rx="${rx.toFixed(1)}" ry="${(len / 2).toFixed(1)}"/><circle cx="${cx.toFixed(1)}" cy="${(y0 + len).toFixed(1)}" r="${(r * 1.05).toFixed(1)}"/></g>`;
-        }
-      }
-      // losse druppeltjes die zweven
-      for (let i = 0; i < Math.max(3, Math.round(W / 220)); i++) {
-        const r = 5 + rnd() * 8, cx = rnd() * W;
-        const cy = up ? y0 - E * (0.28 + rnd() * 0.3) : y0 + E * (0.35 + rnd() * 0.45);
-        shapes += `<circle class="blob" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r.toFixed(1)}" style="--t:${(1 + rnd()).toFixed(2)}s;--d:${(-rnd()).toFixed(2)}s;--a:${Math.round(10 + rnd() * 16)}"/>`;
-      }
-      const svg = d.createElementNS(NS, 'svg');
-      svg.setAttribute('class', `curtain__edge curtain__edge--${side}`);
-      svg.setAttribute('aria-hidden', 'true');
-      svg.setAttribute('viewBox', `0 0 ${W} ${E}`);
-      svg.setAttribute('preserveAspectRatio', 'none');
-      svg.innerHTML = `<defs><filter id="${id}" x="-5%" y="-60%" width="110%" height="220%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="${Math.max(7, E * 0.06).toFixed(1)}" result="b"/><feColorMatrix in="b" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 26 -10"/></filter></defs><g filter="url(#${id})">${shapes}</g>`;
-      curtain.appendChild(svg);
-    }
-  }
-  buildEdges();
-  { let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!leaving) buildEdges(); }, 200); }); }
-
   async function enter() {
     const raw = store.get('claro:media');
     if (root.classList.contains('is-entering-media') && raw && mediaCurtain) {
@@ -132,7 +88,7 @@
       store.del('claro:curtain');
       const hold = reduced ? 160 : 1050;   // zo lang blijft het logo met zijn animatie in beeld
       if (!reduced) curtain.classList.add('is-playing');
-      const slide = curtain.animate([{ transform: 'translateY(0)' }, { transform: `translateY(calc(-100% - ${edgeH()}px))` }], { duration: 900, easing: EASE, delay: hold, fill: 'forwards' });
+      const slide = curtain.animate([{ transform: 'translateY(0)' }, { transform: `translateY(-100%)` }], { duration: 900, easing: EASE, delay: hold, fill: 'forwards' });
       setTimeout(ready, hold + 260);
       await slide.finished.catch(() => {});
       root.classList.remove('is-entering');
@@ -150,7 +106,7 @@
     store.set('claro:curtain', String(Date.now()));
     curtain.classList.add('is-active');
     try {
-      await curtain.animate([{ transform: `translateY(calc(100% + ${edgeH()}px))` }, { transform: 'translateY(0)' }], { duration: 750, easing: EASE, fill: 'forwards' }).finished;
+      await curtain.animate([{ transform: `translateY(100%)` }, { transform: 'translateY(0)' }], { duration: 750, easing: EASE, fill: 'forwards' }).finished;
     } catch (e) {}
     location.href = href;
   }
