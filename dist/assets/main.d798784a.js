@@ -89,10 +89,10 @@
       const t0 = parseInt(store.get('claro:curtain'), 10) || 0;
       const elapsed = t0 ? clamp(Date.now() - t0, 0, 1500) : 0;
       store.del('claro:curtain');
-      const hold = reduced ? 120 : Math.max(80, 1000 - elapsed);
+      const hold = reduced ? 160 : Math.max(150, 1700 - elapsed);
       if (!reduced) { curtain.style.setProperty('--off', (elapsed / 1000).toFixed(3) + 's'); curtain.classList.add('is-playing'); }
-      const slide = curtain.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], { duration: 650, easing: EASE, delay: hold, fill: 'forwards' });
-      setTimeout(ready, hold + 200);
+      const slide = curtain.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], { duration: 900, easing: EASE, delay: hold, fill: 'forwards' });
+      setTimeout(ready, hold + 260);
       await slide.finished.catch(() => {});
       root.classList.remove('is-entering');
       curtain.classList.remove('is-playing');
@@ -111,7 +111,7 @@
     curtain.style.removeProperty('--off');
     curtain.classList.add('is-active', 'is-playing');
     try {
-      await curtain.animate([{ transform: 'translateY(100%)' }, { transform: 'translateY(0)' }], { duration: 480, easing: EASE, fill: 'forwards' }).finished;
+      await curtain.animate([{ transform: 'translateY(100%)' }, { transform: 'translateY(0)' }], { duration: 750, easing: EASE, fill: 'forwards' }).finished;
     } catch (e) {}
     location.href = href;
   }
