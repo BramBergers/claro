@@ -256,14 +256,21 @@ export function homePage(ctx) {
 <section class="clients" data-lamp>
   <div class="container">
     <h2 class="clients__title" data-reveal>${esc(site.clientsTitle)}</h2>
-    <ul class="clients__grid">
-      ${clients
-        .map(
-          (c, i) =>
-            `<li class="client" data-reveal style="--d:${(i % 4) * 90}ms"><span class="client__logo" style="--w:${logoWidth(svgRatio(c.svg))}px">${c.svg}</span></li>`
-        )
-        .join('')}
-    </ul>
+    <div class="clients__marquee">
+      <div class="clients__track">
+        <ul class="clients__grid">
+          ${clients
+            .map(
+              (c, i) =>
+                `<li class="client" data-reveal style="--d:${(i % 4) * 90}ms"><span class="client__logo" style="--w:${logoWidth(svgRatio(c.svg))}px">${c.svg}</span></li>`
+            )
+            .join('')}
+        </ul>
+        <ul class="clients__grid clients__grid--copy" aria-hidden="true">
+          ${clients.map((c) => `<li class="client"><span class="client__logo" style="--w:${logoWidth(svgRatio(c.svg))}px">${c.svg}</span></li>`).join('')}
+        </ul>
+      </div>
+    </div>
   </div>
 </section>`;
 

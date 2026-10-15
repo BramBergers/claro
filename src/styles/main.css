@@ -161,7 +161,7 @@ html.menu-open .site-header { transform: none; background: transparent; -webkit-
 .burger[aria-expanded='true'] .burger__line:nth-child(2) { top: 23px; transform: rotate(-45deg); background: var(--c-light); }
 
 .menu {
-  position: fixed; inset: 0; z-index: 90; overflow: auto; overscroll-behavior: contain;
+  position: fixed; inset: 0; z-index: 90; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain;
   display: flex; flex-direction: column; justify-content: space-between; gap: 2rem;
   padding: calc(var(--header-h) + 1.5rem) var(--gutter) max(1.75rem, env(safe-area-inset-bottom));
   background: var(--c-dark);
@@ -169,7 +169,7 @@ html.menu-open .site-header { transform: none; background: transparent; -webkit-
   transition: clip-path 0.8s var(--ease), visibility 0s 0.8s;
 }
 .menu.is-open { clip-path: circle(150% at calc(100% - 2.2rem) 2.2rem); visibility: visible; transition: clip-path 0.95s var(--ease), visibility 0s; }
-.menu__glow { position: absolute; width: 150vmax; height: 150vmax; left: -40vmax; top: 10%; background: radial-gradient(circle, rgba(174, 107, 255, 0.34), rgba(174, 107, 255, 0) 55%); pointer-events: none; animation: drift 14s ease-in-out infinite alternate; }
+.menu__glow { position: fixed; width: 150vmax; height: 150vmax; left: -40vmax; top: 10%; background: radial-gradient(circle, rgba(174, 107, 255, 0.34), rgba(174, 107, 255, 0) 55%); pointer-events: none; animation: drift 14s ease-in-out infinite alternate; }
 @keyframes drift { to { transform: translate(18vmax, -16vmax) scale(1.15); } }
 .menu__nav, .menu__foot { position: relative; }
 .menu__nav { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
@@ -186,10 +186,12 @@ html.menu-open .site-header { transform: none; background: transparent; -webkit-
 html.menu-open { overflow: hidden; }
 
 /* ---------- Pagina-overgangen ---------- */
-.curtain { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; background: var(--c-light); transform: translateY(100%); pointer-events: none; will-change: transform; }
+.curtain { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; background: var(--c-light); transform: translateY(100%); visibility: hidden; pointer-events: none; will-change: transform; }
+html.is-entering .curtain, .curtain.is-active { visibility: visible; }
 .curtain__logo { width: clamp(150px, 22vw, 300px); }
 .curtain__logo .logo { width: 100%; height: auto; }
 html.is-entering .curtain { transform: translateY(0); }
+html, body { overscroll-behavior-y: none; }
 /* Zelfde animatie als het logo in het menu: letters lichten van links naar rechts op, daarna springt de punt */
 @keyframes curtain-wave {
   0%   { transform: translateY(0); fill: currentColor; }
@@ -204,8 +206,8 @@ html.is-entering .curtain { transform: translateY(0); }
   62%  { transform: translateY(0) scale(1); fill: currentColor; }
   100% { transform: translateY(0) scale(1); fill: currentColor; }
 }
-.curtain.is-playing .logo__shape:not(.logo__dot) { animation: curtain-wave 1s var(--ease-out) both; animation-delay: calc(0.12s + var(--i) * 0.09s); }
-.curtain.is-playing .logo__dot { animation: curtain-dot 1s var(--ease-out) both; animation-delay: calc(0.12s + var(--i) * 0.09s); }
+.curtain.is-playing .logo__shape:not(.logo__dot) { animation: curtain-wave 0.9s var(--ease-out) both; animation-delay: calc(0.04s + var(--i) * 0.08s - var(--off, 0s)); }
+.curtain.is-playing .logo__dot { animation: curtain-dot 0.9s var(--ease-out) both; animation-delay: calc(0.04s + var(--i) * 0.08s - var(--off, 0s)); }
 .media-curtain { position: fixed; inset: 0; z-index: 290; background: var(--c-dark); opacity: 0; visibility: hidden; pointer-events: none; overflow: hidden; }
 html.is-entering-media .media-curtain { opacity: 1; visibility: visible; }
 .media-curtain__asset { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -290,6 +292,8 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
 /* ---------- Home: klanten ---------- */
 .clients { background: var(--c-dark); padding: clamp(4.5rem, 9vw, 9rem) 0; }
 .clients__title { max-width: 14em; margin: 0 auto clamp(2.2rem, 4.5vw, 4.5rem); text-align: center; color: var(--c-light); font-weight: 700; font-size: clamp(1.4rem, 2.5vw, 2.5rem); letter-spacing: -0.02em; line-height: 1.2; text-wrap: balance; }
+.clients__marquee, .clients__track { display: contents; }
+.clients__grid--copy { display: none; }
 .clients__grid { --cols: 4; --gap: clamp(1.5rem, 3.2vw, 3.6rem); display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(1.8rem, 3.6vw, 3.6rem) var(--gap); max-width: 1120px; margin-inline: auto; }
 .client { flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); display: flex; justify-content: center; align-items: center; min-height: clamp(52px, 6.2vw, 88px); }
 .client__logo { display: block; width: var(--w, 190px); max-width: 100%; color: var(--c-light); transition: color 0.4s, transform 0.6s var(--ease-out), filter 0.4s; }
@@ -332,7 +336,8 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
 .sintro__lead { font-weight: 300; font-size: clamp(1.35rem, 2.7vw, 2.8rem); line-height: 1.3; letter-spacing: -0.015em; }
 .offer { display: grid; }
 .offer__item { position: relative; display: grid; grid-template-columns: 3rem 1fr; column-gap: 1rem; padding: clamp(1.2rem, 2vw, 1.8rem) 0; border-top: 1px solid rgba(174, 107, 255, 0.3); }
-.offer__item:last-child { border-bottom: 1px solid rgba(174, 107, 255, 0.3); }
+.offer__item:first-child { border-top: 0; padding-top: 0; }
+.offer__item:last-child { padding-bottom: 0; }
 .offer__num { grid-row: span 2; color: var(--c-light); font-size: 0.8rem; padding-top: 0.5em; }
 .offer__title { font-weight: 700; font-size: clamp(1.1rem, 1.6vw, 1.6rem); transition: color 0.4s, transform 0.6s var(--ease-out); }
 .offer__text { margin-top: 0.4rem; font-weight: 300; font-size: clamp(0.85rem, 1vw, 1rem); color: rgba(255, 255, 255, 0.8); }
@@ -400,6 +405,9 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
 .contact__details li { display: grid; grid-template-columns: 6.5rem 1fr; gap: 1rem; align-items: baseline; padding-top: 0.9rem; border-top: 1px solid rgba(174, 107, 255, 0.3); font-size: clamp(0.85rem, 1.05vw, 1.05rem); }
 .contact__details span { color: var(--c-light); font-size: 0.8rem; }
 .contact__details b { font-weight: 400; }
+.contact__details li:first-child { border-top: 0; padding-top: 0; }
+.contact__details .text-link { background: none; padding-bottom: 0; }
+.contact__details .text-link:hover { color: var(--c-light); }
 .contact__card { background: var(--c-dark); border: 1px solid rgba(174, 107, 255, 0.3); border-radius: clamp(20px, 2.4vw, 36px); padding: clamp(1.5rem, 3.2vw, 3.2rem); box-shadow: 0 40px 100px -40px rgba(0, 0, 0, 0.7); }
 .form__title { font-weight: 700; font-size: clamp(1.2rem, 1.9vw, 1.9rem); letter-spacing: -0.02em; margin-bottom: 1rem; }
 .field { position: relative; margin-bottom: 1rem; }
@@ -437,7 +445,6 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
   .hero { height: min(82svh, 720px); min-height: 380px; }
   .footer__social { gap: 0.2rem; }
 
-  .service__row { flex-direction: column; align-items: flex-start; gap: 0.35rem; }
   .service__tags { text-align: left; }
   .service__link:hover .service__tags { transform: none; }
 
@@ -450,14 +457,23 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
 
 /* Touchscreens: geen hover, dus de voorbeeldbeelden staan er gewoon schuin onder de dienst */
 @media (hover: none), (max-width: 900px) {
-  .service__media { position: relative; top: auto; height: auto; padding: 0 var(--gutter) clamp(1.2rem, 4vw, 2rem); max-width: var(--maxw); margin-inline: auto; }
-  .service__card { position: relative; left: auto; top: auto; translate: none; width: min(60vw, 320px); margin-left: auto; margin-right: 0.4rem; opacity: 1; transform: rotate(var(--rot, -3deg)); }
+  .service__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1rem; row-gap: 0.3rem; align-items: center; }
+  .service__title, .service__tags { grid-column: 1; }
+  .service__row::after { content: '\2197'; grid-column: 2; grid-row: 1 / span 2; display: grid; place-items: center; width: 2.7rem; height: 2.7rem; border: 1.5px solid rgba(174, 107, 255, 0.6); border-radius: 50%; color: var(--c-light); font-size: 1.05rem; transition: background 0.3s, color 0.3s, border-color 0.3s; }
+  .service__link:active .service__row::after { background: var(--c-purple); color: var(--c-white); border-color: var(--c-purple); }
+  .service__link { padding: clamp(1.5rem, 6vw, 2.2rem) 0 clamp(0.9rem, 3vw, 1.3rem); }
+  .service__media { position: relative; top: auto; height: auto; padding: 0 var(--gutter) clamp(1.6rem, 6vw, 2.4rem); max-width: var(--maxw); margin-inline: auto; pointer-events: auto; cursor: pointer; }
+  .service__card { position: relative; left: auto; top: auto; translate: none; width: 90%; margin-inline: auto; opacity: 1; transform: rotate(var(--rot, -3deg)); }
   .service:hover .service__card { transform: rotate(var(--rot, -3deg)); }
-  .service__link { padding-bottom: clamp(0.6rem, 2vw, 1rem); }
 }
 
 @media (max-width: 640px) {
-  .clients__grid { --cols: 2; --gap: 1.5rem; }
+  .clients__marquee { display: block; margin-inline: calc(var(--gutter) * -1); overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .clients__track { display: flex; width: max-content; animation: clients-marquee 36s linear infinite; }
+  .clients__grid, .clients__grid--copy { display: flex; flex-wrap: nowrap; justify-content: flex-start; align-items: center; gap: 3.2rem; max-width: none; margin: 0; padding-right: 3.2rem; flex: none; }
+  .clients__grid .client { flex: none; min-height: 56px; }
+  .client__logo { width: calc(var(--w, 190px) * 0.62); max-width: none; }
+  .js .clients__track .client[data-reveal] { opacity: 1; transform: none; }
   .footer__top { align-items: center; }
   .footer__bottom { flex-direction: column; }
   .contact__details li { grid-template-columns: 5rem 1fr; }
@@ -468,10 +484,13 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
   .cta-pill { height: clamp(96px, 30vw, 150px); }
 }
 
+@keyframes clients-marquee { to { transform: translateX(-50%); } }
+
 /* ---------- Minder beweging als je dat in je systeem hebt aangegeven ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
   .js [data-reveal], .js [data-hero-in] { opacity: 1; transform: none; }
+  .clients__marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
   .js [data-words] .w { opacity: 1; }
   .js .intro__logo .logo__shape { opacity: 1; }
 }

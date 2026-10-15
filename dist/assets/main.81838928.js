@@ -85,14 +85,18 @@
       fade.cancel();
       mediaCurtain.replaceChildren();
     } else if (root.classList.contains('is-entering') && curtain) {
+      // De logo-animatie begon al op de vorige pagina; hier loopt hij door waar hij bleef.
+      const t0 = parseInt(store.get('claro:curtain'), 10) || 0;
+      const elapsed = t0 ? clamp(Date.now() - t0, 0, 1500) : 0;
       store.del('claro:curtain');
-      const hold = reduced ? 160 : 1050;   // zo lang blijft het logo met zijn animatie in beeld
-      if (!reduced) curtain.classList.add('is-playing');
-      const slide = curtain.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], { duration: 900, easing: EASE, delay: hold, fill: 'forwards' });
-      setTimeout(ready, hold + 260);
+      const hold = reduced ? 120 : Math.max(80, 1000 - elapsed);
+      if (!reduced) { curtain.style.setProperty('--off', (elapsed / 1000).toFixed(3) + 's'); curtain.classList.add('is-playing'); }
+      const slide = curtain.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], { duration: 650, easing: EASE, delay: hold, fill: 'forwards' });
+      setTimeout(ready, hold + 200);
       await slide.finished.catch(() => {});
       root.classList.remove('is-entering');
       curtain.classList.remove('is-playing');
+      curtain.style.removeProperty('--off');
       slide.cancel();
     } else {
       requestAnimationFrame(() => requestAnimationFrame(ready));
@@ -103,9 +107,11 @@
   async function leaveWithCurtain(href) {
     if (leaving) return;
     leaving = true;
-    store.set('claro:curtain', '1');
+    store.set('claro:curtain', String(Date.now()));
+    curtain.style.removeProperty('--off');
+    curtain.classList.add('is-active', 'is-playing');
     try {
-      await curtain.animate([{ transform: 'translateY(100%)' }, { transform: 'translateY(0)' }], { duration: 750, easing: EASE, fill: 'forwards' }).finished;
+      await curtain.animate([{ transform: 'translateY(100%)' }, { transform: 'translateY(0)' }], { duration: 480, easing: EASE, fill: 'forwards' }).finished;
     } catch (e) {}
     location.href = href;
   }
@@ -171,6 +177,7 @@
     $$('.ghost').forEach((g) => g.remove());
     $$('.service__card').forEach((c) => (c.style.visibility = ''));
     [curtain, header].forEach((n) => n && n.getAnimations().forEach((a) => a.cancel()));
+    if (curtain) curtain.classList.remove('is-active', 'is-playing');
     root.classList.remove('is-entering', 'is-entering-media');
     body.classList.add('is-ready');
   });
@@ -293,6 +300,12 @@
       const w = Math.max(70, Math.min(Math.sqrt(11000 * ratio), 76 * ratio, 200));
       svg.parentElement.style.setProperty('--w', Math.round(w) + 'px');
     } catch (e) {}
+  });
+
+  /* ---------- Diensten op touchscreens: ook een tik op het voorbeeldbeeld opent de dienst ---------- */
+  $$('.service').forEach((li) => {
+    const media = $('.service__media', li), link = $('.service__link', li);
+    if (media && link) media.addEventListener('click', () => { if (matchMedia('(hover: none), (max-width: 900px)').matches) link.click(); });
   });
 
   /* ---------- Header-video wisselt mee als je je telefoon draait ---------- */
