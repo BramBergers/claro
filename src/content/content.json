@@ -1,0 +1,181 @@
+{
+  "_info": "Dit is de terugval-inhoud. Zodra Sanity is gekoppeld (SANITY_PROJECT_ID), komt de inhoud uit het CMS en wordt dit bestand alleen gebruikt voor velden die in het CMS nog leeg zijn.",
+
+  "site": {
+    "name": "Claro",
+    "url": "https://clarodesign.nl",
+    "description": "Claro is een creatief ontwerpbureau voor branding, webdesign, motion en print & signage. Helder in design, klaar voor impact.",
+    "heroVideo": { "src": "/media/headervideo.mp4", "poster": "/media/headervideo-poster.jpg" },
+    "marquee": ["Infographics", "Print & Signage", "Branding", "Webdesign", "Motion"],
+    "heroTitle": "Helder in design, klaar voor impact.",
+    "ctaLabel": "Let's chat!",
+    "servicesTitle": "Waar wij in stralen.",
+    "clientsTitle": "Voor deze klanten is het nu helder.",
+    "instagram": "https://www.instagram.com/wijzijnclaro/",
+    "linkedin": "https://www.linkedin.com/",
+    "email": "hallo@clarodesign.nl",
+    "kvk": "12345678",
+    "byline": "Nicole Timmer en Bram Bergers"
+  },
+
+  "services": [
+    {
+      "title": "Branding & Merk",
+      "slug": "branding-merk",
+      "tags": ["logo", "huisstijl", "brandbook"],
+      "media": { "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" },
+      "intro": "Een merk is meer dan een logo. Wij vertalen wie je bent naar een herkenbare identiteit die overal klopt, van visitekaartje tot website.",
+      "offer": [
+        { "title": "Logo", "text": "Een eenvoudig, sterk logo dat groot en klein werkt en blijft hangen." },
+        { "title": "Huisstijl", "text": "Kleuren, lettertypes en beeldtaal die samen één helder verhaal vertellen." },
+        { "title": "Brandbook", "text": "Een handige gids, zodat iedereen die met je merk werkt het goed doet." }
+      ],
+      "cases": [
+        {
+          "title": "Voorbeeldcase Branding",
+          "client": "Klantnaam",
+          "year": "2026",
+          "description": "Dit is een voorbeeldtekst. Hier komt een korte beschrijving van de opdracht, onze aanpak en het resultaat.",
+          "media": [
+            { "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" },
+            { "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" }
+          ]
+        },
+        {
+          "title": "Tweede voorbeeldcase",
+          "client": "Klantnaam",
+          "year": "2026",
+          "description": "Nog een voorbeeldtekst. Vervang deze via het CMS door een echte case met eigen beeld en video.",
+          "media": [{ "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" }]
+        }
+      ]
+    },
+    {
+      "title": "Webdesign",
+      "slug": "webdesign",
+      "tags": ["UX / UI", "landingspagina's"],
+      "media": { "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" },
+      "intro": "Een website die in één blik duidelijk maakt wat je doet. Ontworpen vanuit de bezoeker, gebouwd om te blijven.",
+      "offer": [
+        { "title": "UX / UI", "text": "Slimme structuur en een ontwerp dat bezoekers vanzelf de goede kant op stuurt." },
+        { "title": "Landingspagina's", "text": "Gerichte pagina's die één boodschap helder overbrengen en tot actie leiden." },
+        { "title": "Websites", "text": "Complete websites met een CMS, zodat je zelf teksten en beelden kunt aanpassen." }
+      ],
+      "cases": [
+        {
+          "title": "Voorbeeldcase Webdesign",
+          "client": "Klantnaam",
+          "year": "2026",
+          "description": "Dit is een voorbeeldtekst. Hier komt een korte beschrijving van de opdracht, onze aanpak en het resultaat.",
+          "media": [{ "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" }]
+        }
+      ]
+    },
+    {
+      "title": "Motion",
+      "slug": "motion",
+      "tags": ["animatie", "intro's", "reclame"],
+      "media": { "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" },
+      "intro": "Beweging trekt aandacht en houdt die vast. Van korte intro's tot reclamefilms die je boodschap in een paar seconden helder maken.",
+      "offer": [
+        { "title": "Animatie", "text": "Uitleganimaties en logo-animaties die je merk tot leven brengen." },
+        { "title": "Intro's", "text": "Een sterke opening voor video's, presentaties en livestreams." },
+        { "title": "Reclame", "text": "Korte, krachtige films voor social media, beurzen en schermen." }
+      ],
+      "cases": [
+        {
+          "title": "Voorbeeldcase Motion",
+          "client": "Klantnaam",
+          "year": "2026",
+          "description": "Dit is een voorbeeldtekst. Hier komt een korte beschrijving van de opdracht, onze aanpak en het resultaat.",
+          "media": [
+            { "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" },
+            { "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" }
+          ]
+        },
+        {
+          "title": "Tweede voorbeeldcase",
+          "client": "Klantnaam",
+          "year": "2026",
+          "description": "Nog een voorbeeldtekst. Vervang deze via het CMS door een echte case met eigen beeld en video.",
+          "media": [{ "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" }]
+        }
+      ]
+    },
+    {
+      "title": "Print & Signage",
+      "slug": "print-signage",
+      "tags": ["beurs", "gevel", "voertuig"],
+      "media": { "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" },
+      "intro": "Op de beursvloer, aan de gevel of op de bus: je merk moet van ver al helder zijn. Wij ontwerpen drukwerk en signing dat opvalt en klopt.",
+      "offer": [
+        { "title": "Beurs", "text": "Beursstands en materialen die je al van de gang af herkent." },
+        { "title": "Gevel", "text": "Gevelreclame en raamdecoratie die je pand een gezicht geven." },
+        { "title": "Voertuig", "text": "Belettering die onderweg meewerkt aan je naamsbekendheid." }
+      ],
+      "cases": [
+        {
+          "title": "Voorbeeldcase Print & Signage",
+          "client": "Klantnaam",
+          "year": "2026",
+          "description": "Dit is een voorbeeldtekst. Hier komt een korte beschrijving van de opdracht, onze aanpak en het resultaat.",
+          "media": [{ "src": "/media/case1_beeld1.mp4", "poster": "/media/case1_beeld1-poster.jpg" }]
+        }
+      ]
+    }
+  ],
+
+  "clients": [
+    { "name": "Klant 1", "file": "src/assets/klant-placeholder.svg" },
+    { "name": "Klant 2", "file": "src/assets/klant-placeholder.svg" },
+    { "name": "Klant 3", "file": "src/assets/klant-placeholder.svg" },
+    { "name": "Klant 4", "file": "src/assets/klant-placeholder.svg" },
+    { "name": "Klant 5", "file": "src/assets/klant-placeholder.svg" },
+    { "name": "Klant 6", "file": "src/assets/klant-placeholder.svg" },
+    { "name": "Klant 7", "file": "src/assets/klant-placeholder.svg" }
+  ],
+
+  "about": {
+    "title": "Over Claro",
+    "statement": "Wij maken het helder.",
+    "intro": "Claro is een creatief ontwerpbureau voor ondernemers die helder willen zijn over wie ze zijn en wat ze doen.",
+    "story": [
+      "Claro betekent helder, en dat is precies wat we doen. Veel merken en websites zeggen te veel, te rommelig of net niet genoeg. Wij halen de ruis weg, zodat je boodschap in één oogopslag aankomt.",
+      "We werken in een klein team en zitten dicht op de opdracht. Dat betekent korte lijnen, eerlijke feedback en ontwerpen waar we zelf achter staan. Van branding en webdesign tot motion en print & signage: alles vanuit dezelfde heldere kijk."
+    ],
+    "stepsTitle": "Zo werken we",
+    "steps": [
+      { "title": "Luisteren", "text": "We beginnen met vragen stellen. Wie ben je, wie wil je bereiken en wat moet blijven hangen?" },
+      { "title": "Ontwerpen", "text": "Vanuit die antwoorden maken we een eerste richting die je kunt zien, voelen en bijsturen." },
+      { "title": "Verfijnen", "text": "We slijpen het ontwerp tot elk detail klopt en het overal even sterk werkt." },
+      { "title": "Opleveren", "text": "Je krijgt alles netjes aangeleverd en weet precies hoe je het zelf gebruikt." }
+    ],
+    "teamTitle": "Wie we zijn",
+    "team": [
+      { "name": "Nicole Timmer", "role": "Oprichter", "bio": "Voorbeeldtekst. Hier komt een korte introductie." },
+      { "name": "Bram Bergers", "role": "Oprichter", "bio": "Voorbeeldtekst. Hier komt een korte introductie." }
+    ]
+  },
+
+  "contact": {
+    "title": "Let's chat!",
+    "intro": "Een vraag, een idee of gewoon benieuwd wat we voor je kunnen doen? Laat het ons weten, we reageren zo snel mogelijk.",
+    "formTitle": "Stuur ons een bericht",
+    "successTitle": "Bedankt voor je bericht!",
+    "successText": "We hebben het ontvangen en komen zo snel mogelijk bij je terug."
+  },
+
+  "privacy": {
+    "title": "Privacyverklaring",
+    "updated": "Oktober 2026",
+    "note": "Dit is een concepttekst. Laat deze controleren voordat de website live gaat.",
+    "sections": [
+      { "title": "Wie zijn wij?", "text": "Claro, gevestigd in Nederland en ingeschreven bij de Kamer van Koophandel. Je kunt ons bereiken via het e-mailadres op de contactpagina." },
+      { "title": "Welke gegevens verwerken we?", "text": "Alleen de gegevens die je zelf invult in het contactformulier: je naam, e-mailadres, eventueel je bedrijfsnaam, je interesse en je bericht." },
+      { "title": "Waarvoor gebruiken we die?", "text": "Om je vraag te beantwoorden en contact met je op te nemen. We gebruiken je gegevens niet voor andere doeleinden en delen ze niet met derden, behalve met de partijen die het formulier technisch verwerken (onze hostingpartij)." },
+      { "title": "Hoe lang bewaren we ze?", "text": "Niet langer dan nodig is om je vraag af te handelen, of zo lang als de wet vraagt." },
+      { "title": "Cookies", "text": "Deze website gebruikt geen tracking- of advertentiecookies." },
+      { "title": "Jouw rechten", "text": "Je mag je gegevens opvragen, laten aanpassen of laten verwijderen. Stuur daarvoor een bericht naar ons e-mailadres. Kom je er niet uit met ons, dan kun je een klacht indienen bij de Autoriteit Persoonsgegevens." }
+    ]
+  }
+}
