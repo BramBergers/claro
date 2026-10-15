@@ -163,7 +163,9 @@
     if (samePage) { e.preventDefault(); if (menuOpen) setMenu(false); scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }); return; }
     if (reduced) return;
     e.preventDefault();
-    a.matches('[data-service]') ? expandThenGo(a, url.href) : leaveWithCurtain(url.href);
+    // Op telefoons (en touchscreens) dezelfde overgang als de andere pagina's; de uitvergrote kaart blijft voor desktop.
+    const touchLayout = matchMedia('(hover: none), (max-width: 900px)').matches;
+    a.matches('[data-service]') && !touchLayout ? expandThenGo(a, url.href) : leaveWithCurtain(url.href);
   });
 
   addEventListener('pageshow', (e) => {
