@@ -145,7 +145,10 @@ html.menu-open .site-header { transform: none; background: transparent; -webkit-
 .has-dropdown:hover .dropdown, .has-dropdown:focus-within .dropdown { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition: opacity 0.3s, transform 0.5s var(--ease-out), visibility 0s; }
 .dropdown__link { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.85em 1em; border-radius: 14px; font-size: 0.88rem; font-weight: 400; overflow: hidden; isolation: isolate; transition: color 0.35s; }
 .dropdown__link::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--c-light); transform: scaleX(0); transform-origin: right; transition: transform 0.5s var(--ease); }
-.dropdown__link:hover, .dropdown__link:focus-visible, .dropdown__link[aria-current] { color: var(--c-purple); }
+.dropdown__link[aria-current] { color: var(--c-light); font-weight: 700; }
+.dropdown__link[aria-current]::after { content: ''; width: 0.5em; height: 0.5em; border-radius: 50%; background: currentColor; flex: none; transition: opacity 0.3s; }
+.dropdown__link:hover, .dropdown__link:focus-visible, .dropdown__link[aria-current]:hover, .dropdown__link[aria-current]:focus-visible { color: var(--c-purple); }
+.dropdown__link[aria-current]:hover::after, .dropdown__link[aria-current]:focus-visible::after { opacity: 0; }
 .dropdown__link:hover::before, .dropdown__link:focus-visible::before { transform: scaleX(1); transform-origin: left; }
 .dropdown__link .arrow { opacity: 0; transform: translateX(-6px); transition: opacity 0.3s, transform 0.4s var(--ease-out); }
 .dropdown__link:hover .arrow { opacity: 1; transform: none; }
@@ -187,6 +190,22 @@ html.menu-open { overflow: hidden; }
 .curtain__logo { width: clamp(150px, 22vw, 300px); }
 .curtain__logo .logo { width: 100%; height: auto; }
 html.is-entering .curtain { transform: translateY(0); }
+/* Zelfde animatie als het logo in het menu: letters lichten van links naar rechts op, daarna springt de punt */
+@keyframes curtain-wave {
+  0%   { transform: translateY(0); fill: currentColor; }
+  22%  { transform: translateY(-16%); fill: #fff; }
+  50%  { transform: translateY(0); fill: currentColor; }
+  100% { transform: translateY(0); fill: currentColor; }
+}
+@keyframes curtain-dot {
+  0%   { transform: translateY(0) scale(1); fill: currentColor; }
+  20%  { transform: translateY(-140%) scale(0.85); fill: #fff; }
+  42%  { transform: translateY(0) scale(1.35); fill: #fff; }
+  62%  { transform: translateY(0) scale(1); fill: currentColor; }
+  100% { transform: translateY(0) scale(1); fill: currentColor; }
+}
+.curtain.is-playing .logo__shape:not(.logo__dot) { animation: curtain-wave 1s var(--ease-out) both; animation-delay: calc(0.12s + var(--i) * 0.09s); }
+.curtain.is-playing .logo__dot { animation: curtain-dot 1s var(--ease-out) both; animation-delay: calc(0.12s + var(--i) * 0.09s); }
 .media-curtain { position: fixed; inset: 0; z-index: 290; background: var(--c-dark); opacity: 0; visibility: hidden; pointer-events: none; overflow: hidden; }
 html.is-entering-media .media-curtain { opacity: 1; visibility: visible; }
 .media-curtain__asset { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -200,12 +219,14 @@ html.is-entering-media .media-curtain { opacity: 1; visibility: visible; }
 .lamp__glow { display: block; width: 600px; height: 600px; margin: -300px 0 0 -300px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 238, 255, 0.5) 0, rgba(214, 168, 255, 0.34) 13%, rgba(174, 107, 255, 0.17) 34%, rgba(174, 107, 255, 0.06) 52%, rgba(174, 107, 255, 0) 70%); transition: transform 0.7s var(--ease-out); }
 .lamp__core { display: block; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #fff; box-shadow: 0 0 14px 3px rgba(255, 255, 255, 0.7), 0 0 44px 14px rgba(190, 130, 255, 0.65); transition: transform 0.4s var(--ease-out), opacity 0.2s, background 0.3s; }
 .lamp.is-hover .lamp__glow { transform: scale(1.35); }
-.lamp.is-hover .lamp__core { transform: scale(2.4); }
+.lamp.is-hover .lamp__core { transform: scale(2.6); background: transparent; box-shadow: 0 0 0 0.7px rgba(255, 255, 255, 0.95), 0 0 20px 2px rgba(190, 130, 255, 0.5); }
 .lamp.is-down .lamp__core { transform: scale(0.7); }
 .lamp.is-text .lamp__core { opacity: 0; }
 .lamp--light { mix-blend-mode: normal; }
 .lamp--light .lamp__glow { background: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0, rgba(255, 255, 255, 0.3) 14%, rgba(255, 255, 255, 0.12) 36%, rgba(255, 255, 255, 0) 68%); }
 .lamp--light .lamp__core { background: var(--c-purple); box-shadow: 0 0 0 7px rgba(47, 6, 104, 0.14); }
+.lamp--light.is-hover .lamp__core { background: transparent; box-shadow: 0 0 0 0.8px var(--c-purple), 0 0 0 5px rgba(47, 6, 104, 0.1); }
+.lamp-trail { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 399; pointer-events: none; }
 html.has-lamp, html.has-lamp * { cursor: none !important; }
 html.has-lamp input[type='text'], html.has-lamp input[type='email'], html.has-lamp textarea { cursor: text !important; }
 

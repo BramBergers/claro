@@ -86,10 +86,13 @@
       mediaCurtain.replaceChildren();
     } else if (root.classList.contains('is-entering') && curtain) {
       store.del('claro:curtain');
-      const slide = curtain.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], { duration: 900, easing: EASE, delay: 160, fill: 'forwards' });
-      setTimeout(ready, 420);
+      const hold = reduced ? 160 : 1050;   // zo lang blijft het logo met zijn animatie in beeld
+      if (!reduced) curtain.classList.add('is-playing');
+      const slide = curtain.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-100%)' }], { duration: 900, easing: EASE, delay: hold, fill: 'forwards' });
+      setTimeout(ready, hold + 260);
       await slide.finished.catch(() => {});
       root.classList.remove('is-entering');
+      curtain.classList.remove('is-playing');
       slide.cancel();
     } else {
       requestAnimationFrame(() => requestAnimationFrame(ready));
@@ -218,6 +221,52 @@
     [glowPos, corePos] = $$('.lamp__pos', lamp);
     root.classList.add('has-lamp');
 
+    // Lichtspoor: een kort, vervagend spoor achter de cursor
+    if (!reduced) {
+      const cv = d.createElement('canvas');
+      cv.className = 'lamp-trail';
+      cv.setAttribute('aria-hidden', 'true');
+      body.insertBefore(cv, lamp);
+      const ctx = cv.getContext('2d');
+      const LIFE = 550;
+      const pts = [];
+      let dirty = false;
+      const size = () => {
+        const k = Math.min(devicePixelRatio || 1, 2);
+        cv.width = innerWidth * k; cv.height = innerHeight * k;
+        ctx.setTransform(k, 0, 0, k, 0, 0);
+      };
+      size();
+      addEventListener('resize', size);
+      L.trail = (x, y, light, now) => {
+        const last = pts[pts.length - 1];
+        if (!last || Math.hypot(x - last.x, y - last.y) > 2) pts.push({ x, y, t: now, light });
+        while (pts.length && now - pts[0].t > LIFE) pts.shift();
+        if (pts.length < 2) {
+          if (dirty) { ctx.clearRect(0, 0, innerWidth, innerHeight); dirty = false; }
+          return;
+        }
+        dirty = true;
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        ctx.lineCap = 'round';
+        for (let i = 1; i < pts.length; i++) {
+          const a = pts[i - 1], b = pts[i];
+          const f = Math.pow(1 - (now - b.t) / LIFE, 1.5);
+          if (f <= 0) continue;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+          if (b.light) {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = `rgba(255,255,255,${0.4 * f})`; ctx.lineWidth = 24 * f; ctx.stroke();
+            ctx.strokeStyle = `rgba(47,6,104,${0.3 * f})`; ctx.lineWidth = 5 * f; ctx.stroke();
+          } else {
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.strokeStyle = `rgba(174,107,255,${0.2 * f})`; ctx.lineWidth = 28 * f; ctx.stroke();
+            ctx.strokeStyle = `rgba(255,236,255,${0.55 * f})`; ctx.lineWidth = 6 * f; ctx.stroke();
+          }
+        }
+      };
+    }
+
     addEventListener('pointermove', (e) => {
       if (e.pointerType === 'touch') return;
       L.tx = e.clientX; L.ty = e.clientY;
@@ -324,6 +373,7 @@
       L.cx = lerp(L.cx, L.tx, reduced ? 1 : 0.5); L.cy = lerp(L.cy, L.ty, reduced ? 1 : 0.5);
       glowPos.style.transform = `translate3d(${L.gx}px, ${L.gy}px, 0)`;
       corePos.style.transform = `translate3d(${L.cx}px, ${L.cy}px, 0)`;
+      if (L.trail) L.trail(L.cx, L.cy, lamp.classList.contains('lamp--light'), performance.now());
     }
 
     // header-video: parallax, lichte zoom en donker worden
