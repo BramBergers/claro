@@ -463,10 +463,9 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
   .service__title, .service__tags { grid-column: 1; }
   .service__row::after { content: '\2197'; grid-column: 2; grid-row: 1 / span 2; display: grid; place-items: center; width: 2.7rem; height: 2.7rem; border: 1.5px solid rgba(174, 107, 255, 0.6); border-radius: 50%; color: var(--c-light); font-size: 1.05rem; transition: background 0.3s, color 0.3s, border-color 0.3s; }
   .service__link:active .service__row::after { background: var(--c-purple); color: var(--c-white); border-color: var(--c-purple); }
-  .service__link { padding: clamp(1.5rem, 6vw, 2.2rem) 0 clamp(0.9rem, 3vw, 1.3rem); }
-  .service__media { position: relative; top: auto; height: auto; padding: 0 var(--gutter) clamp(1.6rem, 6vw, 2.4rem); max-width: var(--maxw); margin-inline: auto; pointer-events: auto; cursor: pointer; }
-  .service__card { position: relative; left: auto; top: auto; translate: none; width: 90%; margin-inline: auto; opacity: 1; transform: rotate(var(--rot, -3deg)); }
-  .service:hover .service__card { transform: rotate(var(--rot, -3deg)); }
+  .service__link { padding: clamp(1.4rem, 5.5vw, 2rem) 0; }
+  /* Op touchscreens geen voorbeeldbeelden op de homepage: je ziet ze op de dienstpagina zelf */
+  .service__media { display: none; }
 }
 
 @media (max-width: 640px) {
