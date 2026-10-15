@@ -116,9 +116,6 @@ function footer(ctx) {
       <span class="cta-pill__fill" aria-hidden="true"></span>
       <span class="cta-pill__label">${esc(site.ctaLabel)}</span>
     </a>
-    <div class="playground" data-playground aria-hidden="true">
-      <span class="playground__hint">Pak een blok</span>
-    </div>
     <div class="footer__bottom">
       <p>${year} Claro · by ${esc(site.byline)}</p>
       <p>kvk: ${esc(site.kvk)} · <a class="text-link" href="/privacy/">privacy</a></p>
