@@ -282,6 +282,19 @@
     videos.filter((v) => v.dataset.play !== 'hover').forEach((v) => vio.observe(v));
   }
 
+  /* ---------- Klantlogo's: strak bijsnijden en optisch even groot, zodat alles netjes uitlijnt ---------- */
+  $$('.client__logo svg').forEach((svg) => {
+    try {
+      const b = svg.getBBox();
+      if (!(b.width > 0 && b.height > 0)) return;
+      const pad = Math.max(b.width, b.height) * 0.004;
+      svg.setAttribute('viewBox', `${b.x - pad} ${b.y - pad} ${b.width + pad * 2} ${b.height + pad * 2}`);
+      const ratio = b.width / b.height;
+      const w = Math.max(70, Math.min(Math.sqrt(11000 * ratio), 76 * ratio, 200));
+      svg.parentElement.style.setProperty('--w', Math.round(w) + 'px');
+    } catch (e) {}
+  });
+
   /* ---------- Header-video wisselt mee als je je telefoon draait ---------- */
   const heroVid = $('video[data-src-m]');
   if (heroVid) {

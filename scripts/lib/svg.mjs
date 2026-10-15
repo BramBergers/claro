@@ -67,10 +67,15 @@ export function recolorSvg(raw, { label = '' } = {}) {
     svg = svg.split(`id="${id}"`).join(`id="${id}-${n}"`).split(`#${id})`).join(`#${id}-${n})`);
   }
 
-  // kleuren overnemen van de tekstkleur
+  // kleuren overnemen van de tekstkleur: als attribuut, in style="..." en in <style>-blokken
+  const css = (t) => t
+    .replace(/(^|[;{\s"'])fill\s*:\s*(?!none|url|currentColor|transparent|inherit)[^;}"']+/gi, '$1fill:currentColor')
+    .replace(/(^|[;{\s"'])stroke\s*:\s*(?!none|url|currentColor|transparent|inherit)[^;}"']+/gi, '$1stroke:currentColor');
   svg = svg
-    .replace(/\sfill="(?!none|url)[^"]*"/g, ' fill="currentColor"')
-    .replace(/\sstroke="(?!none|url)[^"]*"/g, ' stroke="currentColor"');
+    .replace(/\sfill=(["'])(?!none|url|currentColor)[^"']*\1/gi, ' fill="currentColor"')
+    .replace(/\sstroke=(["'])(?!none|url|currentColor)[^"']*\1/gi, ' stroke="currentColor"')
+    .replace(/<style\b([^>]*)>([\s\S]*?)<\/style>/gi, (m, a, body) => `<style${a}>${css(body)}</style>`)
+    .replace(/\sstyle=(["'])([\s\S]*?)\1/gi, (m, q, body) => ` style=${q}${css(body)}${q}`);
 
   // root-element opschonen
   svg = svg.replace(/<svg\b([^>]*)>/, (m, attrs) => {
@@ -78,4 +83,17 @@ export function recolorSvg(raw, { label = '' } = {}) {
     return `<svg${clean} class="client-logo__svg" role="img" aria-label="${label.replace(/"/g, '&quot;')}" fill="currentColor" focusable="false">`;
   });
   return svg;
+}
+
+/** Verhouding (breed/hoog) van een inline SVG, uit de viewBox. */
+export function svgRatio(svg) {
+  const m = /viewBox=["']\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)/.exec(svg || '');
+  const r = m ? parseFloat(m[1]) / parseFloat(m[2]) : 3;
+  return Number.isFinite(r) && r > 0 ? r : 3;
+}
+
+/** Breedte (px) waarbij logo's met een andere vorm optisch even groot ogen. */
+export function logoWidth(ratio) {
+  const w = Math.min(Math.sqrt(11000 * ratio), 76 * ratio, 200);
+  return Math.round(Math.max(70, w));
 }

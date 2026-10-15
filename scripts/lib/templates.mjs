@@ -1,5 +1,5 @@
 // HTML-sjablonen voor alle pagina's. Wil je tekst of opbouw aanpassen? Dit is de plek.
-import { renderLogo } from './svg.mjs';
+import { logoWidth, renderLogo, svgRatio } from './svg.mjs';
 
 export const esc = (s = '') =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -260,7 +260,7 @@ export function homePage(ctx) {
       ${clients
         .map(
           (c, i) =>
-            `<li class="client" data-reveal style="--d:${(i % 4) * 90}ms"><span class="client__logo">${c.svg}</span></li>`
+            `<li class="client" data-reveal style="--d:${(i % 4) * 90}ms"><span class="client__logo" style="--w:${logoWidth(svgRatio(c.svg))}px">${c.svg}</span></li>`
         )
         .join('')}
     </ul>

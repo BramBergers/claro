@@ -291,8 +291,8 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
 .clients { background: var(--c-dark); padding: clamp(4.5rem, 9vw, 9rem) 0; }
 .clients__title { max-width: 14em; margin: 0 auto clamp(2.2rem, 4.5vw, 4.5rem); text-align: center; color: var(--c-light); font-weight: 700; font-size: clamp(1.4rem, 2.5vw, 2.5rem); letter-spacing: -0.02em; line-height: 1.2; text-wrap: balance; }
 .clients__grid { --cols: 4; --gap: clamp(1.5rem, 3.2vw, 3.6rem); display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(1.8rem, 3.6vw, 3.6rem) var(--gap); max-width: 1120px; margin-inline: auto; }
-.client { flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); display: flex; justify-content: center; }
-.client__logo { display: block; width: 100%; max-width: 190px; color: var(--c-light); transition: color 0.4s, transform 0.6s var(--ease-out), filter 0.4s; }
+.client { flex: 0 0 calc((100% - (var(--cols) - 1) * var(--gap)) / var(--cols)); display: flex; justify-content: center; align-items: center; min-height: clamp(52px, 6.2vw, 88px); }
+.client__logo { display: block; width: var(--w, 190px); max-width: 100%; color: var(--c-light); transition: color 0.4s, transform 0.6s var(--ease-out), filter 0.4s; }
 .client__logo svg { display: block; width: 100%; height: auto; }
 .client:hover .client__logo { color: var(--c-white); transform: scale(1.09) rotate(-1.5deg); filter: drop-shadow(0 0 20px rgba(174, 107, 255, 0.75)); }
 
