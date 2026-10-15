@@ -185,6 +185,14 @@ ${footer(ctx)}
 /* Pagina's                                                            */
 /* ------------------------------------------------------------------ */
 
+/** Header-video: een brede versie voor desktop en optioneel een staande voor telefoons. Alleen de passende wordt geladen. */
+function heroVideo(d, m) {
+  const mob = m && m.type === 'video' ? m : null;
+  const attrs = `data-src-d="${esc(d.src)}"${d.poster ? ` data-poster-d="${esc(d.poster)}"` : ''}${mob ? ` data-src-m="${esc(mob.src)}"${mob.poster ? ` data-poster-m="${esc(mob.poster)}"` : ''}` : ''}`;
+  return `<video class="hero__asset" autoplay muted loop playsinline preload="auto" ${attrs} data-media-kind="video" disablepictureinpicture aria-hidden="true"></video>
+<script>(function(){var v=document.currentScript.previousElementSibling,p=!!v.getAttribute('data-src-m')&&matchMedia('(max-aspect-ratio: 1/1)').matches,k=p?'m':'d',po=v.getAttribute('data-poster-'+k);if(po)v.poster=po;v.src=v.getAttribute('data-src-'+k);})();</script>`;
+}
+
 export function homePage(ctx) {
   const { site, services, clients, logo } = ctx;
   const hero = site.heroVideo;
@@ -197,7 +205,7 @@ export function homePage(ctx) {
       hero
         ? hero.type === 'image'
           ? media(hero, { cls: 'hero__asset', eager: true })
-          : `<video class="hero__asset" autoplay muted loop playsinline preload="auto"${hero.poster ? ` poster="${esc(hero.poster)}"` : ''} data-media-kind="video" disablepictureinpicture aria-hidden="true"><source src="${esc(hero.src)}" type="${mime(hero.src)}"></video>`
+          : heroVideo(hero, site.heroVideoMobile)
         : ''
     }
   </div>

@@ -29,7 +29,8 @@ export const siteSettings = defineType({
   title: 'Website-instellingen',
   type: 'document',
   fields: [
-    defineField({ name: 'heroVideo', title: 'Header-video (homepage)', type: 'media' }),
+    defineField({ name: 'heroVideo', title: 'Header-video (homepage, desktop)', type: 'media' }),
+    defineField({ name: 'heroVideoMobile', title: 'Header-video (homepage, mobiel, staand)', type: 'media', description: 'Optioneel. Staande video (9:16) voor telefoons. Leeg laten? Dan gebruikt de telefoon de desktopvideo.' }),
     defineField({ name: 'heroTitle', title: 'Kop in de intro', type: 'string', description: 'Het eerste woord wordt lichtpaars, de punt aan het eind ook.' }),
     defineField({ name: 'marquee', title: 'Streamer onder de video', type: 'array', of: [{ type: 'string' }] }),
     defineField({ name: 'servicesTitle', title: 'Titel boven de diensten', type: 'string' }),

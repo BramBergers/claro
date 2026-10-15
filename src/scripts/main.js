@@ -282,6 +282,18 @@
     videos.filter((v) => v.dataset.play !== 'hover').forEach((v) => vio.observe(v));
   }
 
+  /* ---------- Header-video wisselt mee als je je telefoon draait ---------- */
+  const heroVid = $('video[data-src-m]');
+  if (heroVid) {
+    const mq = matchMedia('(max-aspect-ratio: 1/1)');
+    mq.addEventListener('change', () => {
+      const k = mq.matches ? 'm' : 'd';
+      const src = heroVid.getAttribute('data-src-' + k), poster = heroVid.getAttribute('data-poster-' + k);
+      if (poster) heroVid.poster = poster;
+      if (src && !heroVid.src.endsWith(src)) { heroVid.src = src; heroVid.load(); if (!reduced) heroVid.play().catch(() => {}); }
+    });
+  }
+
   /* ---------- Diensten: schuine voorbeeldbeelden die de muis volgen ---------- */
   const hovered = new Set();
   $$('.service').forEach((li) => {

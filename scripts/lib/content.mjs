@@ -11,7 +11,8 @@ const QUERY = `{
   "site": *[_type == "siteSettings"][0]{
     heroTitle, ctaLabel, servicesTitle, clientsTitle, marquee,
     instagram, linkedin, email, kvk, byline, description,
-    "heroVideo": heroVideo${mediaProjection}
+    "heroVideo": heroVideo${mediaProjection},
+    "heroVideoMobile": heroVideoMobile${mediaProjection}
   },
   "services": *[_type == "service"] | order(order asc, title asc){
     title, "slug": slug.current, tags, intro, offer[]{ title, text },
@@ -66,7 +67,10 @@ export async function loadContent(root) {
   }
 
   const site = { ...local.site, ...strip(remote?.site) };
-  site.heroVideo = normalizeMedia(remote?.site?.heroVideo) || normalizeMedia(local.site.heroVideo);
+  // De mobiele video hoort bij de gekozen desktopvideo: komt die uit Sanity, dan ook de mobiele (of geen).
+  const remoteHero = normalizeMedia(remote?.site?.heroVideo);
+  site.heroVideo = remoteHero || normalizeMedia(local.site.heroVideo);
+  site.heroVideoMobile = remoteHero ? normalizeMedia(remote.site.heroVideoMobile) : normalizeMedia(local.site.heroVideoMobile);
 
   const remoteServices = (remote?.services || []).filter((s) => s.title && s.slug);
   const services = (remoteServices.length ? remoteServices : local.services).map((s) => ({
