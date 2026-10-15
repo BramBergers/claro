@@ -12,7 +12,7 @@ const singletons = [
 export default defineConfig({
   name: 'claro',
   title: 'Claro',
-  projectId: 'VUL_HIER_JE_PROJECT_ID_IN',
+  projectId: 'hv6kxjar',
   dataset: 'production',
   plugins: [
     structureTool({
