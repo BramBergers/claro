@@ -66,7 +66,7 @@ function header(ctx, current) {
     .join('');
 
   return `
-<header class="site-header" id="header" data-lamp>
+<header class="site-header" id="header">
   <div class="site-header__inner">
     <a class="brand" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { className: 'brand__logo' })}</a>
     <nav class="nav" aria-label="Hoofdmenu">
@@ -103,7 +103,7 @@ function footer(ctx) {
   const { site, logo } = ctx;
   const year = new Date().getFullYear();
   return `
-<footer class="footer" data-lamp="light">
+<footer class="footer">
   <div class="container footer__inner">
     <div class="footer__top">
       <a class="footer__brand" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
@@ -199,7 +199,7 @@ export function homePage(ctx) {
   const marqueeItems = site.marquee.map((t) => `<span class="marquee__item">${esc(t)}</span>${STAR}`).join('');
 
   const body = `
-<section class="hero" data-lamp>
+<section class="hero">
   <div class="hero__media" data-hero-media>
     ${
       hero
@@ -220,7 +220,7 @@ export function homePage(ctx) {
   </div>
 </div>
 
-<section class="intro" data-lamp>
+<section class="intro">
   <div class="container">
     ${renderLogo(logo, { className: 'intro__logo' })}
     <h1 class="intro__title" data-words>${headline(site.heroTitle)}</h1>
@@ -231,7 +231,7 @@ export function homePage(ctx) {
   </div>
 </section>
 
-<section class="services" id="werk" data-lamp>
+<section class="services" id="werk">
   <div class="container">
     <h2 class="services__title" data-reveal>${esc(site.servicesTitle)}</h2>
   </div>
@@ -253,7 +253,7 @@ export function homePage(ctx) {
   </ul>
 </section>
 
-<section class="clients" data-lamp>
+<section class="clients">
   <div class="container">
     <h2 class="clients__title" data-reveal>${esc(site.clientsTitle)}</h2>
     <div class="clients__marquee">
@@ -322,7 +322,7 @@ export function servicePage(ctx, service, index) {
     .join('');
 
   const body = `
-<section class="shero" data-lamp>
+<section class="shero">
   <div class="shero__media" data-hero-media>${hero ? media(hero, { cls: 'shero__asset', eager: true, preload: 'auto' }) : ''}</div>
   <div class="shero__shade" aria-hidden="true"></div>
   <div class="container shero__content">
@@ -333,21 +333,21 @@ export function servicePage(ctx, service, index) {
   <a class="scrollcue" href="#intro" aria-label="Scroll naar beneden"><span></span></a>
 </section>
 
-<section class="sintro" id="intro" data-lamp>
+<section class="sintro" id="intro">
   <div class="container sintro__grid">
     <p class="sintro__lead" data-words>${words(service.intro)}</p>
     <ul class="offer">${offer}</ul>
   </div>
 </section>
 
-<section class="cases" data-lamp>
+<section class="cases">
   <div class="container">
     <h2 class="cases__title" data-reveal>Cases</h2>
     ${cases || '<p class="cases__empty">Binnenkort verschijnen hier onze cases.</p>'}
   </div>
 </section>
 
-<section class="snext" data-lamp>
+<section class="snext">
   <a class="snext__link" href="/werk/${esc(next.slug)}/">
     <span class="service__bar" aria-hidden="true"></span>
     <span class="container snext__row">
@@ -401,7 +401,7 @@ export function aboutPage(ctx) {
     .join('');
 
   const body = `
-<section class="phero phero--about" data-lamp>
+<section class="phero phero--about">
   <div class="container">
     <p class="eyebrow" data-hero-in>${esc(about.title)}</p>
     <h1 class="phero__title" data-hero-in>${esc(about.statement)}</h1>
@@ -409,20 +409,20 @@ export function aboutPage(ctx) {
   </div>
 </section>
 
-<section class="story" data-lamp>
+<section class="story">
   <div class="container story__grid">
     ${about.story.map((p) => `<p class="story__p" data-words>${words(p)}</p>`).join('')}
   </div>
 </section>
 
-<section class="steps" data-lamp>
+<section class="steps">
   <div class="container">
     <h2 class="section-title" data-reveal>${esc(about.stepsTitle)}</h2>
     <ol class="steps__list">${steps}</ol>
   </div>
 </section>
 
-<section class="team" data-lamp>
+<section class="team">
   <div class="container">
     <h2 class="section-title" data-reveal>${esc(about.teamTitle)}</h2>
     <ul class="team__list">${team}</ul>
@@ -448,7 +448,7 @@ export function contactPage(ctx) {
     .join('');
 
   const body = `
-<section class="phero phero--contact" data-lamp>
+<section class="phero phero--contact">
   <div class="container contact__grid">
     <div class="contact__intro">
       <p class="eyebrow" data-hero-in>contact</p>
@@ -497,7 +497,7 @@ export function contactPage(ctx) {
 export function thanksPage(ctx) {
   const { contact } = ctx;
   const body = `
-<section class="phero phero--thanks" data-lamp>
+<section class="phero phero--thanks">
   <div class="container">
     <p class="eyebrow" data-hero-in>contact</p>
     <h1 class="phero__title" data-hero-in>${esc(contact.successTitle)}</h1>
@@ -511,7 +511,7 @@ export function thanksPage(ctx) {
 export function privacyPage(ctx) {
   const { privacy } = ctx;
   const body = `
-<section class="phero phero--privacy" data-lamp>
+<section class="phero phero--privacy">
   <div class="container prose">
     <p class="eyebrow" data-hero-in>bijgewerkt: ${esc(privacy.updated)}</p>
     <h1 class="phero__title phero__title--sm" data-hero-in>${esc(privacy.title)}</h1>
@@ -524,7 +524,7 @@ export function privacyPage(ctx) {
 
 export function notFoundPage(ctx) {
   const body = `
-<section class="phero phero--404" data-lamp>
+<section class="phero phero--404">
   <div class="container">
     <p class="eyebrow" data-hero-in>404</p>
     <h1 class="phero__title" data-hero-in>Hier is het nog niet helder.</h1>
