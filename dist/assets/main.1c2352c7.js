@@ -224,6 +224,79 @@
     });
   }
 
+  /* ---------- Case-beelden groot bekijken (lightbox) ---------- */
+  const lbTiles = $$('[data-lb]');
+  if (lbTiles.length) {
+    const lb = d.createElement('div');
+    lb.className = 'lb';
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.setAttribute('aria-label', 'Beeld groot bekijken');
+    lb.innerHTML = '<div class="lb__stage"></div>' +
+      '<button type="button" class="lb__close" aria-label="Sluiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button>' +
+      '<button type="button" class="lb__nav lb__nav--prev" aria-label="Vorige"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4l-8 8 8 8"/></svg></button>' +
+      '<button type="button" class="lb__nav lb__nav--next" aria-label="Volgende"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8"/></svg></button>' +
+      '<p class="lb__info"><span class="lb__title"></span><span class="lb__count"></span></p>';
+    body.appendChild(lb);
+    const stage = $('.lb__stage', lb);
+    const prevBtn = $('.lb__nav--prev', lb), nextBtn = $('.lb__nav--next', lb);
+    let group = [], idx = 0, opener = null;
+
+    const show = (i, dirn = 0) => {
+      idx = (i + group.length) % group.length;
+      const t = group[idx];
+      const el = d.createElement(t.dataset.kind === 'image' ? 'img' : 'video');
+      el.className = 'lb__asset';
+      if (el.tagName === 'IMG') { el.src = t.dataset.src; el.alt = ''; }
+      else {
+        el.src = t.dataset.src; if (t.dataset.poster) el.poster = t.dataset.poster;
+        el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true; el.controls = true;
+        el.setAttribute('playsinline', ''); el.play && el.play().catch(() => {});
+      }
+      if (dirn && !reduced) el.style.animation = `lb-in-${dirn > 0 ? 'r' : 'l'} 0.45s var(--ease-out)`;
+      stage.replaceChildren(el);
+      $('.lb__count', lb).textContent = group.length > 1 ? `${String(idx + 1).padStart(2, '0')} / ${String(group.length).padStart(2, '0')}` : '';
+    };
+    const open = (tile) => {
+      const art = tile.closest('.case');
+      group = $$('[data-lb]', art);
+      opener = tile;
+      $('.lb__title', lb).textContent = art.dataset.title || '';
+      lb.classList.toggle('is-single', group.length < 2);
+      show(group.indexOf(tile));
+      lb.classList.add('is-open');
+      root.classList.add('lb-open');
+      $('.lb__close', lb).focus({ preventScroll: true });
+    };
+    const close = () => {
+      if (!lb.classList.contains('is-open')) return;
+      lb.classList.remove('is-open');
+      root.classList.remove('lb-open');
+      setTimeout(() => { if (!lb.classList.contains('is-open')) stage.replaceChildren(); }, 450);
+      opener && opener.focus({ preventScroll: true });
+    };
+    const step = (n) => { if (group.length > 1) show(idx + n, n); };
+
+    lbTiles.forEach((t) => t.addEventListener('click', () => open(t)));
+    $('.lb__close', lb).addEventListener('click', close);
+    prevBtn.addEventListener('click', () => step(-1));
+    nextBtn.addEventListener('click', () => step(1));
+    lb.addEventListener('click', (e) => { if (e.target === lb || e.target === stage) close(); });
+    addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight') step(1);
+      else if (e.key === 'ArrowLeft') step(-1);
+    });
+    let sx = 0, sy2 = 0;
+    lb.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; sy2 = e.touches[0].clientY; }, { passive: true });
+    lb.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy2;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) step(dx < 0 ? 1 : -1);
+      else if (dy > 90 && Math.abs(dy) > Math.abs(dx) * 1.5) close();
+    }, { passive: true });
+  }
+
   /* ---------- Onthullen bij scrollen ---------- */
   const revealEls = $$('[data-reveal], .intro__logo');
   if (reduced || !('IntersectionObserver' in window)) {

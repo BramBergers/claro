@@ -302,7 +302,9 @@ export function servicePage(ctx, service, index) {
   const cases = service.cases
     .map((c, i) => {
       const [first, ...rest] = c.media;
-      return `<article class="case" data-reveal>
+      const tile = (m, lead) =>
+        `<button type="button" class="case__media${lead ? ' case__media--lead' : ''}" data-lb data-kind="${m.type}" data-src="${esc(m.src)}"${m.poster ? ` data-poster="${esc(m.poster)}"` : ''} aria-label="Bekijk groot: ${esc(c.title)}">${media(m, { cls: 'case__asset', alt: c.title })}<span class="case__zoom" aria-hidden="true"></span></button>`;
+      return `<article class="case" data-reveal data-title="${esc(c.title)}">
       <div class="case__meta">
         <p class="case__eyebrow">${esc(c.client)}${c.client && c.year ? ' · ' : ''}${esc(c.year)}</p>
         <h3 class="case__title">${esc(c.title)}</h3>
@@ -310,12 +312,8 @@ export function servicePage(ctx, service, index) {
         <span class="case__count">${String(i + 1).padStart(2, '0')} / ${String(service.cases.length).padStart(2, '0')}</span>
       </div>
       <div class="case__visuals">
-        ${first ? `<div class="case__media case__media--lead">${media(first, { cls: 'case__asset', alt: c.title })}</div>` : ''}
-        ${
-          rest.length
-            ? `<div class="case__gallery">${rest.map((m) => `<div class="case__media">${media(m, { cls: 'case__asset', alt: c.title })}</div>`).join('')}</div>`
-            : ''
-        }
+        ${first ? tile(first, true) : ''}
+        ${rest.length ? `<div class="case__gallery" data-n="${rest.length}">${rest.map((m) => tile(m, false)).join('')}</div>` : ''}
       </div>
     </article>`;
     })

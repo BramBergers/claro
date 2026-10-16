@@ -48,7 +48,7 @@ function normalizeMedia(obj) {
 }
 
 async function fetchSanity(projectId, dataset) {
-  const url = `https://${projectId}.apicdn.sanity.io/v${API_VERSION}/data/query/${dataset}?query=${encodeURIComponent(QUERY)}`;
+  const url = `https://${projectId}.api.sanity.io/v${API_VERSION}/data/query/${dataset}?query=${encodeURIComponent(QUERY)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Sanity gaf status ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const json = await res.json();
