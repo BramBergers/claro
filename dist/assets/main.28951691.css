@@ -499,15 +499,32 @@ html.lb-open { overflow: hidden; }
 .lb.is-open .lb__asset { transform: none; }
 @keyframes lb-in-r { from { opacity: 0; transform: translateX(60px) scale(0.98); } to { opacity: 1; transform: none; } }
 @keyframes lb-in-l { from { opacity: 0; transform: translateX(-60px) scale(0.98); } to { opacity: 1; transform: none; } }
-.lb__close, .lb__nav { position: absolute; display: grid; place-items: center; border-radius: 50%; background: var(--c-light); color: var(--c-dark); transition: transform 0.5s var(--ease-out), background 0.3s, color 0.3s; }
-.lb__close { top: clamp(0.8rem, 2vw, 1.8rem); right: clamp(0.8rem, 2vw, 1.8rem); width: clamp(3.2rem, 4.4vw, 4.2rem); height: clamp(3.2rem, 4.4vw, 4.2rem); }
-.lb__close svg { width: 46%; height: 46%; fill: none; stroke: currentColor; stroke-width: 3.4; stroke-linecap: round; }
-.lb__close:hover { transform: rotate(90deg) scale(1.08); background: #fff; }
-.lb__nav { top: 50%; width: clamp(2.8rem, 4vw, 3.8rem); height: clamp(2.8rem, 4vw, 3.8rem); margin-top: calc(clamp(2.8rem, 4vw, 3.8rem) / -2); background: rgba(174, 107, 255, 0.18); color: #fff; border: 1.5px solid rgba(174, 107, 255, 0.6); }
-.lb__nav svg { width: 42%; height: 42%; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.lb__close, .lb__nav { position: absolute; display: grid; place-items: center; overflow: hidden; isolation: isolate; border-radius: 50%; transition: transform 0.6s var(--ease-out), box-shadow 0.4s; }
+.lb__close::before, .lb__nav::before { content: ''; position: absolute; inset: -2px; z-index: -1; border-radius: 50%; transform: scale(0); transition: transform 0.6s var(--ease-out); }
+.lb__close:hover::before, .lb__nav:hover::before, .lb__close:focus-visible::before, .lb__nav:focus-visible::before { transform: scale(1.05); }
+.lb__icon { position: relative; display: block; width: 100%; height: 100%; }
+.lb__icon svg { position: absolute; left: 50%; top: 50%; width: 42%; height: 42%; margin: -21% 0 0 -21%; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.55s var(--ease-out), opacity 0.3s; }
+.lb__icon svg:last-child { opacity: 0; }
+.lb__close { top: clamp(0.8rem, 2vw, 1.8rem); right: clamp(0.8rem, 2vw, 1.8rem); width: clamp(3.2rem, 4.4vw, 4.2rem); height: clamp(3.2rem, 4.4vw, 4.2rem); background: var(--c-light); color: var(--c-dark); }
+.lb__close::before { background: #fff; }
+.lb__close svg { stroke-width: 3.6; width: 46%; height: 46%; margin: -23% 0 0 -23%; }
+.lb__close:hover { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(174, 107, 255, 0.28); }
+.lb__close svg:last-child { transform: scale(0.2) rotate(-90deg); }
+.lb__close:hover svg:first-child { transform: scale(0.2) rotate(90deg); opacity: 0; }
+.lb__close:hover svg:last-child { transform: none; opacity: 1; }
+.lb__nav { top: 50%; width: clamp(2.8rem, 4vw, 3.8rem); height: clamp(2.8rem, 4vw, 3.8rem); margin-top: calc(clamp(2.8rem, 4vw, 3.8rem) / -2); background: rgba(174, 107, 255, 0.16); color: #fff; border: 1.5px solid rgba(174, 107, 255, 0.6); }
+.lb__nav::before { background: var(--c-light); }
+.lb__nav:hover { color: var(--c-dark); transform: scale(1.08); }
 .lb__nav--prev { left: clamp(0.6rem, 2vw, 2rem); }
 .lb__nav--next { right: clamp(0.6rem, 2vw, 2rem); }
-.lb__nav:hover { background: var(--c-light); color: var(--c-dark); transform: scale(1.1); }
+/* pijl schuift weg in de richting, een nieuwe schuift van de andere kant binnen */
+.lb__nav--next svg:last-child { transform: translateX(-190%); }
+.lb__nav--prev svg:last-child { transform: translateX(190%); }
+.lb__nav svg:last-child { opacity: 1; }
+.lb__nav--next:hover svg:first-child { transform: translateX(190%); }
+.lb__nav--prev:hover svg:first-child { transform: translateX(-190%); }
+.lb__nav:hover svg:last-child { transform: none; }
+.lb__nav:active { transform: scale(0.94); }
 .lb.is-single .lb__nav { display: none; }
 .lb__info { position: absolute; left: clamp(1rem, 3vw, 3rem); right: clamp(1rem, 3vw, 3rem); bottom: clamp(1rem, 2.4vh, 1.8rem); display: flex; justify-content: space-between; gap: 1rem; font-size: 0.85rem; color: var(--c-light); }
 .lb__title { font-weight: 700; color: #fff; }

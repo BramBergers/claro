@@ -233,9 +233,9 @@
     lb.setAttribute('aria-modal', 'true');
     lb.setAttribute('aria-label', 'Beeld groot bekijken');
     lb.innerHTML = '<div class="lb__stage"></div>' +
-      '<button type="button" class="lb__close" aria-label="Sluiten"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button>' +
-      '<button type="button" class="lb__nav lb__nav--prev" aria-label="Vorige"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4l-8 8 8 8"/></svg></button>' +
-      '<button type="button" class="lb__nav lb__nav--next" aria-label="Volgende"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8"/></svg></button>' +
+      '<button type="button" class="lb__close" aria-label="Sluiten"><span class="lb__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></span></button>' +
+      '<button type="button" class="lb__nav lb__nav--prev" aria-label="Vorige"><span class="lb__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4l-8 8 8 8"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4l-8 8 8 8"/></svg></span></button>' +
+      '<button type="button" class="lb__nav lb__nav--next" aria-label="Volgende"><span class="lb__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8"/></svg></span></button>' +
       '<p class="lb__info"><span class="lb__title"></span><span class="lb__count"></span></p>';
     body.appendChild(lb);
     const stage = $('.lb__stage', lb);
