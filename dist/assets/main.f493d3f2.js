@@ -213,49 +213,14 @@
   addEventListener('scroll', headerScroll, { passive: true });
   headerScroll();
 
-  /* ---------- Lamp-cursor ---------- */
-  let lamp, glowPos, corePos;
-  const L = { tx: innerWidth / 2, ty: innerHeight / 2, gx: 0, gy: 0, cx: 0, cy: 0, seen: false };
+  /* ---------- Knoppen: vulling start vanaf de plek waar de muis binnenkomt ---------- */
   if (finePointer) {
-    lamp = d.createElement('div');
-    lamp.className = 'lamp';
-    lamp.setAttribute('aria-hidden', 'true');
-    lamp.innerHTML = '<div class="lamp__pos"><i class="lamp__glow"></i></div><div class="lamp__pos"><i class="lamp__core"></i></div>';
-    body.appendChild(lamp);
-    [glowPos, corePos] = $$('.lamp__pos', lamp);
-    root.classList.add('has-lamp');
-
-    addEventListener('pointermove', (e) => {
-      if (e.pointerType === 'touch') return;
-      L.tx = e.clientX; L.ty = e.clientY;
-      if (!L.seen) { L.seen = true; L.gx = L.cx = L.tx; L.gy = L.cy = L.ty; lamp.classList.add('is-on'); }
-      const t = e.target;
-      if (!(t instanceof Element)) return;
-      lamp.classList.toggle('is-hover', !!t.closest('a, button, label, .chip, summary'));
-      lamp.classList.toggle('is-text', !!t.closest('input[type=text], input[type=email], textarea'));
-      const zone = t.closest('[data-lamp]');
-      lamp.classList.toggle('lamp--light', !!zone && zone.dataset.lamp === 'light');
-    }, { passive: true });
-    root.addEventListener('mouseleave', () => lamp.classList.remove('is-on'));
-    root.addEventListener('mouseenter', () => L.seen && lamp.classList.add('is-on'));
-    addEventListener('pointerdown', () => lamp.classList.add('is-down'));
-    addEventListener('pointerup', () => lamp.classList.remove('is-down'));
-  }
-
-  /* ---------- Magnetische knoppen en vulling vanaf de muis ---------- */
-  if (finePointer && !reduced) {
     $$('.btn, .cta-pill').forEach((el) => {
-      const strength = el.classList.contains('cta-pill') ? 0.04 : 0.22;
-      const max = el.classList.contains('cta-pill') ? 18 : 9;
-      el.addEventListener('pointermove', (e) => {
+      el.addEventListener('pointerenter', (e) => {
         const r = el.getBoundingClientRect();
-        const dx = e.clientX - (r.left + r.width / 2);
-        const dy = e.clientY - (r.top + r.height / 2);
-        el.style.translate = `${clamp(dx * strength, -max, max)}px ${clamp(dy * strength, -max, max)}px`;
         el.style.setProperty('--mx', `${((e.clientX - r.left) / r.width) * 100}%`);
         el.style.setProperty('--my', `${((e.clientY - r.top) / r.height) * 100}%`);
       });
-      el.addEventListener('pointerleave', () => { el.style.translate = ''; });
     });
   }
 
@@ -345,7 +310,24 @@
   const cta = $('[data-cta]');
   const marquee = $('[data-marquee]');
   const track = marquee && $('.marquee__track', marquee);
-  if (track) root.classList.add('js-marquee');
+  if (track) {
+    root.classList.add('js-marquee');
+    // genoeg kopieën zodat de streamer op elk scherm gevuld blijft
+    const fillMarquee = () => {
+      const first = track.firstElementChild;
+      const gw = first.offsetWidth;
+      if (!gw) return;
+      const need = Math.max(3, Math.ceil(innerWidth / gw) + 2);
+      while (track.children.length < need) {
+        const c = first.cloneNode(true);
+        c.setAttribute('aria-hidden', 'true');
+        track.appendChild(c);
+      }
+    };
+    fillMarquee();
+    addEventListener('resize', fillMarquee);
+    addEventListener('load', fillMarquee);
+  }
 
   let lastSy = scrollY, vel = 0, mx = 0, dir = 1;
 
@@ -354,15 +336,6 @@
     const vh = innerHeight;
     vel = lerp(vel, sy - lastSy, 0.14);
     lastSy = sy;
-
-    // lamp
-    if (lamp && L.seen) {
-      const f = reduced ? 1 : 0.13;
-      L.gx = lerp(L.gx, L.tx, f); L.gy = lerp(L.gy, L.ty, f);
-      L.cx = lerp(L.cx, L.tx, reduced ? 1 : 0.5); L.cy = lerp(L.cy, L.ty, reduced ? 1 : 0.5);
-      glowPos.style.transform = `translate3d(${L.gx}px, ${L.gy}px, 0)`;
-      corePos.style.transform = `translate3d(${L.cx}px, ${L.cy}px, 0)`;
-    }
 
     // header-video: parallax, lichte zoom en donker worden
     if (heroSection && heroMedia && !reduced) {
