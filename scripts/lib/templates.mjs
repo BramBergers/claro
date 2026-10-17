@@ -99,22 +99,23 @@ function header(ctx, current) {
 </div>`;
 }
 
-function footer(ctx) {
+function footer(ctx, path = '') {
   const { site, logo, services = [] } = ctx;
+  const onContact = path.startsWith('/contact');
   const year = new Date().getFullYear();
   const mail = site.email ? `<a class="footer__mail" href="mailto:${esc(site.email)}"><span>${esc(site.email)}</span> ${ARROW}</a>` : '';
   return `
 <footer class="footer">
   <div class="container footer__inner">
-    <div class="footer__head">
-      <p class="footer__kicker">Klaar om helder te worden?</p>
-      <p class="footer__statement">Vertel ons waar je naartoe wilt. Wij maken het helder.</p>
-    </div>
-    <a class="cta-pill" href="/contact/" data-cta>
+    ${
+      onContact
+        ? ''
+        : `<a class="cta-pill" href="/contact/" data-cta>
       <span class="cta-pill__fill" aria-hidden="true"></span>
       <span class="cta-pill__label">${esc(site.ctaLabel)}</span>
-    </a>
-    <div class="footer__grid">
+    </a>`
+    }
+    <div class="footer__grid${onContact ? ' footer__grid--first' : ''}">
       <div class="footer__col footer__col--about">
         <a class="footer__brand" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
         <p class="footer__about">${esc(site.description || '')}</p>
@@ -198,7 +199,7 @@ ${header(ctx, path)}
 <main id="main">
 ${body}
 </main>
-${footer(ctx)}
+${footer(ctx, path)}
 <div class="curtain" aria-hidden="true"><div class="curtain__logo">${renderLogo(logo, { variant: 'mono' })}</div></div>
 <div class="media-curtain" aria-hidden="true"></div>
 <script src="${assets.js}" defer></script>
