@@ -535,30 +535,3 @@ html.lb-open { overflow: hidden; }
   .lb__nav--next { right: 0.8rem; }
   .lb__info { right: 8.5rem; bottom: 1.2rem; flex-direction: column; gap: 0.2rem; }
 }
-
-/* ---------- Luminous type: een zwevende spotlight die gedimde titels oplicht ---------- */
-@property --lx { syntax: '<percentage>'; inherits: false; initial-value: 30%; }
-@property --ly { syntax: '<percentage>'; inherits: false; initial-value: 40%; }
-.shero__title, .phero__title, .cases__title, .section-title, .clients__title, .services__title {
-  --lum: 255, 255, 255;
-  --lum-glow: 224, 196, 255;
-  --lum-dim: 0.2;
-  color: transparent;
-  background-image: radial-gradient(circle at var(--lx) var(--ly), rgb(255, 255, 255) 0, rgb(var(--lum-glow)) 9%, rgba(var(--lum), 0.62) 22%, rgba(var(--lum), calc(var(--lum-dim) + 0.06)) 42%, rgba(var(--lum), var(--lum-dim)) 70%);
-  background-size: 100% 100%;
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: lum-x 13s ease-in-out infinite alternate, lum-y 9s ease-in-out infinite alternate;
-}
-.clients__title, .services__title { --lum: 174, 107, 255; --lum-dim: 0.42; }
-.cases__title { animation-delay: -4s, -2s; }
-.section-title { animation-delay: -7s, -5s; }
-@keyframes lum-x { 0% { --lx: -10%; } 35% { --lx: 45%; } 65% { --lx: 30%; } 100% { --lx: 110%; } }
-@keyframes lum-y { 0% { --ly: 10%; } 50% { --ly: 90%; } 100% { --ly: 35%; } }
-.shero__title .accent, .phero__title .accent { -webkit-text-fill-color: var(--c-light); }
-@media (prefers-reduced-motion: reduce) {
-  .shero__title, .phero__title, .cases__title, .section-title, .clients__title, .services__title { animation: none; --lx: 35%; --ly: 45%; }
-}
-@supports not (background-clip: text) {
-  .shero__title, .phero__title, .cases__title, .section-title, .clients__title, .services__title { color: inherit; -webkit-text-fill-color: currentColor; background: none; }
-}
