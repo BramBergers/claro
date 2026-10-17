@@ -570,10 +570,10 @@ body.is-ready .split.is-shown .sw__i { transform: none; }
 @keyframes ch-jump { 0% { transform: none; } 35% { transform: translateY(-14%) rotate(-4deg); } 100% { transform: none; } }
 
 
-/* ---------- Interactieve puntenachtergrond ---------- */
-.has-dots { position: relative; }
-.has-dots > .dots { position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; }
-.has-dots > :not(.dots) { position: relative; z-index: 1; }
+/* ---------- Achtergrond: licht achter geribbeld glas ---------- */
+.has-glass { position: relative; }
+.has-glass > .glass { position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; }
+.has-glass > :not(.glass) { position: relative; z-index: 1; }
 
 @media (max-width: 900px) {
   .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -434,133 +434,111 @@
     }, { passive: true });
   });
 
-  /* ---------- Interactieve puntenachtergrond ---------- */
-  (function dotFields() {
+  /* ---------- Achtergrond: licht achter geribbeld glas (helder) ---------- */
+  (function glassFields() {
     if (reduced) return;
     const sections = $$('.intro, .services, .clients, .sintro, .story, .steps, .team, .phero');
     if (!sections.length) return;
-    const GAP = 26, R = 240, DPR = Math.min(devicePixelRatio || 1, 1.5);
+    const RES = 0.5, FLUTE = 84, SRC = 0.2;
     const fields = [];
 
-    sections.forEach((sec) => {
+    // één ribbel: lichte rand links, schaduw rechts
+    const rib = d.createElement('canvas');
+    rib.width = Math.round(FLUTE * RES); rib.height = 4;
+    const rg = rib.getContext('2d');
+    const grad = rg.createLinearGradient(0, 0, rib.width, 0);
+    grad.addColorStop(0, 'rgba(255,255,255,0.035)');
+    grad.addColorStop(0.18, 'rgba(255,255,255,0.008)');
+    grad.addColorStop(0.7, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(10,0,30,0.09)');
+    rg.fillStyle = grad; rg.fillRect(0, 0, rib.width, rib.height);
+
+    sections.forEach((sec, n) => {
       const c = d.createElement('canvas');
-      c.className = 'dots';
+      c.className = 'glass';
       c.setAttribute('aria-hidden', 'true');
       sec.prepend(c);
-      sec.classList.add('has-dots');
-      fields.push({ sec, c, ctx: c.getContext('2d'), w: 0, h: 0, n: 0, mx: -9999, my: -9999, inside: false, ripples: [], active: false, visible: false });
+      sec.classList.add('has-glass');
+      const src = d.createElement('canvas');
+      fields.push({ sec, c, ctx: c.getContext('2d'), src, sctx: src.getContext('2d'), w: 0, h: 0, visible: false,
+        mx: 0, my: 0, lx: 0, ly: 0, inside: false, seed: n * 1.7, pattern: null });
     });
 
-    function build(f) {
+    function size(f) {
       f.w = f.sec.clientWidth; f.h = f.sec.clientHeight;
-      f.c.width = Math.round(f.w * DPR); f.c.height = Math.round(f.h * DPR);
+      f.c.width = Math.max(1, Math.round(f.w * RES)); f.c.height = Math.max(1, Math.round(f.h * RES));
       f.c.style.width = f.w + 'px'; f.c.style.height = f.h + 'px';
-      const cols = Math.ceil(f.w / GAP) + 1, rows = Math.ceil(f.h / GAP) + 1;
-      const offX = (f.w - (cols - 1) * GAP) / 2, offY = (f.h - (rows - 1) * GAP) / 2;
-      f.n = cols * rows;
-      f.bx = new Float32Array(f.n); f.by = new Float32Array(f.n);
-      f.ox = new Float32Array(f.n); f.oy = new Float32Array(f.n);
-      f.vx = new Float32Array(f.n); f.vy = new Float32Array(f.n);
-      f.glow = new Float32Array(f.n); f.rx = new Float32Array(f.n); f.ry = new Float32Array(f.n);
-      let i = 0;
-      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++, i++) { f.bx[i] = offX + x * GAP; f.by[i] = offY + y * GAP; }
-      draw(f);
+      f.src.width = Math.max(1, Math.round(f.w * SRC)); f.src.height = Math.max(1, Math.round(f.h * SRC));
+      f.pattern = f.ctx.createPattern(rib, 'repeat');
+      if (!f.lx) { f.lx = f.w * 0.7; f.ly = Math.min(f.h, innerHeight) * 0.4; }
     }
 
-    function draw(f) {
-      const g = f.ctx;
-      g.setTransform(DPR, 0, 0, DPR, 0, 0);
-      g.clearRect(0, 0, f.w, f.h);
-      // gewone punten in één pad
-      g.fillStyle = 'rgba(174, 107, 255, 0.16)';
-      g.beginPath();
-      for (let i = 0; i < f.n; i++) {
-        if (f.glow[i] > 0.04) continue;
-        const x = f.bx[i] + f.ox[i] + f.rx[i], y = f.by[i] + f.oy[i] + f.ry[i];
-        g.moveTo(x + 1.1, y); g.arc(x, y, 1.1, 0, 6.2832);
-      }
-      g.fill();
-      // oplichtende punten
-      for (let i = 0; i < f.n; i++) {
-        const k = f.glow[i];
-        if (k <= 0.04) continue;
-        const x = f.bx[i] + f.ox[i] + f.rx[i], y = f.by[i] + f.oy[i] + f.ry[i];
-        const r = 1.1 + k * 1.2;
-        g.fillStyle = `rgba(${Math.round(174 + 26 * k)}, ${Math.round(107 + 43 * k)}, 255, ${(0.16 + k * 0.5).toFixed(3)})`;
-        g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill();
-      }
+    function blob(g, x, y, r, rgb, a) {
+      const gr = g.createRadialGradient(x, y, 0, x, y, r);
+      gr.addColorStop(0, `rgba(${rgb},${a})`);
+      gr.addColorStop(0.45, `rgba(${rgb},${a * 0.45})`);
+      gr.addColorStop(1, `rgba(${rgb},0)`);
+      g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
     }
 
-    function step(f, now) {
-      let moving = false;
-      const R2 = R * R;
-      f.ripples = f.ripples.filter((rp) => now - rp.t < 2000);
-      for (let i = 0; i < f.n; i++) {
-        let fx = 0, fy = 0, glow = 0, rfx = 0, rfy = 0;
-        const px = f.bx[i], py = f.by[i];
-        if (f.inside) {
-          const dx = px - f.mx, dy = py - f.my, d2 = dx * dx + dy * dy;
-          if (d2 < R2) {
-            const dist = Math.sqrt(d2) || 1, s = 1 - dist / R, e = s * s * (3 - 2 * s);
-            fx += (dx / dist) * e * 7; fy += (dy / dist) * e * 7;
-            glow = Math.max(glow, e * 0.75);
-          }
-        }
-        for (const rp of f.ripples) {
-          const age = (now - rp.t) / 1000, dx = px - rp.x, dy = py - rp.y;
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          // één zachte golf die naar buiten loopt
-          const front = age * 480, off = (dist - front) / 75;
-          if (off > -3 && off < 3) {
-            const fade = Math.max(0, 1 - age / 2), band = Math.exp(-off * off) * fade * Math.min(1, (dist + 40) / 120);
-            rfx += (dx / dist) * band * 14; rfy += (dy / dist) * band * 14;
-            glow = Math.max(glow, band * 0.8);
-          }
-        }
-        // rustig naar de doelpositie glijden, zonder na te veren
-        const ddx = fx - f.ox[i], ddy = fy - f.oy[i];
-        f.ox[i] += ddx * 0.07; f.oy[i] += ddy * 0.07;
-        f.rx[i] = rfx; f.ry[i] = rfy;
-        f.glow[i] += (glow - f.glow[i]) * (f.ripples.length ? 0.35 : 0.08);
-        if (rfx !== 0 || rfy !== 0 || Math.abs(ddx) + Math.abs(ddy) > 0.05 || Math.abs(f.ox[i]) + Math.abs(f.oy[i]) > 0.05 || f.glow[i] > 0.01) moving = true;
+    function render(f, t) {
+      const r = f.sec.getBoundingClientRect();
+      const visTop = Math.max(0, -r.top), visH = Math.max(1, Math.min(f.h, innerHeight - r.top) - visTop);
+      // doel van het licht: de muis, of rustig zwevend in het zichtbare deel
+      const tx = f.inside ? f.mx : f.w * (0.62 + 0.18 * Math.sin(t * 0.00011 + f.seed));
+      const ty = f.inside ? f.my : visTop + visH * (0.42 + 0.16 * Math.cos(t * 0.00009 + f.seed));
+      f.lx += (tx - f.lx) * 0.045; f.ly += (ty - f.ly) * 0.045;
+
+      // 1. lichtbronnen achter het glas (klein en zacht)
+      const s = f.sctx, k = SRC, R = Math.max(f.w, visH) * k;
+      s.clearRect(0, 0, f.src.width, f.src.height);
+      s.globalCompositeOperation = 'lighter';
+      blob(s, f.lx * k, f.ly * k, R * 0.34, '174,107,255', 0.24);
+      blob(s, (f.w * (0.2 + 0.1 * Math.sin(t * 0.00013 + f.seed * 2))) * k, (visTop + visH * (0.7 + 0.1 * Math.sin(t * 0.00017 + f.seed))) * k, R * 0.3, '120,60,255', 0.16);
+      blob(s, (f.lx + (f.w * 0.18)) * k, (f.ly - visH * 0.15) * k, R * 0.16, '230,200,255', 0.1);
+      s.globalCompositeOperation = 'source-over';
+
+      // 2. door geribbeld glas: elke ribbel toont een breder, verschoven stuk van het licht
+      const g = f.ctx, cw = f.c.width, ch = f.c.height, fw = FLUTE * RES, scale = cw / f.w;
+      g.clearRect(0, 0, cw, ch);
+      const sw = f.src.width / cw;
+      for (let x = 0; x < cw; x += fw) {
+        const centre = x + fw / 2;
+        const shift = ((f.lx * scale) - centre) * 0.22;
+        const sx = (centre - fw * 1.3 + shift) * sw;
+        g.drawImage(f.src, sx, 0, fw * 2.6 * sw, f.src.height, x, 0, fw + 1, ch);
       }
-      draw(f);
-      return moving || f.inside || f.ripples.length > 0;
+      g.fillStyle = f.pattern;
+      g.fillRect(0, 0, cw, ch);
     }
 
     let raf = 0;
-    function loop(now) {
+    function loop(t) {
       raf = 0;
       let any = false;
-      for (const f of fields) if (f.active && f.visible) { f.active = step(f, now); any = any || f.active; }
+      for (const f of fields) if (f.visible && f.w) { render(f, t); any = true; }
       if (any) raf = requestAnimationFrame(loop);
     }
-    const wake = (f) => { f.active = true; if (!raf) raf = requestAnimationFrame(loop); };
+    const start = () => { if (!raf) raf = requestAnimationFrame(loop); };
 
     fields.forEach((f) => {
       const local = (e) => { const r = f.c.getBoundingClientRect(); f.mx = e.clientX - r.left; f.my = e.clientY - r.top; };
-      if (finePointer) {
-        f.sec.addEventListener('pointermove', (e) => { local(e); f.inside = true; wake(f); }, { passive: true });
-        f.sec.addEventListener('pointerleave', () => { f.inside = false; wake(f); });
-      }
-      f.sec.addEventListener('pointerdown', (e) => {
-        if (e.target.closest('a, button, input, textarea, label')) return;
-        local(e); f.ripples.push({ x: f.mx, y: f.my, t: performance.now() }); wake(f);
-      }, { passive: true });
+      f.sec.addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { local(e); f.inside = true; } }, { passive: true });
+      f.sec.addEventListener('pointerleave', () => { f.inside = false; });
     });
 
     const io = new IntersectionObserver((entries) => entries.forEach((en) => {
       const f = fields.find((x) => x.sec === en.target);
       f.visible = en.isIntersecting;
-      if (f.visible && !f.w) build(f);
-    }), { rootMargin: '200px 0px' });
+      if (f.visible && !f.w) size(f);
+      if (f.visible) start();
+    }), { rootMargin: '100px 0px' });
     fields.forEach((f) => io.observe(f.sec));
 
     let rt;
-    const rebuild = () => fields.forEach((f) => { if (f.w && (f.sec.clientWidth !== f.w || f.sec.clientHeight !== f.h)) build(f); });
-    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(rebuild, 200); });
-    addEventListener('load', rebuild);
-    if ('ResizeObserver' in window) { const ro = new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(rebuild, 200); }); fields.forEach((f) => ro.observe(f.sec)); }
+    const resize = () => { clearTimeout(rt); rt = setTimeout(() => fields.forEach((f) => { if (f.w && (f.sec.clientWidth !== f.w || f.sec.clientHeight !== f.h)) size(f); }), 200); };
+    addEventListener('resize', resize);
+    if ('ResizeObserver' in window) { const ro = new ResizeObserver(resize); fields.forEach((f) => ro.observe(f.sec)); }
   })();
 
   /* ---------- Scroll-effecten (één lus voor alles) ---------- */
