@@ -552,3 +552,8 @@ body.is-ready .split.is-shown .sw__i { transform: none; }
 .cta-pill:hover .ch { animation: ch-jump 0.7s var(--ease-out) calc(var(--ci) * 35ms); }
 @keyframes ch-jump { 0% { transform: none; } 35% { transform: translateY(-14%) rotate(-4deg); } 100% { transform: none; } }
 
+
+/* ---------- Interactieve puntenachtergrond ---------- */
+.has-dots { position: relative; }
+.has-dots > .dots { position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; }
+.has-dots > :not(.dots) { position: relative; z-index: 1; }

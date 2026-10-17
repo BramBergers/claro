@@ -426,6 +426,133 @@
     }, { passive: true });
   });
 
+  /* ---------- Interactieve puntenachtergrond ---------- */
+  (function dotFields() {
+    if (reduced) return;
+    const sections = $$('.intro, .services, .clients, .sintro, .story, .steps, .team, .phero');
+    if (!sections.length) return;
+    const GAP = 26, R = 150, DPR = Math.min(devicePixelRatio || 1, 1.5);
+    const fields = [];
+
+    sections.forEach((sec) => {
+      const c = d.createElement('canvas');
+      c.className = 'dots';
+      c.setAttribute('aria-hidden', 'true');
+      sec.prepend(c);
+      sec.classList.add('has-dots');
+      fields.push({ sec, c, ctx: c.getContext('2d'), w: 0, h: 0, n: 0, mx: -9999, my: -9999, inside: false, ripples: [], active: false, visible: false });
+    });
+
+    function build(f) {
+      f.w = f.sec.clientWidth; f.h = f.sec.clientHeight;
+      f.c.width = Math.round(f.w * DPR); f.c.height = Math.round(f.h * DPR);
+      f.c.style.width = f.w + 'px'; f.c.style.height = f.h + 'px';
+      const cols = Math.ceil(f.w / GAP) + 1, rows = Math.ceil(f.h / GAP) + 1;
+      const offX = (f.w - (cols - 1) * GAP) / 2, offY = (f.h - (rows - 1) * GAP) / 2;
+      f.n = cols * rows;
+      f.bx = new Float32Array(f.n); f.by = new Float32Array(f.n);
+      f.ox = new Float32Array(f.n); f.oy = new Float32Array(f.n);
+      f.vx = new Float32Array(f.n); f.vy = new Float32Array(f.n);
+      f.glow = new Float32Array(f.n);
+      let i = 0;
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++, i++) { f.bx[i] = offX + x * GAP; f.by[i] = offY + y * GAP; }
+      draw(f);
+    }
+
+    function draw(f) {
+      const g = f.ctx;
+      g.setTransform(DPR, 0, 0, DPR, 0, 0);
+      g.clearRect(0, 0, f.w, f.h);
+      // gewone punten in één pad
+      g.fillStyle = 'rgba(174, 107, 255, 0.16)';
+      g.beginPath();
+      for (let i = 0; i < f.n; i++) {
+        if (f.glow[i] > 0.04) continue;
+        const x = f.bx[i] + f.ox[i], y = f.by[i] + f.oy[i];
+        g.moveTo(x + 1.1, y); g.arc(x, y, 1.1, 0, 6.2832);
+      }
+      g.fill();
+      // oplichtende punten
+      for (let i = 0; i < f.n; i++) {
+        const k = f.glow[i];
+        if (k <= 0.04) continue;
+        const x = f.bx[i] + f.ox[i], y = f.by[i] + f.oy[i];
+        const r = 1.1 + k * 1.9;
+        g.fillStyle = `rgba(${Math.round(174 + 81 * k * k)}, ${Math.round(107 + 148 * k * k)}, 255, ${(0.16 + k * 0.8).toFixed(3)})`;
+        g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill();
+      }
+    }
+
+    function step(f, now) {
+      let moving = false;
+      const R2 = R * R;
+      f.ripples = f.ripples.filter((rp) => now - rp.t < 1600);
+      for (let i = 0; i < f.n; i++) {
+        let fx = 0, fy = 0, glow = 0;
+        const px = f.bx[i], py = f.by[i];
+        if (f.inside) {
+          const dx = px - f.mx, dy = py - f.my, d2 = dx * dx + dy * dy;
+          if (d2 < R2) {
+            const dist = Math.sqrt(d2) || 1, s = 1 - dist / R, e = s * s * (3 - 2 * s);
+            fx += (dx / dist) * e * 18; fy += (dy / dist) * e * 18;
+            glow = Math.max(glow, e);
+          }
+        }
+        for (const rp of f.ripples) {
+          const age = (now - rp.t) / 1000, rad = age * 620, dx = px - rp.x, dy = py - rp.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1, band = 1 - Math.abs(dist - rad) / 70;
+          if (band > 0) {
+            const fade = Math.max(0, 1 - age / 1.6), e = band * band * fade;
+            fx += (dx / dist) * e * 14; fy += (dy / dist) * e * 14;
+            glow = Math.max(glow, e * 0.9);
+          }
+        }
+        // veer terug naar de doelpositie
+        f.vx[i] = (f.vx[i] + (fx - f.ox[i]) * 0.14) * 0.78;
+        f.vy[i] = (f.vy[i] + (fy - f.oy[i]) * 0.14) * 0.78;
+        f.ox[i] += f.vx[i]; f.oy[i] += f.vy[i];
+        f.glow[i] += (glow - f.glow[i]) * 0.2;
+        if (Math.abs(f.vx[i]) + Math.abs(f.vy[i]) > 0.02 || Math.abs(f.ox[i]) + Math.abs(f.oy[i]) > 0.05 || f.glow[i] > 0.01) moving = true;
+      }
+      draw(f);
+      return moving || f.inside || f.ripples.length > 0;
+    }
+
+    let raf = 0;
+    function loop(now) {
+      raf = 0;
+      let any = false;
+      for (const f of fields) if (f.active && f.visible) { f.active = step(f, now); any = any || f.active; }
+      if (any) raf = requestAnimationFrame(loop);
+    }
+    const wake = (f) => { f.active = true; if (!raf) raf = requestAnimationFrame(loop); };
+
+    fields.forEach((f) => {
+      const local = (e) => { const r = f.c.getBoundingClientRect(); f.mx = e.clientX - r.left; f.my = e.clientY - r.top; };
+      if (finePointer) {
+        f.sec.addEventListener('pointermove', (e) => { local(e); f.inside = true; wake(f); }, { passive: true });
+        f.sec.addEventListener('pointerleave', () => { f.inside = false; wake(f); });
+      }
+      f.sec.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('a, button, input, textarea, label')) return;
+        local(e); f.ripples.push({ x: f.mx, y: f.my, t: performance.now() }); wake(f);
+      }, { passive: true });
+    });
+
+    const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+      const f = fields.find((x) => x.sec === en.target);
+      f.visible = en.isIntersecting;
+      if (f.visible && !f.w) build(f);
+    }), { rootMargin: '200px 0px' });
+    fields.forEach((f) => io.observe(f.sec));
+
+    let rt;
+    const rebuild = () => fields.forEach((f) => { if (f.w && (f.sec.clientWidth !== f.w || f.sec.clientHeight !== f.h)) build(f); });
+    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(rebuild, 200); });
+    addEventListener('load', rebuild);
+    if ('ResizeObserver' in window) { const ro = new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(rebuild, 200); }); fields.forEach((f) => ro.observe(f.sec)); }
+  })();
+
   /* ---------- Scroll-effecten (één lus voor alles) ---------- */
   const heroSection = $('.hero, .shero');
   const heroMedia = $('[data-hero-media]');
