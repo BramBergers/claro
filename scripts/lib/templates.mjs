@@ -100,27 +100,53 @@ function header(ctx, current) {
 }
 
 function footer(ctx) {
-  const { site, logo } = ctx;
+  const { site, logo, services = [] } = ctx;
   const year = new Date().getFullYear();
+  const mail = site.email ? `<a class="footer__mail" href="mailto:${esc(site.email)}"><span>${esc(site.email)}</span> ${ARROW}</a>` : '';
   return `
 <footer class="footer">
   <div class="container footer__inner">
-    <div class="footer__top">
-      <a class="footer__brand" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
-      <ul class="footer__social">
-        <li><a class="link-arrow" href="${esc(site.instagram)}" target="_blank" rel="noopener">Instagram ${ARROW}</a></li>
-        <li><a class="link-arrow" href="${esc(site.linkedin)}" target="_blank" rel="noopener">LinkedIn ${ARROW}</a></li>
-      </ul>
+    <div class="footer__head">
+      <p class="footer__kicker">Klaar om helder te worden?</p>
+      <p class="footer__statement">Vertel ons waar je naartoe wilt. Wij maken het helder.</p>
     </div>
     <a class="cta-pill" href="/contact/" data-cta>
       <span class="cta-pill__fill" aria-hidden="true"></span>
       <span class="cta-pill__label">${esc(site.ctaLabel)}</span>
     </a>
+    <div class="footer__grid">
+      <div class="footer__col footer__col--about">
+        <a class="footer__brand" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
+        <p class="footer__about">${esc(site.description || '')}</p>
+      </div>
+      <nav class="footer__col" aria-label="Diensten">
+        <p class="footer__label">Diensten</p>
+        <ul class="footer__links">${services.map((sv) => `<li><a href="/werk/${esc(sv.slug)}/">${esc(sv.title)}</a></li>`).join('')}</ul>
+      </nav>
+      <nav class="footer__col" aria-label="Claro">
+        <p class="footer__label">Claro</p>
+        <ul class="footer__links">
+          <li><a href="/over-claro/">Over ons</a></li>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/privacy/">Privacy</a></li>
+        </ul>
+      </nav>
+      <div class="footer__col">
+        <p class="footer__label">Contact</p>
+        ${mail}
+        <ul class="footer__links footer__links--social">
+          <li><a href="${esc(site.instagram)}" target="_blank" rel="noopener">Instagram ${ARROW}</a></li>
+          <li><a href="${esc(site.linkedin)}" target="_blank" rel="noopener">LinkedIn ${ARROW}</a></li>
+        </ul>
+      </div>
+    </div>
     <div class="footer__bottom">
-      <p>${year} Claro · by ${esc(site.byline)}</p>
-      <p>kvk: ${esc(site.kvk)} · <a class="text-link" href="/privacy/">privacy</a></p>
+      <p>© ${year} Claro · by ${esc(site.byline)}</p>
+      <p>KvK ${esc(site.kvk)}</p>
+      <button type="button" class="footer__top-btn" data-to-top>Terug naar boven <span aria-hidden="true">↑</span></button>
     </div>
   </div>
+  <div class="footer__giant" aria-hidden="true">${renderLogo(logo, { variant: 'mono' })}</div>
 </footer>`;
 }
 

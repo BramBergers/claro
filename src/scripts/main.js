@@ -347,6 +347,13 @@
     $$('.split, .person__photo, .cta-pill').forEach((el) => el.classList.add('is-shown'));
   }
 
+  /* ---------- Footer: terug naar boven en groot logo dat omhoog schuift ---------- */
+  $$('[data-to-top]').forEach((b) => b.addEventListener('click', () => scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' })));
+  const footEl = $('.footer');
+  if (footEl && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => footEl.classList.toggle('is-end', e.isIntersecting), { threshold: 0.6 }).observe($('.footer__giant', footEl) || footEl);
+  }
+
   /* ---------- Onthullen bij scrollen ---------- */
   const revealEls = $$('[data-reveal], .intro__logo');
   if (reduced || !('IntersectionObserver' in window)) {
