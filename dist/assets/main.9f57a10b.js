@@ -486,7 +486,7 @@
     function step(f, now) {
       let moving = false;
       const R2 = R * R;
-      f.ripples = f.ripples.filter((rp) => now - rp.t < 2600);
+      f.ripples = f.ripples.filter((rp) => now - rp.t < 2000);
       for (let i = 0; i < f.n; i++) {
         let fx = 0, fy = 0, glow = 0, rfx = 0, rfy = 0;
         const px = f.bx[i], py = f.by[i];
@@ -501,19 +501,12 @@
         for (const rp of f.ripples) {
           const age = (now - rp.t) / 1000, dx = px - rp.x, dy = py - rp.y;
           const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          // indrukken: punten worden kort naar het midden gezogen
-          if (age < 0.5 && dist < 170) {
-            const k = (1 - dist / 170) * Math.sin((age / 0.5) * Math.PI);
-            rfx -= (dx / dist) * k * 16; rfy -= (dy / dist) * k * 16;
-            glow = Math.max(glow, k * 0.9);
-          }
-          // golven die naar buiten lopen: meerdere ringen achter elkaar
-          const front = age * 560, behind = front - dist;
-          if (behind > 0 && behind < 300) {
-            const env = Math.sin((behind / 300) * Math.PI) * Math.max(0, 1 - age / 2.6) * Math.min(1, 220 / (dist + 60));
-            const wave = Math.sin((behind / 100) * Math.PI * 2);
-            rfx += (dx / dist) * wave * env * 32; rfy += (dy / dist) * wave * env * 32;
-            glow = Math.max(glow, Math.max(0, wave) * Math.sin((behind / 300) * Math.PI) * Math.max(0, 1 - age / 2.6) * 1.15);
+          // één zachte golf die naar buiten loopt
+          const front = age * 480, off = (dist - front) / 75;
+          if (off > -3 && off < 3) {
+            const fade = Math.max(0, 1 - age / 2), band = Math.exp(-off * off) * fade * Math.min(1, (dist + 40) / 120);
+            rfx += (dx / dist) * band * 14; rfy += (dy / dist) * band * 14;
+            glow = Math.max(glow, band * 0.8);
           }
         }
         // rustig naar de doelpositie glijden, zonder na te veren
