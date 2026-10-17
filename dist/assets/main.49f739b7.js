@@ -297,6 +297,56 @@
     }, { passive: true });
   }
 
+  /* ---------- Vet: titels woord voor woord uit een masker ---------- */
+  const splitTargets = $$('.phero__title, .shero__title, .section-title, .cases__title, .clients__title, .services__title, .case__title, .snext__title');
+  if (!reduced) {
+    splitTargets.forEach((el) => {
+      let n = 0;
+      const walk = (node) => {
+        [...node.childNodes].forEach((ch) => {
+          if (ch.nodeType === 3) {
+            const frag = d.createDocumentFragment();
+            ch.textContent.split(/(\s+)/).forEach((part) => {
+              if (!part) return;
+              if (/^\s+$/.test(part)) { frag.appendChild(d.createTextNode(' ')); return; }
+              const o = d.createElement('span'); o.className = 'sw';
+              const i = d.createElement('span'); i.className = 'sw__i'; i.style.setProperty('--wi', n++); i.textContent = part;
+              o.appendChild(i); frag.appendChild(o);
+            });
+            ch.replaceWith(frag);
+          } else if (ch.nodeType === 1) walk(ch);
+        });
+      };
+      walk(el);
+      el.classList.add('split');
+    });
+  }
+
+  /* ---------- Vet: grote "Let's chat!" letter voor letter ---------- */
+  const ctaLabel = $('.cta-pill__label');
+  if (ctaLabel && !reduced) {
+    const txt = ctaLabel.textContent;
+    ctaLabel.setAttribute('aria-label', txt);
+    ctaLabel.innerHTML = [...txt].map((c, i) => `<span class="ch" aria-hidden="true" style="--ci:${i}">${c === ' ' ? '&nbsp;' : c.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span>`).join('');
+  }
+
+  /* ---------- Vet: titels, teamfoto's en Let's chat in beeld laten komen ---------- */
+  if (!reduced && 'IntersectionObserver' in window) {
+    // let op: een element met clip-path wordt door de observer als onzichtbaar gezien, dus we kijken naar de ouder
+    const showIO = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        const t = en.target;
+        (t._show || [t]).forEach((el) => el.classList.add('is-shown'));
+        showIO.unobserve(t);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    $$('.split, .cta-pill').forEach((el) => showIO.observe(el));
+    $$('.person').forEach((pp) => { const ph = $('.person__photo', pp); if (ph) { pp._show = [ph]; showIO.observe(pp); } });
+  } else {
+    $$('.split, .person__photo, .cta-pill').forEach((el) => el.classList.add('is-shown'));
+  }
+
   /* ---------- Onthullen bij scrollen ---------- */
   const revealEls = $$('[data-reveal], .intro__logo');
   if (reduced || !('IntersectionObserver' in window)) {

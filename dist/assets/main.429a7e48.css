@@ -535,3 +535,20 @@ html.lb-open { overflow: hidden; }
   .lb__nav--next { right: 0.8rem; }
   .lb__info { right: 8.5rem; bottom: 1.2rem; flex-direction: column; gap: 0.2rem; }
 }
+
+/* ================= Vet: animaties ================= */
+/* titels woord voor woord uit een masker */
+.split { opacity: 1 !important; transform: none !important; }
+.sw { display: inline-block; overflow: hidden; vertical-align: top; padding: 0.04em 0.02em 0.12em; margin: -0.04em -0.02em -0.12em; }
+.sw__i { display: inline-block; transform: translateY(115%) rotate(7deg); transform-origin: 0 100%; transition: transform 1.15s var(--ease-out) calc(var(--wi) * 65ms + 80ms); }
+body.is-ready .split.is-shown .sw__i { transform: none; }
+
+.js .person__photo { clip-path: inset(0 0 100% 0 round clamp(20px, 3vw, 44px)); transition: clip-path 1.3s var(--ease-out), transform 0.8s var(--ease-out); }
+.js .person__photo.is-shown { clip-path: inset(0 0 0 0 round clamp(20px, 3vw, 44px)); }
+
+/* Let's chat! letter voor letter */
+.cta-pill__label .ch { display: inline-block; transform: translateY(105%); transition: transform 0.9s var(--ease-out) calc(var(--ci) * 45ms); }
+.cta-pill.is-shown .cta-pill__label .ch { transform: none; }
+.cta-pill:hover .ch { animation: ch-jump 0.7s var(--ease-out) calc(var(--ci) * 35ms); }
+@keyframes ch-jump { 0% { transform: none; } 35% { transform: translateY(-14%) rotate(-4deg); } 100% { transform: none; } }
+
