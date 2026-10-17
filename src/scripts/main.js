@@ -297,19 +297,6 @@
     }, { passive: true });
   }
 
-  /* ---------- Luminous type: spotlight volgt de muis over de titels ---------- */
-  if (finePointer) {
-    $$('.shero__title, .phero__title, .cases__title, .section-title, .clients__title, .services__title').forEach((el) => {
-      el.addEventListener('pointermove', (e) => {
-        const r = el.getBoundingClientRect();
-        el.style.setProperty('--lx', `${((e.clientX - r.left) / r.width) * 100}%`);
-        el.style.setProperty('--ly', `${((e.clientY - r.top) / r.height) * 100}%`);
-      });
-      el.addEventListener('pointerenter', () => el.classList.add('is-lum'));
-      el.addEventListener('pointerleave', () => el.classList.remove('is-lum'));
-    });
-  }
-
   /* ---------- Onthullen bij scrollen ---------- */
   const revealEls = $$('[data-reveal], .intro__logo');
   if (reduced || !('IntersectionObserver' in window)) {
