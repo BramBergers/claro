@@ -535,3 +535,48 @@ html.lb-open { overflow: hidden; }
   .lb__nav--next { right: 0.8rem; }
   .lb__info { right: 8.5rem; bottom: 1.2rem; flex-direction: column; gap: 0.2rem; }
 }
+
+/* ================= Vet: animaties ================= */
+/* titels woord voor woord uit een masker */
+.split { opacity: 1 !important; transform: none !important; }
+.sw { display: inline-block; overflow: hidden; vertical-align: top; padding: 0.04em 0.02em 0.12em; margin: -0.04em -0.02em -0.12em; }
+.sw__i { display: inline-block; transform: translateY(115%) rotate(7deg); transform-origin: 0 100%; transition: transform 1.15s var(--ease-out) calc(var(--wi) * 65ms + 80ms); }
+body.is-ready .split.is-shown .sw__i { transform: none; }
+
+/* beelden onthullen met een veeg van onder naar boven */
+.js .case__media { clip-path: inset(100% 0 0 0 round var(--radius)); transition: clip-path 1.25s var(--ease-out) var(--sd, 0ms); }
+.js .case__media.is-shown { clip-path: inset(0 0 0 0 round var(--radius)); }
+.js .case__media .case__asset { scale: 1.28; transition: scale 1.8s var(--ease-out) var(--sd, 0ms), filter 0.7s var(--ease-out), transform 1.2s var(--ease-out); }
+.js .case__media.is-shown .case__asset { scale: 1; }
+.js .person__photo { clip-path: inset(0 0 100% 0 round clamp(20px, 3vw, 44px)); transition: clip-path 1.3s var(--ease-out), transform 0.8s var(--ease-out); }
+.js .person__photo.is-shown { clip-path: inset(0 0 0 0 round clamp(20px, 3vw, 44px)); }
+
+/* lijnen tussen de diensten tekenen zichzelf */
+.js .service { border-top-color: transparent; }
+.js .service:last-child { border-bottom-color: transparent; }
+.js .service::before, .js .service:last-child::after { content: ''; position: absolute; left: 0; right: 0; height: 1px; background: rgba(174, 107, 255, 0.35); transform: scaleX(0); transform-origin: left; transition: transform 1.5s var(--ease-out) var(--d, 0ms); z-index: 1; pointer-events: none; }
+.js .service::before { top: -1px; }
+.js .service:last-child::after { bottom: -1px; }
+.js .service.is-in::before, .js .service.is-in:last-child::after { transform: none; }
+
+/* reuzenwoorden bij de diensten */
+.services__giant { overflow: hidden; padding: clamp(1rem, 3vw, 3rem) 0 clamp(1.5rem, 3vw, 3rem); pointer-events: none; user-select: none; }
+.services__giant span { display: inline-block; white-space: nowrap; font-weight: 800; font-size: clamp(4rem, 13vw, 14rem); line-height: 0.95; letter-spacing: -0.04em; color: transparent; -webkit-text-stroke: 1.5px rgba(174, 107, 255, 0.45); will-change: transform; }
+.services__giant i { font-style: normal; font-size: 0.5em; vertical-align: middle; -webkit-text-stroke: 0; color: var(--c-light); opacity: 0.7; margin: 0 0.3em; }
+
+/* Let's chat! letter voor letter */
+.cta-pill__label .ch { display: inline-block; transform: translateY(105%); transition: transform 0.9s var(--ease-out) calc(var(--ci) * 45ms); }
+.cta-pill.is-shown .cta-pill__label .ch { transform: none; }
+.cta-pill:hover .ch { animation: ch-jump 0.7s var(--ease-out) calc(var(--ci) * 35ms); }
+@keyframes ch-jump { 0% { transform: none; } 35% { transform: translateY(-14%) rotate(-4deg); } 100% { transform: none; } }
+
+/* leesvoortgang */
+.scroll-progress { position: fixed; left: 0; right: 0; top: 0; z-index: 120; height: 3px; background: linear-gradient(90deg, var(--c-light), #fff); transform: scaleX(0); transform-origin: left; pointer-events: none; }
+html.menu-open .scroll-progress { opacity: 0; }
+
+/* header-video krimpt tot een kaart tijdens het scrollen */
+.hero { will-change: clip-path; }
+
+@media (prefers-reduced-motion: reduce) {
+  .services__giant span { transform: none !important; }
+}

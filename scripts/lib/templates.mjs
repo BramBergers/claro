@@ -232,6 +232,7 @@ export function homePage(ctx) {
 </section>
 
 <section class="services" id="werk">
+  <div class="services__giant" aria-hidden="true" data-giant><span>${services.map((s) => esc(s.title)).join(' <i>✦</i> ')} <i>✦</i> ${services.map((s) => esc(s.title)).join(' <i>✦</i> ')}</span></div>
   <div class="container">
     <h2 class="services__title" data-reveal>${esc(site.servicesTitle)}</h2>
   </div>
