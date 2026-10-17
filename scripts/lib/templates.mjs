@@ -507,7 +507,7 @@ export function contactPage(ctx) {
         <div class="field"><input id="f-bedrijf" name="bedrijf" type="text" autocomplete="organization" placeholder=" "><label for="f-bedrijf">Bedrijf (optioneel)</label></div>
         <fieldset class="chips"><legend>Waar kunnen we mee helpen?</legend><div class="chips__row">${chips}</div></fieldset>
         <div class="field field--area"><textarea id="f-bericht" name="bericht" required rows="5" placeholder=" "></textarea><label for="f-bericht">Je bericht</label></div>
-        <button class="btn btn--solid btn--lg" type="submit"><span>Verstuur</span></button>
+        <button class="cta-pill cta-pill--nav cta-pill--submit" type="submit"><span class="cta-pill__fill" aria-hidden="true"></span><span class="cta-pill__label">Verstuur</span></button>
         <p class="form__note">Door te versturen ga je akkoord met onze <a class="text-link" href="/privacy/">privacyverklaring</a>.</p>
         <p class="form__status" role="status" aria-live="polite"></p>
       </form>

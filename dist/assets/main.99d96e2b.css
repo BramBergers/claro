@@ -437,11 +437,11 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
 .chip:hover span { border-color: var(--c-light); transform: translateY(-2px); }
 .chip input:checked + span { background: var(--c-light); border-color: var(--c-light); color: var(--c-purple); }
 .chip input:focus-visible + span { outline: 3px solid var(--c-light); outline-offset: 3px; }
-.form .btn { margin-top: 1rem; }
+.form .btn, .form .cta-pill { margin-top: 1rem; }
 .form__note { margin-top: 1rem; font-size: 0.74rem; color: rgba(255, 255, 255, 0.7); }
 .form__status { min-height: 1.4em; margin-top: 0.6rem; font-size: 0.85rem; color: var(--c-light); }
 .form-success p { margin: 0 0 1.6rem; color: rgba(255, 255, 255, 0.85); }
-.form.is-sending .btn { opacity: 0.6; pointer-events: none; }
+.form.is-sending .btn, .form.is-sending .cta-pill { opacity: 0.6; pointer-events: none; }
 
 .prose { max-width: 52rem; margin-inline: 0; }
 .prose__note { margin-top: 1.4rem; padding: 0.9rem 1.2rem; border: 1px dashed var(--c-light); border-radius: 14px; font-size: 0.85rem; color: var(--c-light); }
@@ -605,3 +605,5 @@ body.is-ready .split.is-shown .sw__i { transform: none; }
 .cta-pill.cta-pill--nav:hover { color: var(--c-purple); }
 .menu__cta.cta-pill--band .cta-pill__label { font-size: clamp(1.4rem, 6vw, 2rem); }
 .cta-pill.menu__cta { margin-top: 1.4rem; }
+.cta-pill.cta-pill--submit { margin-top: 1rem; padding: 0.85em 1.8em 0.9em; border: 0; font: inherit; cursor: pointer; }
+.cta-pill--submit .cta-pill__label { font-size: clamp(0.95rem, 1.1vw, 1.1rem); }
