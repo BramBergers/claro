@@ -105,19 +105,29 @@ function footer(ctx, path = '') {
   const year = new Date().getFullYear();
   const mail = site.email ? `<a class="footer__mail" href="mailto:${esc(site.email)}"><span>${esc(site.email)}</span> ${ARROW}</a>` : '';
   return `
+${
+  onContact
+    ? ''
+    : `<section class="cta-band" aria-label="Contact opnemen">
+  <div class="container cta-band__inner">
+    <div class="cta-band__text">
+      <p class="cta-band__eyebrow">Samenwerken?</p>
+      <h2 class="cta-band__title">Laten we samen iets helders maken.</h2>
+    </div>
+    <div class="cta-band__actions">
+      <a class="cta-pill cta-pill--band" href="/contact/">
+        <span class="cta-pill__fill" aria-hidden="true"></span>
+        <span class="cta-pill__label">${esc(site.ctaLabel)}</span>
+      </a>
+      ${site.email ? `<a class="cta-band__mail" href="mailto:${esc(site.email)}">of mail naar ${esc(site.email)}</a>` : ''}
+    </div>
+  </div>
+</section>`
+}
 <footer class="footer">
   <div class="container footer__inner">
-    ${
-      onContact
-        ? ''
-        : `<a class="cta-pill" href="/contact/" data-cta>
-      <span class="cta-pill__fill" aria-hidden="true"></span>
-      <span class="cta-pill__label">${esc(site.ctaLabel)}</span>
-    </a>`
-    }
-    <div class="footer__grid${onContact ? ' footer__grid--first' : ''}">
+    <div class="footer__grid footer__grid--first">
       <div class="footer__col footer__col--about">
-        <a class="footer__brand" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
         <p class="footer__about">${esc(site.description || '')}</p>
       </div>
       <nav class="footer__col" aria-label="Diensten">
