@@ -76,7 +76,7 @@ function header(ctx, current) {
           <div class="dropdown"><ul>${serviceLinks}</ul></div>
         </li>
         <li class="nav__item"><a class="nav__link" href="/over-claro/"${cur('/over-claro/')}>over claro</a></li>
-        <li class="nav__item"><a class="btn btn--pill" href="/contact/"${cur('/contact/')}><span>${esc(site.ctaLabel)}</span></a></li>
+        <li class="nav__item"><a class="cta-pill cta-pill--nav" href="/contact/"${cur('/contact/')}><span class="cta-pill__fill" aria-hidden="true"></span><span class="cta-pill__label">${esc(site.ctaLabel)}</span></a></li>
       </ul>
     </nav>
     <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu openen">
@@ -90,7 +90,7 @@ function header(ctx, current) {
     <p class="menu__label" style="--i:0">ons werk</p>
     <ul class="menu__services">${menuServices}</ul>
     <a class="menu__big" style="--i:5" href="/over-claro/"${cur('/over-claro/')}><span>over claro</span></a>
-    <a class="btn btn--solid btn--xl menu__cta" style="--i:6" href="/contact/"><span>${esc(site.ctaLabel)}</span></a>
+    <a class="cta-pill cta-pill--band menu__cta" style="--i:6" href="/contact/"><span class="cta-pill__fill" aria-hidden="true"></span><span class="cta-pill__label">${esc(site.ctaLabel)}</span></a>
   </nav>
   <div class="menu__foot" style="--i:7">
     <a class="link-arrow" href="${esc(site.instagram)}" target="_blank" rel="noopener">Instagram ${ARROW}</a>
@@ -112,7 +112,7 @@ ${
   <div class="container cta-band__inner">
     <div class="cta-band__text">
       <p class="cta-band__eyebrow">Samenwerken?</p>
-      <h2 class="cta-band__title">Laten we samen iets helders maken.</h2>
+      <h2 class="cta-band__title">Laten we samen iets helder maken.</h2>
     </div>
     <div class="cta-band__actions">
       <a class="cta-pill cta-pill--band" href="/contact/">

@@ -597,3 +597,10 @@ body.is-ready .split.is-shown .sw__i { transform: none; }
 .cta-band__mail { font-weight: 300; font-size: clamp(0.85rem, 1vw, 1rem); color: rgba(255, 255, 255, 0.82); text-decoration: underline; text-decoration-color: rgba(174, 107, 255, 0.6); text-underline-offset: 0.25em; transition: color 0.3s; }
 .cta-band__mail:hover { color: #fff; }
 .footer__about { margin-top: 0; font-size: clamp(0.95rem, 1.15vw, 1.15rem); line-height: 1.5; }
+
+/* Let's chat in de menubalk: zelfde knop, kleiner */
+.cta-pill.cta-pill--nav { height: auto; margin: 0; padding: 0.7em 1.35em 0.75em; transform: none; background: var(--c-light); color: var(--c-dark); }
+.cta-pill--nav .cta-pill__label { font-size: clamp(0.8rem, 0.95vw, 0.95rem); font-weight: 800; letter-spacing: -0.01em; padding-bottom: 0; }
+.cta-pill--nav .cta-pill__fill { background: #fff; }
+.cta-pill.cta-pill--nav:hover { color: var(--c-purple); }
+.menu__cta.cta-pill--band .cta-pill__label { font-size: clamp(1.4rem, 6vw, 2rem); }
