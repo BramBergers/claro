@@ -376,6 +376,162 @@
     }, { passive: true });
   });
 
+  /* ---------- Ribbon type: diensten op satijnen linten die door de ruimte golven ---------- */
+  (function ribbons() {
+    const band = $('[data-marquee]');
+    if (!band || reduced) return;
+    const canvas = d.createElement('canvas');
+    canvas.className = 'ribbon__canvas';
+    canvas.setAttribute('aria-hidden', 'true');
+    const gl = canvas.getContext('webgl', { antialias: true, alpha: true, premultipliedAlpha: true });
+    if (!gl) return;
+
+    const words = $$('.marquee__group:first-child .marquee__item', band).map((el) => el.textContent.trim()).filter(Boolean);
+    if (!words.length) return;
+
+    const VS = `
+      attribute vec2 a;
+      uniform float uT, uAspect, uPhase, uAmp, uW, uY, uZ, uTwist, uFreq, uRep, uScroll, uDir;
+      varying vec2 vUv; varying vec3 vN; varying float vZ;
+      void main() {
+        float s = a.x;
+        float ph = s * 6.2831 * uFreq + uT * 0.55 * uDir + uPhase;
+        vec3 c = vec3(mix(-1.25, 1.25, s) * uAspect, uY + uAmp * sin(ph), uZ + 0.28 * cos(ph * 0.7 + uPhase));
+        float tw = uTwist * sin(ph * 0.5 + uT * 0.35 + uPhase);
+        vec3 across = vec3(0.0, cos(tw), sin(tw));
+        vec3 p = c + across * a.y * uW;
+        vN = normalize(vec3(-uAmp * cos(ph) * 0.6, -sin(tw), cos(tw)));
+        float f = 3.2 / (3.2 - p.z);
+        gl_Position = vec4(p.x / uAspect * f, p.y * f, -p.z * 0.25, 1.0);
+        vUv = vec2(s * uRep - uScroll, 0.5 - a.y * 0.5);
+        vZ = p.z;
+      }`;
+    const FS = `
+      precision mediump float;
+      uniform sampler2D uTex; uniform vec3 uCol;
+      varying vec2 vUv; varying vec3 vN; varying float vZ;
+      void main() {
+        vec3 n = normalize(vN);
+        if (gl_FrontFacing) n = -n;
+        vec3 L = normalize(vec3(-0.35, 0.55, 1.0));
+        float diff = 0.78 + 0.3 * max(dot(n, L), 0.0);
+        vec3 H = normalize(L + vec3(0.0, 0.0, 1.0));
+        float spec = pow(max(dot(n, H), 0.0), 28.0) * 0.4;
+        float sheen = pow(max(dot(n, vec3(0.0, 0.0, 1.0)), 0.0), 6.0) * 0.18;
+        float edge = smoothstep(0.0, 0.12, vUv.y) * smoothstep(1.0, 0.88, vUv.y);
+        float ink = texture2D(uTex, vec2(gl_FrontFacing ? -vUv.x : vUv.x, vUv.y)).a;
+        vec3 base = mix(uCol, vec3(1.0) - (vec3(1.0) - uCol) * 0.0, 0.0);
+        vec3 col = mix(base, INK, ink);
+        col = col * diff * (0.82 + 0.18 * edge) + vec3(spec + sheen);
+        col *= 0.9 + 0.1 * clamp(vZ * 2.0 + 0.5, 0.0, 1.0);
+        gl_FragColor = vec4(col, 1.0);
+      }`;
+
+    function prog(ink) {
+      const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+      const p = gl.createProgram();
+      gl.attachShader(p, sh(gl.VERTEX_SHADER, VS));
+      gl.attachShader(p, sh(gl.FRAGMENT_SHADER, FS.replace('INK', `vec3(${ink.map((v) => (v / 255).toFixed(3)).join(',')})`)));
+      gl.linkProgram(p);
+      return gl.getProgramParameter(p, gl.LINK_STATUS) ? p : null;
+    }
+
+    // tekst-textuur: alleen de letters (alpha), naadloos herhaalbaar
+    const fontFamily = getComputedStyle(body).fontFamily;
+    function makeTexture() {
+      const c = d.createElement('canvas');
+      c.width = 2048; c.height = 128;
+      const x = c.getContext('2d');
+      const font = `800 64px ${fontFamily}`;
+      x.font = font;
+      const sep = '   ✦   ';
+      const seq = words.join(sep) + sep;
+      const w = x.measureText(seq).width;
+      const n = Math.max(1, Math.round(2048 / w));
+      x.setTransform(2048 / (w * n), 0, 0, 1, 0, 0);
+      x.font = font; x.textBaseline = 'middle'; x.fillStyle = '#fff';
+      for (let i = 0; i < n; i++) x.fillText(seq, i * w, 66);
+      const t = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      return n;
+    }
+
+    // lint-geometrie: strook van segmenten
+    const SEG = 220, verts = [];
+    for (let i = 0; i <= SEG; i++) { const s = i / SEG; verts.push(s, -1, s, 1); }
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+
+    const ribbonsDef = [
+      { col: [0.122, 0.0, 0.267], ink: [174, 107, 255], y: 0.22, z: -0.3, amp: 0.22, w: 0.3, freq: 0.7, phase: 2.2, twist: 0.75, dir: -1, speed: 0.04 },
+      { col: [0.682, 0.42, 1.0], ink: [47, 6, 104], y: -0.12, z: 0.1, amp: 0.26, w: 0.38, freq: 0.55, phase: 0.0, twist: 0.85, dir: 1, speed: 0.055 }
+    ];
+
+    let ok = true, rep = 1;
+    const go = () => {
+      rep = makeTexture();
+      ribbonsDef.forEach((r) => {
+        r.p = prog(r.ink);
+        if (!r.p) { ok = false; return; }
+        r.u = {};
+        ['uT', 'uAspect', 'uPhase', 'uAmp', 'uW', 'uY', 'uZ', 'uTwist', 'uFreq', 'uRep', 'uScroll', 'uDir', 'uCol'].forEach((k) => (r.u[k] = gl.getUniformLocation(r.p, k)));
+        r.a = gl.getAttribLocation(r.p, 'a');
+        r.scroll = 0;
+      });
+      if (!ok) return;
+      band.appendChild(canvas);
+      root.classList.add('has-ribbon');
+      resize();
+      addEventListener('resize', resize);
+      new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf) raf = requestAnimationFrame(frame); }).observe(band);
+    };
+
+    let W = 0, H = 0, visible = true, raf = 0, last = performance.now(), lastY = scrollY, sv = 0;
+    function resize() {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      W = band.clientWidth; H = band.clientHeight;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    function frame(now) {
+      raf = 0;
+      if (!visible) return;
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      sv += ((scrollY - lastY) - sv) * 0.12; lastY = scrollY;
+      const boost = 1 + Math.min(Math.abs(sv), 40) * 0.12;
+      const aspect = W / H;
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.enable(gl.DEPTH_TEST);
+      ribbonsDef.forEach((r) => {
+        r.scroll += r.speed * r.dir * boost * dt * (sv < -0.6 ? -1 : 1);
+        gl.useProgram(r.p);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.enableVertexAttribArray(r.a);
+        gl.vertexAttribPointer(r.a, 2, gl.FLOAT, false, 0, 0);
+        const u = r.u, t = now / 1000;
+        gl.uniform1f(u.uT, t); gl.uniform1f(u.uAspect, aspect); gl.uniform1f(u.uPhase, r.phase);
+        gl.uniform1f(u.uAmp, r.amp); gl.uniform1f(u.uW, r.w); gl.uniform1f(u.uY, r.y); gl.uniform1f(u.uZ, r.z);
+        gl.uniform1f(u.uTwist, r.twist); gl.uniform1f(u.uFreq, r.freq);
+        // herhalingen zo kiezen dat letters niet uitrekken: lengte lint / (breedte * verhouding textuur)
+        const texAspect = 2048 / 128 / rep;
+        gl.uniform1f(u.uRep, Math.max(1, Math.round((2.5 * aspect) / (2 * r.w * texAspect))));
+        gl.uniform1f(u.uScroll, r.scroll); gl.uniform1f(u.uDir, r.dir);
+        gl.uniform3fv(u.uCol, r.col);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, (SEG + 1) * 2);
+      });
+      raf = requestAnimationFrame(frame);
+    }
+
+    (d.fonts && d.fonts.ready ? d.fonts.ready : Promise.resolve()).then(go);
+  })();
+
   /* ---------- Scroll-effecten (één lus voor alles) ---------- */
   const heroSection = $('.hero, .shero');
   const heroMedia = $('[data-hero-media]');
