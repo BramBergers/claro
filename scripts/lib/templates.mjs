@@ -119,7 +119,6 @@ ${
         <span class="cta-pill__fill" aria-hidden="true"></span>
         <span class="cta-pill__label">${esc(site.ctaLabel)}</span>
       </a>
-      ${site.email ? `<a class="cta-band__mail" href="mailto:${esc(site.email)}">of mail naar ${esc(site.email)}</a>` : ''}
     </div>
   </div>
 </section>`
@@ -154,7 +153,6 @@ ${
     <div class="footer__bottom">
       <p>© ${year} Claro · by ${esc(site.byline)}</p>
       <p>KvK ${esc(site.kvk)}</p>
-      <button type="button" class="footer__top-btn" data-to-top>Terug naar boven <span aria-hidden="true">↑</span></button>
     </div>
   </div>
   <div class="footer__giant" aria-hidden="true">${renderLogo(logo, { variant: 'mono' })}</div>
@@ -552,7 +550,7 @@ export function privacyPage(ctx) {
   <div class="container prose">
     <p class="eyebrow" data-hero-in>bijgewerkt: ${esc(privacy.updated)}</p>
     <h1 class="phero__title phero__title--sm" data-hero-in>${esc(privacy.title)}</h1>
-    <p class="prose__note" data-hero-in>${esc(privacy.note)}</p>
+    ${privacy.note ? `<p class="prose__note" data-hero-in>${esc(privacy.note)}</p>` : ''}
     ${privacy.sections.map((s) => `<h2>${esc(s.title)}</h2><p>${esc(s.text)}</p>`).join('')}
   </div>
 </section>`;
