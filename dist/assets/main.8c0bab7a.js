@@ -323,11 +323,12 @@
   }
 
   /* ---------- Vet: grote "Let's chat!" letter voor letter ---------- */
-  const ctaLabel = $('.cta-pill__label');
-  if (ctaLabel && !reduced) {
-    const txt = ctaLabel.textContent;
-    ctaLabel.setAttribute('aria-label', txt);
-    ctaLabel.innerHTML = [...txt].map((c, i) => `<span class="ch" aria-hidden="true" style="--ci:${i}">${c === ' ' ? '&nbsp;' : c.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span>`).join('');
+  if (!reduced) {
+    $$('.cta-pill__label').forEach((ctaLabel) => {
+      const txt = ctaLabel.textContent;
+      ctaLabel.setAttribute('aria-label', txt);
+      ctaLabel.innerHTML = [...txt].map((c, i) => `<span class="ch" aria-hidden="true" style="--ci:${i}">${c === ' ' ? '&nbsp;' : c.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span>`).join('');
+    });
   }
 
   /* ---------- Vet: titels, teamfoto's en Let's chat in beeld laten komen ---------- */

@@ -262,8 +262,10 @@ export function homePage(ctx) {
     ${renderLogo(logo, { className: 'intro__logo' })}
     <h1 class="intro__title" data-words>${headline(site.heroTitle)}</h1>
     <div class="intro__cta" data-reveal>
-      <a class="btn btn--solid" href="/contact/"><span>${esc(site.ctaLabel)}</span></a>
-      <a class="btn btn--ghost" href="#werk"><span>Ons werk</span></a>
+      <a class="cta-pill cta-pill--band" href="/contact/">
+        <span class="cta-pill__fill" aria-hidden="true"></span>
+        <span class="cta-pill__label">${esc(site.ctaLabel)}</span>
+      </a>
     </div>
   </div>
 </section>

@@ -243,7 +243,7 @@ html:not(.js) .marquee__track { animation: marquee 32s linear infinite; }
 /* ---------- Home: intro ---------- */
 .intro { background: var(--c-purple); padding: clamp(4rem, 9vw, 9.5rem) 0 clamp(4.5rem, 10vw, 10rem); }
 .intro__logo { height: clamp(30px, 3.7vw, 62px); margin-bottom: clamp(0.8rem, 2vw, 1.8rem); }
-.intro__title { font-weight: 300; font-size: clamp(1.9rem, 5.2vw, 5.4rem); line-height: 1.14; letter-spacing: -0.025em; max-width: 15em; text-wrap: balance; }
+.intro__title { font-weight: 800; font-size: clamp(1.9rem, 5.2vw, 5.4rem); line-height: 1.06; letter-spacing: -0.035em; max-width: 15em; text-wrap: balance; }
 .intro__cta { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: clamp(1.6rem, 3.2vw, 3rem); }
 
 /* ---------- Home: diensten ---------- */
