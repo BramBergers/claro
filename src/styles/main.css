@@ -604,3 +604,4 @@ body.is-ready .split.is-shown .sw__i { transform: none; }
 .cta-pill--nav .cta-pill__fill { background: #fff; }
 .cta-pill.cta-pill--nav:hover { color: var(--c-purple); }
 .menu__cta.cta-pill--band .cta-pill__label { font-size: clamp(1.4rem, 6vw, 2rem); }
+.cta-pill.menu__cta { margin-top: 1.4rem; }
