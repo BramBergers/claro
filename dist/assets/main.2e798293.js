@@ -431,7 +431,7 @@
     if (reduced) return;
     const sections = $$('.intro, .services, .clients, .sintro, .story, .steps, .team, .phero');
     if (!sections.length) return;
-    const GAP = 26, R = 150, DPR = Math.min(devicePixelRatio || 1, 1.5);
+    const GAP = 26, R = 240, DPR = Math.min(devicePixelRatio || 1, 1.5);
     const fields = [];
 
     sections.forEach((sec) => {
@@ -477,8 +477,8 @@
         const k = f.glow[i];
         if (k <= 0.04) continue;
         const x = f.bx[i] + f.ox[i], y = f.by[i] + f.oy[i];
-        const r = 1.1 + k * 1.9;
-        g.fillStyle = `rgba(${Math.round(174 + 81 * k * k)}, ${Math.round(107 + 148 * k * k)}, 255, ${(0.16 + k * 0.8).toFixed(3)})`;
+        const r = 1.1 + k * 0.8;
+        g.fillStyle = `rgba(${Math.round(174 + 26 * k)}, ${Math.round(107 + 43 * k)}, 255, ${(0.16 + k * 0.38).toFixed(3)})`;
         g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill();
       }
     }
@@ -494,7 +494,7 @@
           const dx = px - f.mx, dy = py - f.my, d2 = dx * dx + dy * dy;
           if (d2 < R2) {
             const dist = Math.sqrt(d2) || 1, s = 1 - dist / R, e = s * s * (3 - 2 * s);
-            fx += (dx / dist) * e * 18; fy += (dy / dist) * e * 18;
+            fx += (dx / dist) * e * 7; fy += (dy / dist) * e * 7;
             glow = Math.max(glow, e);
           }
         }
@@ -503,16 +503,15 @@
           const dist = Math.sqrt(dx * dx + dy * dy) || 1, band = 1 - Math.abs(dist - rad) / 70;
           if (band > 0) {
             const fade = Math.max(0, 1 - age / 1.6), e = band * band * fade;
-            fx += (dx / dist) * e * 14; fy += (dy / dist) * e * 14;
-            glow = Math.max(glow, e * 0.9);
+            fx += (dx / dist) * e * 6; fy += (dy / dist) * e * 6;
+            glow = Math.max(glow, e * 0.6);
           }
         }
-        // veer terug naar de doelpositie
-        f.vx[i] = (f.vx[i] + (fx - f.ox[i]) * 0.14) * 0.78;
-        f.vy[i] = (f.vy[i] + (fy - f.oy[i]) * 0.14) * 0.78;
-        f.ox[i] += f.vx[i]; f.oy[i] += f.vy[i];
-        f.glow[i] += (glow - f.glow[i]) * 0.2;
-        if (Math.abs(f.vx[i]) + Math.abs(f.vy[i]) > 0.02 || Math.abs(f.ox[i]) + Math.abs(f.oy[i]) > 0.05 || f.glow[i] > 0.01) moving = true;
+        // rustig naar de doelpositie glijden, zonder na te veren
+        const ddx = fx - f.ox[i], ddy = fy - f.oy[i];
+        f.ox[i] += ddx * 0.07; f.oy[i] += ddy * 0.07;
+        f.glow[i] += (glow - f.glow[i]) * 0.08;
+        if (Math.abs(ddx) + Math.abs(ddy) > 0.05 || Math.abs(f.ox[i]) + Math.abs(f.oy[i]) > 0.05 || f.glow[i] > 0.01) moving = true;
       }
       draw(f);
       return moving || f.inside || f.ripples.length > 0;
