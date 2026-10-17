@@ -453,7 +453,7 @@
       f.bx = new Float32Array(f.n); f.by = new Float32Array(f.n);
       f.ox = new Float32Array(f.n); f.oy = new Float32Array(f.n);
       f.vx = new Float32Array(f.n); f.vy = new Float32Array(f.n);
-      f.glow = new Float32Array(f.n);
+      f.glow = new Float32Array(f.n); f.rx = new Float32Array(f.n); f.ry = new Float32Array(f.n);
       let i = 0;
       for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++, i++) { f.bx[i] = offX + x * GAP; f.by[i] = offY + y * GAP; }
       draw(f);
@@ -468,7 +468,7 @@
       g.beginPath();
       for (let i = 0; i < f.n; i++) {
         if (f.glow[i] > 0.04) continue;
-        const x = f.bx[i] + f.ox[i], y = f.by[i] + f.oy[i];
+        const x = f.bx[i] + f.ox[i] + f.rx[i], y = f.by[i] + f.oy[i] + f.ry[i];
         g.moveTo(x + 1.1, y); g.arc(x, y, 1.1, 0, 6.2832);
       }
       g.fill();
@@ -476,9 +476,9 @@
       for (let i = 0; i < f.n; i++) {
         const k = f.glow[i];
         if (k <= 0.04) continue;
-        const x = f.bx[i] + f.ox[i], y = f.by[i] + f.oy[i];
-        const r = 1.1 + k * 0.8;
-        g.fillStyle = `rgba(${Math.round(174 + 26 * k)}, ${Math.round(107 + 43 * k)}, 255, ${(0.16 + k * 0.38).toFixed(3)})`;
+        const x = f.bx[i] + f.ox[i] + f.rx[i], y = f.by[i] + f.oy[i] + f.ry[i];
+        const r = 1.1 + k * 1.2;
+        g.fillStyle = `rgba(${Math.round(174 + 26 * k)}, ${Math.round(107 + 43 * k)}, 255, ${(0.16 + k * 0.5).toFixed(3)})`;
         g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill();
       }
     }
@@ -486,32 +486,42 @@
     function step(f, now) {
       let moving = false;
       const R2 = R * R;
-      f.ripples = f.ripples.filter((rp) => now - rp.t < 1600);
+      f.ripples = f.ripples.filter((rp) => now - rp.t < 2600);
       for (let i = 0; i < f.n; i++) {
-        let fx = 0, fy = 0, glow = 0;
+        let fx = 0, fy = 0, glow = 0, rfx = 0, rfy = 0;
         const px = f.bx[i], py = f.by[i];
         if (f.inside) {
           const dx = px - f.mx, dy = py - f.my, d2 = dx * dx + dy * dy;
           if (d2 < R2) {
             const dist = Math.sqrt(d2) || 1, s = 1 - dist / R, e = s * s * (3 - 2 * s);
             fx += (dx / dist) * e * 7; fy += (dy / dist) * e * 7;
-            glow = Math.max(glow, e);
+            glow = Math.max(glow, e * 0.75);
           }
         }
         for (const rp of f.ripples) {
-          const age = (now - rp.t) / 1000, rad = age * 620, dx = px - rp.x, dy = py - rp.y;
-          const dist = Math.sqrt(dx * dx + dy * dy) || 1, band = 1 - Math.abs(dist - rad) / 70;
-          if (band > 0) {
-            const fade = Math.max(0, 1 - age / 1.6), e = band * band * fade;
-            fx += (dx / dist) * e * 6; fy += (dy / dist) * e * 6;
-            glow = Math.max(glow, e * 0.6);
+          const age = (now - rp.t) / 1000, dx = px - rp.x, dy = py - rp.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          // indrukken: punten worden kort naar het midden gezogen
+          if (age < 0.5 && dist < 170) {
+            const k = (1 - dist / 170) * Math.sin((age / 0.5) * Math.PI);
+            rfx -= (dx / dist) * k * 16; rfy -= (dy / dist) * k * 16;
+            glow = Math.max(glow, k * 0.9);
+          }
+          // golven die naar buiten lopen: meerdere ringen achter elkaar
+          const front = age * 560, behind = front - dist;
+          if (behind > 0 && behind < 300) {
+            const env = Math.sin((behind / 300) * Math.PI) * Math.max(0, 1 - age / 2.6) * Math.min(1, 220 / (dist + 60));
+            const wave = Math.sin((behind / 100) * Math.PI * 2);
+            rfx += (dx / dist) * wave * env * 32; rfy += (dy / dist) * wave * env * 32;
+            glow = Math.max(glow, Math.max(0, wave) * Math.sin((behind / 300) * Math.PI) * Math.max(0, 1 - age / 2.6) * 1.15);
           }
         }
         // rustig naar de doelpositie glijden, zonder na te veren
         const ddx = fx - f.ox[i], ddy = fy - f.oy[i];
         f.ox[i] += ddx * 0.07; f.oy[i] += ddy * 0.07;
-        f.glow[i] += (glow - f.glow[i]) * 0.08;
-        if (Math.abs(ddx) + Math.abs(ddy) > 0.05 || Math.abs(f.ox[i]) + Math.abs(f.oy[i]) > 0.05 || f.glow[i] > 0.01) moving = true;
+        f.rx[i] = rfx; f.ry[i] = rfy;
+        f.glow[i] += (glow - f.glow[i]) * (f.ripples.length ? 0.35 : 0.08);
+        if (rfx !== 0 || rfy !== 0 || Math.abs(ddx) + Math.abs(ddy) > 0.05 || Math.abs(f.ox[i]) + Math.abs(f.oy[i]) > 0.05 || f.glow[i] > 0.01) moving = true;
       }
       draw(f);
       return moving || f.inside || f.ripples.length > 0;
