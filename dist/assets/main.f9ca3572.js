@@ -131,6 +131,7 @@
   const bubble = $('.bubble');
   if (bubble && finePointer && !reduced) {
     root.classList.add('has-bubble');
+    const bubbleText = $('.bubble__text', bubble);
     let tx = -200, ty = -200, x = -200, y = -200, active = false, raf = 0;
     const move = () => {
       x = lerp(x, tx, 0.28); y = lerp(y, ty, 0.28);
@@ -140,7 +141,9 @@
     };
     addEventListener('pointermove', (e) => {
       tx = e.clientX; ty = e.clientY;
-      const on = !!(e.target instanceof Element && e.target.closest('[data-case]'));
+      const hit = e.target instanceof Element ? e.target.closest('[data-case]') : null;
+      const on = !!hit;
+      if (on) { const label = hit.dataset.bubble || 'Bekijk case'; if (bubbleText.textContent !== label) bubbleText.textContent = label; }
       if (on && !active) { x = tx; y = ty; }
       active = on;
       bubble.classList.toggle('is-on', on);

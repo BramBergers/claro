@@ -126,9 +126,6 @@ function footer(ctx) {
   <svg class="foot__wave" aria-hidden="true" preserveAspectRatio="none"><path/></svg>
   <div class="wrap foot__inner">
     <a class="foot__logo" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
-    <nav class="foot__nav" aria-label="Footer">
-      <a href="/cases/">Cases</a><a href="/over-ons/">Over ons</a><a href="/wat-we-doen/">Wat we doen</a><a href="/contact/">Contact</a>
-    </nav>
     <div class="foot__contact">
       ${site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : ''}
       <a href="${esc(site.instagram)}" target="_blank" rel="noopener">Instagram</a>
@@ -189,7 +186,7 @@ ${cta ? ctaBlock(ctx) : ''}
 </main>
 ${footer(ctx)}
 ${menu(ctx, path)}
-<div class="bubble" aria-hidden="true"><span>Bekijk<br>case</span></div>
+<div class="bubble" aria-hidden="true"><svg class="bubble__shape" viewBox="-60 -60 120 120"><path d="M56.00,0.00 L55.41,0.97 L54.81,1.91 L54.22,2.84 L53.64,3.75 L53.10,4.65 L52.59,5.53 L52.13,6.40 L51.72,7.27 L51.37,8.14 L51.08,9.01 L50.85,9.88 L50.69,10.77 L50.59,11.68 L50.56,12.61 L50.58,13.55 L50.65,14.52 L50.76,15.52 L50.91,16.54 L51.08,17.59 L51.27,18.66 L51.47,19.76 L51.65,20.87 L51.28,21.77 L50.36,22.42 L49.45,23.06 L48.56,23.68 L47.70,24.30 L46.87,24.92 L46.08,25.54 L45.35,26.18 L44.66,26.84 L44.03,27.52 L43.46,28.22 L42.95,28.97 L42.48,29.75 L42.07,30.57 L41.71,31.43 L41.38,32.33 L41.09,33.28 L40.83,34.26 L40.58,35.28 L40.35,36.33 L40.11,37.40 L39.86,38.49 L39.60,39.60 L38.49,39.86 L37.40,40.11 L36.33,40.35 L35.28,40.58 L34.26,40.83 L33.28,41.09 L32.33,41.38 L31.43,41.71 L30.57,42.07 L29.75,42.48 L28.97,42.95 L28.22,43.46 L27.52,44.03 L26.84,44.66 L26.18,45.35 L25.54,46.08 L24.92,46.87 L24.30,47.70 L23.68,48.56 L23.06,49.45 L22.42,50.36 L21.77,51.28 L20.87,51.65 L19.76,51.47 L18.66,51.27 L17.59,51.08 L16.54,50.91 L15.52,50.76 L14.52,50.65 L13.55,50.58 L12.61,50.56 L11.68,50.59 L10.77,50.69 L9.88,50.85 L9.01,51.08 L8.14,51.37 L7.27,51.72 L6.40,52.13 L5.53,52.59 L4.65,53.10 L3.75,53.64 L2.84,54.22 L1.91,54.81 L0.97,55.41 L0.00,56.00 L-0.97,55.41 L-1.91,54.81 L-2.84,54.22 L-3.75,53.64 L-4.65,53.10 L-5.53,52.59 L-6.40,52.13 L-7.27,51.72 L-8.14,51.37 L-9.01,51.08 L-9.88,50.85 L-10.77,50.69 L-11.68,50.59 L-12.61,50.56 L-13.55,50.58 L-14.52,50.65 L-15.52,50.76 L-16.54,50.91 L-17.59,51.08 L-18.66,51.27 L-19.76,51.47 L-20.87,51.65 L-21.77,51.28 L-22.42,50.36 L-23.06,49.45 L-23.68,48.56 L-24.30,47.70 L-24.92,46.87 L-25.54,46.08 L-26.18,45.35 L-26.84,44.66 L-27.52,44.03 L-28.22,43.46 L-28.97,42.95 L-29.75,42.48 L-30.57,42.07 L-31.43,41.71 L-32.33,41.38 L-33.28,41.09 L-34.26,40.83 L-35.28,40.58 L-36.33,40.35 L-37.40,40.11 L-38.49,39.86 L-39.60,39.60 L-39.86,38.49 L-40.11,37.40 L-40.35,36.33 L-40.58,35.28 L-40.83,34.26 L-41.09,33.28 L-41.38,32.33 L-41.71,31.43 L-42.07,30.57 L-42.48,29.75 L-42.95,28.97 L-43.46,28.22 L-44.03,27.52 L-44.66,26.84 L-45.35,26.18 L-46.08,25.54 L-46.87,24.92 L-47.70,24.30 L-48.56,23.68 L-49.45,23.06 L-50.36,22.42 L-51.28,21.77 L-51.65,20.87 L-51.47,19.76 L-51.27,18.66 L-51.08,17.59 L-50.91,16.54 L-50.76,15.52 L-50.65,14.52 L-50.58,13.55 L-50.56,12.61 L-50.59,11.68 L-50.69,10.77 L-50.85,9.88 L-51.08,9.01 L-51.37,8.14 L-51.72,7.27 L-52.13,6.40 L-52.59,5.53 L-53.10,4.65 L-53.64,3.75 L-54.22,2.84 L-54.81,1.91 L-55.41,0.97 L-56.00,0.00 L-55.41,-0.97 L-54.81,-1.91 L-54.22,-2.84 L-53.64,-3.75 L-53.10,-4.65 L-52.59,-5.53 L-52.13,-6.40 L-51.72,-7.27 L-51.37,-8.14 L-51.08,-9.01 L-50.85,-9.88 L-50.69,-10.77 L-50.59,-11.68 L-50.56,-12.61 L-50.58,-13.55 L-50.65,-14.52 L-50.76,-15.52 L-50.91,-16.54 L-51.08,-17.59 L-51.27,-18.66 L-51.47,-19.76 L-51.65,-20.87 L-51.28,-21.77 L-50.36,-22.42 L-49.45,-23.06 L-48.56,-23.68 L-47.70,-24.30 L-46.87,-24.92 L-46.08,-25.54 L-45.35,-26.18 L-44.66,-26.84 L-44.03,-27.52 L-43.46,-28.22 L-42.95,-28.97 L-42.48,-29.75 L-42.07,-30.57 L-41.71,-31.43 L-41.38,-32.33 L-41.09,-33.28 L-40.83,-34.26 L-40.58,-35.28 L-40.35,-36.33 L-40.11,-37.40 L-39.86,-38.49 L-39.60,-39.60 L-38.49,-39.86 L-37.40,-40.11 L-36.33,-40.35 L-35.28,-40.58 L-34.26,-40.83 L-33.28,-41.09 L-32.33,-41.38 L-31.43,-41.71 L-30.57,-42.07 L-29.75,-42.48 L-28.97,-42.95 L-28.22,-43.46 L-27.52,-44.03 L-26.84,-44.66 L-26.18,-45.35 L-25.54,-46.08 L-24.92,-46.87 L-24.30,-47.70 L-23.68,-48.56 L-23.06,-49.45 L-22.42,-50.36 L-21.77,-51.28 L-20.87,-51.65 L-19.76,-51.47 L-18.66,-51.27 L-17.59,-51.08 L-16.54,-50.91 L-15.52,-50.76 L-14.52,-50.65 L-13.55,-50.58 L-12.61,-50.56 L-11.68,-50.59 L-10.77,-50.69 L-9.88,-50.85 L-9.01,-51.08 L-8.14,-51.37 L-7.27,-51.72 L-6.40,-52.13 L-5.53,-52.59 L-4.65,-53.10 L-3.75,-53.64 L-2.84,-54.22 L-1.91,-54.81 L-0.97,-55.41 L-0.00,-56.00 L0.97,-55.41 L1.91,-54.81 L2.84,-54.22 L3.75,-53.64 L4.65,-53.10 L5.53,-52.59 L6.40,-52.13 L7.27,-51.72 L8.14,-51.37 L9.01,-51.08 L9.88,-50.85 L10.77,-50.69 L11.68,-50.59 L12.61,-50.56 L13.55,-50.58 L14.52,-50.65 L15.52,-50.76 L16.54,-50.91 L17.59,-51.08 L18.66,-51.27 L19.76,-51.47 L20.87,-51.65 L21.77,-51.28 L22.42,-50.36 L23.06,-49.45 L23.68,-48.56 L24.30,-47.70 L24.92,-46.87 L25.54,-46.08 L26.18,-45.35 L26.84,-44.66 L27.52,-44.03 L28.22,-43.46 L28.97,-42.95 L29.75,-42.48 L30.57,-42.07 L31.43,-41.71 L32.33,-41.38 L33.28,-41.09 L34.26,-40.83 L35.28,-40.58 L36.33,-40.35 L37.40,-40.11 L38.49,-39.86 L39.60,-39.60 L39.86,-38.49 L40.11,-37.40 L40.35,-36.33 L40.58,-35.28 L40.83,-34.26 L41.09,-33.28 L41.38,-32.33 L41.71,-31.43 L42.07,-30.57 L42.48,-29.75 L42.95,-28.97 L43.46,-28.22 L44.03,-27.52 L44.66,-26.84 L45.35,-26.18 L46.08,-25.54 L46.87,-24.92 L47.70,-24.30 L48.56,-23.68 L49.45,-23.06 L50.36,-22.42 L51.28,-21.77 L51.65,-20.87 L51.47,-19.76 L51.27,-18.66 L51.08,-17.59 L50.91,-16.54 L50.76,-15.52 L50.65,-14.52 L50.58,-13.55 L50.56,-12.61 L50.59,-11.68 L50.69,-10.77 L50.85,-9.88 L51.08,-9.01 L51.37,-8.14 L51.72,-7.27 L52.13,-6.40 L52.59,-5.53 L53.10,-4.65 L53.64,-3.75 L54.22,-2.84 L54.81,-1.91 L55.41,-0.97 L56.00,-0.00Z"/></svg><span class="bubble__text">Bekijk case</span></div>
 <div class="swipe" aria-hidden="true"><div class="swipe__logo">${renderLogo(logo, { variant: 'mono' })}</div></div>
 <script src="${assets.js}" defer></script>
 </body>
@@ -202,23 +199,23 @@ ${menu(ctx, path)}
 
 export function homePage(ctx) {
   const { site, projects, services, clients } = ctx;
-  const recent = projects.slice(0, 3);
+  const recent = projects.slice(0, 4);
   const hero = site.heroVideo;
 
   const recentHtml = recent.length
-    ? `<div class="recent">${recent.map((p, i) => projectCard(p, { variant: ['lead', 'side', 'third'][i], speed: [0, 0.12, 0.06][i] })).join('')}</div>`
+    ? `<div class="recent">${recent.map((p, i) => projectCard(p, { eager: i < 2 })).join('')}</div>
+    <div class="recent__more" data-reveal><a class="btn btn--dark btn--big" href="/cases/"><span>Bekijk al ons werk</span></a></div>`
     : '<p class="empty">Hier verschijnen binnenkort onze nieuwste projecten.</p>';
 
   const count = (slug) => projects.filter((p) => p.services.some((s) => s.slug === slug)).length;
   const servicesHtml = services
     .map(
       (s, i) => `<li class="srow" data-reveal style="--d:${i * 70}ms">
-  <a class="srow__link" href="/wat-we-doen/${esc(s.slug)}/">
+  <a class="srow__link" href="/wat-we-doen/${esc(s.slug)}/" data-case data-bubble="Bekijk cases">
     <span class="srow__num">0${i + 1}</span>
     <span class="srow__title">${esc(s.title)}</span>
     <span class="srow__short">${esc(s.short)}</span>
     <span class="srow__count">${count(s.slug)} ${count(s.slug) === 1 ? 'case' : 'cases'}</span>
-    <span class="srow__arrow">${ARROW}</span>
   </a>
 </li>`
     )
@@ -262,7 +259,7 @@ export function homePage(ctx) {
 
 <section class="mod">
   <div class="wrap">
-    ${sectionHead({ sub: 'Recent werk', heading: site.recentTitle, link: { href: '/cases/', label: 'Alle cases' } })}
+    ${sectionHead({ sub: 'Recent werk', heading: site.recentTitle })}
     ${recentHtml}
   </div>
 </section>
@@ -310,20 +307,15 @@ export function servicesPage(ctx) {
   const blocks = services
     .map((s, i) => {
       const n = projects.filter((p) => p.services.some((x) => x.slug === s.slug));
-      const thumbs = n
-        .slice(0, 3)
-        .map((p) => (p.media[0] ? `<span class="sblock__thumb">${media(p.media[0], { cls: 'sblock__asset' })}</span>` : ''))
-        .join('');
       return `<article class="sblock" data-reveal>
-  <a class="sblock__link" href="/wat-we-doen/${esc(s.slug)}/">
+  <a class="sblock__link" href="/wat-we-doen/${esc(s.slug)}/" data-case data-bubble="Bekijk cases">
     <span class="sblock__num">0${i + 1}</span>
     <span class="sblock__body">
       <span class="sblock__title">${esc(s.title)}</span>
       <span class="sblock__short">${esc(s.short || s.intro)}</span>
       ${s.offer.length ? `<span class="sblock__offer">${s.offer.map((o) => `<span>${esc(o.title)}</span>`).join('')}</span>` : ''}
     </span>
-    <span class="sblock__thumbs">${thumbs}</span>
-    <span class="sblock__more">${n.length} ${n.length === 1 ? 'case' : 'cases'} ${ARROW_R}</span>
+    <span class="sblock__more">${n.length} ${n.length === 1 ? 'case' : 'cases'}</span>
   </a>
 </article>`;
     })
