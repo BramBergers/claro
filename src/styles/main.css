@@ -514,8 +514,6 @@ html.lb-open { overflow: hidden; }
 @media (max-width: 860px) {
   .process__wave { display: none; }
   .process__list { grid-template-columns: minmax(0, 1fr); gap: 1.8rem; }
-  /* golvende lijn verticaal tussen de bolletjes */
-  .process__list::before { content: ''; position: absolute; left: calc(1.4rem - 12px); top: 2.8rem; bottom: 2.8rem; width: 24px; background: var(--solid); -webkit-mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 62'%3E%3Cpath d='M4,0 L4.0,0 L8.2,3 L12.0,6 L15.1,9 L17.1,12 L18.0,15 L17.6,18 L15.9,21 L13.1,24 L9.5,27 L5.4,30 L6.8,33 L10.8,36 L14.1,39 L16.6,42 L17.8,45 L17.8,48 L16.6,51 L14.1,54 L10.8,57 L6.8,60' fill='none' stroke='black' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E") repeat-y 0 0 / 24px 62px; mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 62'%3E%3Cpath d='M4,0 L4.0,0 L8.2,3 L12.0,6 L15.1,9 L17.1,12 L18.0,15 L17.6,18 L15.9,21 L13.1,24 L9.5,27 L5.4,30 L6.8,33 L10.8,36 L14.1,39 L16.6,42 L17.8,45 L17.8,48 L16.6,51 L14.1,54 L10.8,57 L6.8,60' fill='none' stroke='black' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E") repeat-y 0 0 / 24px 62px; }
   .process__step { position: relative; grid-template-columns: 2.8rem minmax(0, 1fr); gap: 0.2rem 1.1rem; }
   .process__dot { grid-row: span 2; width: 2.8rem; height: 2.8rem; margin: 0; font-size: 1.1rem; position: relative; z-index: 1; }
   .process__title { align-self: center; font-size: 1.35rem; }
