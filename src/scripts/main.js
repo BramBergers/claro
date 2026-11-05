@@ -349,6 +349,64 @@
   }
 
 
+  /* ---------- Contactblok: het woord wisselt (helder, duidelijk, Claro) ---------- */
+  $$('[data-swap]').forEach((sw) => {
+    let words = [];
+    try { words = JSON.parse(sw.dataset.swap); } catch (e) { return; }
+    const escH = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    const letters = (w) => [...w].map((ch, k) => `<i style="--k:${k}">${ch === ' ' ? '&nbsp;' : escH(ch)}</i>`).join('');
+    let cur = $('.swap__word', sw);
+    cur.innerHTML = letters(words[0]);
+    const pad = () => { const cs = getComputedStyle(sw); return parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight); };
+    const fit = (el) => { sw.style.width = `${el.offsetWidth + pad()}px`; };
+    fit(cur);
+    addEventListener('resize', () => fit(cur));
+    if (words.length < 2 || reduced) return;
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % words.length;
+      const next = d.createElement('span');
+      next.className = 'swap__word is-in';
+      next.innerHTML = letters(words[i]);
+      cur.classList.add('is-out');
+      sw.appendChild(next);
+      fit(next);
+      requestAnimationFrame(() => requestAnimationFrame(() => next.classList.remove('is-in')));
+      const old = cur;
+      cur = next;
+      setTimeout(() => old.remove(), 800);
+    }, 2600);
+  });
+
+  /* ---------- Footer: golvende rand zoals de potloodpunt ---------- */
+  const wave = $('.foot__wave');
+  if (wave) {
+    const wpath = $('path', wave);
+    let wOn = false, wPhase = 0, wLast = 0;
+    const drawWave = () => {
+      const W = wave.clientWidth || innerWidth, H = 16, P = 46;
+      wave.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      let dStr = `M0,${H}`;
+      for (let x = 0; x <= W + 4; x += 4) {
+        const y = 3 + 8 * Math.abs(Math.sin((Math.PI * x) / P + wPhase));
+        dStr += ` L${x},${y.toFixed(1)}`;
+      }
+      wpath.setAttribute('d', `${dStr} L${W + 4},${H} Z`);
+    };
+    const waveLoop = (t) => {
+      if (!wOn) { wLast = 0; return; }
+      if (wLast) wPhase += ((t - wLast) / 1000) * 0.9;
+      wLast = t;
+      drawWave();
+      requestAnimationFrame(waveLoop);
+    };
+    drawWave();
+    addEventListener('resize', drawWave);
+    if (!reduced && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => { const was = wOn; wOn = e.isIntersecting; root.classList.toggle('on-foot', wOn); if (wOn && !was) requestAnimationFrame(waveLoop); }, { rootMargin: '0px 0px -60px 0px' }).observe($('.foot'));
+    }
+  }
+
   /* ---------- Contactformulier ---------- */
   const form = $('[data-form]');
   if (form) {

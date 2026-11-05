@@ -41,7 +41,9 @@ export const siteSettings = defineType({
     defineField({ name: 'servicesTitle', title: 'Titel boven de diensten', type: 'string', group: 'home' }),
     defineField({ name: 'servicesIntro', title: 'Tekst bij de diensten', type: 'text', rows: 2, group: 'home' }),
     defineField({ name: 'clientsTitle', title: 'Titel boven de klantlogo\'s', type: 'string', group: 'home' }),
-    defineField({ name: 'ctaTitle', title: 'Contactblok: titel', type: 'string', group: 'home' }),
+    defineField({ name: 'ctaTitle', title: 'Contactblok: begin van de zin', type: 'string', group: 'home', description: 'Bijvoorbeeld "Klaar om het".' }),
+    defineField({ name: 'ctaWords', title: 'Contactblok: wisselende woorden', type: 'array', of: [{ type: 'string' }], group: 'home', description: 'Bijvoorbeeld "helder", "duidelijk", "Claro".' }),
+    defineField({ name: 'ctaEnd', title: 'Contactblok: einde van de zin', type: 'string', group: 'home', description: 'Bijvoorbeeld "te maken?".' }),
     defineField({ name: 'ctaText', title: 'Contactblok: tekst', type: 'text', rows: 2, group: 'home' }),
     defineField({ name: 'ctaLabel', title: 'Tekst van de contactknop', type: 'string', group: 'home' }),
     defineField({ name: 'casesTitle', title: 'Cases-pagina: titel', type: 'string', group: 'pages' }),
@@ -51,6 +53,7 @@ export const siteSettings = defineType({
     defineField({ name: 'instagram', title: 'Instagram-link', type: 'url', group: 'contact' }),
     defineField({ name: 'linkedin', title: 'LinkedIn-link', type: 'url', group: 'contact' }),
     defineField({ name: 'email', title: 'E-mailadres', type: 'string', group: 'contact' }),
+    defineField({ name: 'phone', title: 'Telefoonnummer', type: 'string', group: 'contact', description: 'Bijvoorbeeld +31 6 12345678.' }),
     defineField({ name: 'kvk', title: 'KvK-nummer', type: 'string', group: 'contact' }),
     defineField({ name: 'byline', title: 'Namen in de footer ("by ...")', type: 'string', group: 'contact' }),
     defineField({ name: 'description', title: 'Beschrijving voor Google', type: 'text', rows: 3, group: 'contact' })

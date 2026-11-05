@@ -72,16 +72,22 @@ function sectionHead({ sub, heading, text = '', link = null, h = 'h2' }) {
 
 function ctaBlock(ctx) {
   const { site } = ctx;
+  const words = (site.ctaWords || []).filter(Boolean);
+  const tel = site.phone ? site.phone.replace(/[^\d+]/g, '') : '';
   return `<section class="mod cta">
-  <div class="wrap cta__inner">
-    <div class="cta__badge" aria-hidden="true">
-      <svg viewBox="0 0 200 200"><defs><path id="cta-ring" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><text><textPath href="#cta-ring">${esc(site.ctaLabel)} ✦ ${esc(site.ctaLabel)} ✦ ${esc(site.ctaLabel)} ✦</textPath></text></svg>
-      <span class="cta__badge-logo">${renderLogo(ctx.logo, { variant: 'mono' })}</span>
-    </div>
-    <div class="cta__text">
-      <h2 class="h-big" data-split>${title(site.ctaTitle)}</h2>
-      <p class="lead" data-reveal>${esc(site.ctaText)}</p>
-      <a class="btn btn--dark" href="/contact/" data-reveal><span>${esc(site.ctaLabel)}</span></a>
+  <div class="wrap">
+    <h2 class="cta__title" data-reveal>
+      <span>${esc(site.ctaTitle)}</span>
+      ${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}
+      <span>${esc(site.ctaEnd || '')}</span>
+    </h2>
+    <div class="cta__row">
+      <p class="cta__text" data-reveal>${esc(site.ctaText)}</p>
+      <div class="cta__links" data-reveal>
+        ${site.email ? `<a class="cta__link" href="mailto:${esc(site.email)}"><span class="cta__label">Mail</span><span class="cta__value">${esc(site.email)}</span>${ARROW}</a>` : ''}
+        ${tel ? `<a class="cta__link" href="tel:${esc(tel)}"><span class="cta__label">Bel</span><span class="cta__value">${esc(site.phone)}</span>${ARROW}</a>` : ''}
+        <a class="btn btn--dark" href="/contact/"><span>${esc(site.ctaLabel)}</span></a>
+      </div>
     </div>
   </div>
 </section>`;
@@ -117,6 +123,7 @@ function footer(ctx) {
   const { site, logo } = ctx;
   const year = new Date().getFullYear();
   return `<footer class="foot">
+  <svg class="foot__wave" aria-hidden="true" preserveAspectRatio="none"><path/></svg>
   <div class="wrap foot__inner">
     <a class="foot__logo" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
     <nav class="foot__nav" aria-label="Footer">
@@ -164,7 +171,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${esc(canonical)}">
-<meta name="theme-color" content="#FFF2AA">
+<meta name="theme-color" content="#F8EDE7">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${fonts}
 <link rel="stylesheet" href="${assets.css}">
@@ -506,6 +513,7 @@ export function contactPage(ctx) {
       <p class="lead" data-reveal>${esc(contact.intro)}</p>
       <ul class="contact__details" data-reveal>
         ${site.email ? `<li><span>E-mail</span><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></li>` : ''}
+        ${site.phone ? `<li><span>Telefoon</span><a href="tel:${esc(site.phone.replace(/[^\d+]/g, ''))}">${esc(site.phone)}</a></li>` : ''}
         <li><span>Instagram</span><a href="${esc(site.instagram)}" target="_blank" rel="noopener">@wijzijnclaro</a></li>
         <li><span>LinkedIn</span><a href="${esc(site.linkedin)}" target="_blank" rel="noopener">Claro op LinkedIn</a></li>
         <li><span>KvK</span><b>${esc(site.kvk)}</b></li>

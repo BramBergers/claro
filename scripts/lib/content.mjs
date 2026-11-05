@@ -10,7 +10,7 @@ const mediaProjection = `{ "url": file.asset->url, "mime": file.asset->mimeType,
 const QUERY = `{
   "site": *[_type == "siteSettings"][0]{
     heroTitle, heroIntro, recentTitle, servicesTitle, servicesIntro, clientsTitle,
-    ctaTitle, ctaText, ctaLabel, casesTitle, casesIntro, servicesPageTitle, servicesPageIntro,
+    ctaTitle, ctaWords, ctaEnd, ctaText, ctaLabel, phone, casesTitle, casesIntro, servicesPageTitle, servicesPageIntro,
     instagram, linkedin, email, kvk, byline, description,
     "heroVideo": heroVideo${mediaProjection}
   },

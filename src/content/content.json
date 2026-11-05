@@ -14,8 +14,8 @@
     "servicesTitle": "Wat we doen",
     "servicesIntro": "Van logo tot livegang. We denken mee vanaf het eerste idee en ontwerpen alles wat je merk nodig heeft om op te vallen.",
     "clientsTitle": "Zij gingen je voor",
-    "ctaTitle": "Zin in iets helders?",
-    "ctaText": "Vertel ons waar je naartoe wilt. We denken graag mee, zonder verplichtingen.",
+    "ctaTitle": "Klaar om het",
+    "ctaText": "Vertel ons waar je naartoe wilt. We denken graag mee, vrijblijvend en zonder poespas.",
     "ctaLabel": "Let's chat!",
     "casesTitle": "Heldere cases",
     "casesIntro": "Een greep uit ons werk. Van complete huisstijlen tot korte animaties: elk project begint met dezelfde vraag, wat moet er blijven hangen?",
@@ -23,9 +23,16 @@
     "servicesPageIntro": "Vier vakgebieden, één heldere aanpak. Kies wat je nodig hebt, of laat ons alles in samenhang oppakken.",
     "instagram": "https://www.instagram.com/wijzijnclaro/",
     "linkedin": "https://www.linkedin.com/",
-    "email": "hallo@clarodesign.nl",
+    "email": "info@clarodesign.nl",
     "kvk": "12345678",
-    "byline": "Nicole Timmer en Bram Bergers"
+    "byline": "Nicole Timmer en Bram Bergers",
+    "phone": "+31 6 53328515",
+    "ctaWords": [
+      "helder",
+      "duidelijk",
+      "Claro"
+    ],
+    "ctaEnd": "te maken?"
   },
   "services": [
     {
