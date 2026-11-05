@@ -325,25 +325,29 @@ export function servicesPage(ctx) {
     <p class="sub" data-reveal>Diensten</p>
     <h1 class="h-hero" data-split>${title(site.servicesPageTitle)}</h1>
     <p class="lead lead--big" data-reveal>${esc(site.servicesPageIntro)}</p>
-    ${
-      steps.length
-        ? `<div class="process">
-      <p class="sub" data-reveal>${esc(ctx.about.stepsTitle || 'Zo werken we')}</p>
-      <div class="process__track">
-      <svg class="process__wave" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 1000 24"><path d="${processWave()}"/></svg>
-      <ol class="process__list">
-        ${steps.map((st, i) => `<li class="process__step" data-reveal style="--d:${i * 140}ms"><span class="process__dot">${i + 1}</span><span class="process__title">${esc(st.title)}</span><span class="process__text">${esc(st.text)}</span></li>`).join('')}
-      </ol>
-      </div>
-    </div>`
-        : ''
-    }
+    ${processBlock(ctx)}
   </div>
 </section>
 <section class="mod">
   <div class="wrap sblocks">${blocks}</div>
 </section>`;
   return page(ctx, { title: 'Wat we doen', description: site.servicesPageIntro, path: '/wat-we-doen/', body, bodyClass: 'page-services' });
+}
+
+/** Werkwijze: genummerde stappen verbonden door een golvende lijn (Wat we doen en Over ons). */
+function processBlock(ctx, { heading = false } = {}) {
+  const steps = (ctx.about && ctx.about.steps) || [];
+  if (!steps.length) return '';
+  const label = esc(ctx.about.stepsTitle || 'Zo werken we');
+  return `<div class="process${heading ? ' process--page' : ''}">
+      ${heading ? `${sectionHead({ sub: 'Werkwijze', heading: ctx.about.stepsTitle || 'Zo werken we' })}` : `<p class="sub" data-reveal>${label}</p>`}
+      <div class="process__track">
+      <svg class="process__wave" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 1000 24"><path d="${processWave()}"/></svg>
+      <ol class="process__list">
+        ${steps.map((st, i) => `<li class="process__step" data-reveal style="--d:${i * 140}ms"><span class="process__dot">${i + 1}</span><span class="process__title">${esc(st.title)}</span><span class="process__text">${esc(st.text)}</span></li>`).join('')}
+      </ol>
+      </div>
+    </div>`;
 }
 
 /** Golvende lijn tussen de stappen, in de vorm van de potloodpunt. */
@@ -501,7 +505,7 @@ ${
 <section class="mod">
   <div class="wrap">
     <div class="story story--cols">${(about.story || []).map((t) => `<p data-reveal>${esc(t)}</p>`).join('')}</div>
-    ${steps ? `${sectionHead({ sub: 'Werkwijze', heading: about.stepsTitle })}<ol class="steps">${steps}</ol>` : ''}
+    ${processBlock(ctx, { heading: true })}
   </div>
 </section>
 
