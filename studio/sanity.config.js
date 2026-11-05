@@ -5,7 +5,7 @@ import { schemaTypes } from './schemaTypes/index.js';
 // Deze documenten bestaan maar één keer ("singletons")
 const singletons = [
   { id: 'siteSettings', title: 'Website-instellingen' },
-  { id: 'aboutPage', title: 'Pagina: Over Claro' },
+  { id: 'aboutPage', title: 'Pagina: Over ons' },
   { id: 'contactPage', title: 'Pagina: Contact' }
 ];
 
@@ -22,6 +22,7 @@ export default defineConfig({
           .items([
             ...singletons.map((s) => S.listItem().title(s.title).id(s.id).child(S.document().schemaType(s.id).documentId(s.id))),
             S.divider(),
+            S.documentTypeListItem('project').title('Projecten (cases)'),
             S.documentTypeListItem('service').title('Diensten'),
             S.documentTypeListItem('client').title('Klanten (logo\'s)')
           ])

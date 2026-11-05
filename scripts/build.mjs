@@ -30,14 +30,18 @@ await mkdir(path.join(dist, 'assets'), { recursive: true });
 await writeFile(path.join(dist, 'assets', cssName), css);
 await writeFile(path.join(dist, 'assets', jsName), js);
 
-// 3. lettertype: eigen bestand als dat er is, anders Google Fonts
-const localFont = path.join(root, 'public/fonts/Unbounded.woff2');
-const fonts = (await exists(localFont))
-  ? `<link rel="preload" href="/fonts/Unbounded.woff2" as="font" type="font/woff2" crossorigin>
-<style>@font-face{font-family:'Unbounded';src:url('/fonts/Unbounded.woff2') format('woff2');font-weight:200 900;font-style:normal;font-display:swap}</style>`
-  : `<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap">`;
+// 3. lettertypen: eigen bestanden in public/fonts (Inter, Inter Display en Lora, SIL Open Font License)
+const fontFaces = [
+  ['Display', 'InterDisplay-Black', 900, 'normal'],
+  ['Display', 'InterDisplay-ExtraBold', 800, 'normal'],
+  ['Text', 'Inter-Regular', 400, 'normal'],
+  ['Text', 'Inter-Medium', 500, 'normal'],
+  ['Text', 'Inter-SemiBold', 600, 'normal'],
+  ['Serif', 'Lora-Italic', '400 700', 'italic']
+];
+const fonts = `<link rel="preload" href="/fonts/InterDisplay-Black.woff" as="font" type="font/woff" crossorigin>
+<link rel="preload" href="/fonts/Inter-Regular.woff" as="font" type="font/woff" crossorigin>
+<style>${fontFaces.map(([fam, file, w, st]) => `@font-face{font-family:'${fam}';src:url('/fonts/${file}.woff') format('woff');font-weight:${w};font-style:${st};font-display:swap}`).join('')}</style>`;
 
 // 4. inhoud en logo
 const content = await loadContent(root);
@@ -55,10 +59,16 @@ async function write(rel, html) {
 }
 
 await write('index.html', T.homePage(ctx));
-for (const [i, s] of ctx.services.entries()) {
-  await write(`werk/${s.slug}/index.html`, T.servicePage(ctx, s, i));
+await write('cases/index.html', T.casesPage(ctx));
+for (const [i, p] of ctx.projects.entries()) {
+  const next = ctx.projects[(i + 1) % ctx.projects.length];
+  await write(`cases/${p.slug}/index.html`, T.casePage(ctx, p, ctx.projects.length > 1 ? next : null));
 }
-await write('over-claro/index.html', T.aboutPage(ctx));
+await write('wat-we-doen/index.html', T.servicesPage(ctx));
+for (const s of ctx.services) {
+  await write(`wat-we-doen/${s.slug}/index.html`, T.servicePage(ctx, s));
+}
+await write('over-ons/index.html', T.aboutPage(ctx));
 await write('contact/index.html', T.contactPage(ctx));
 await write('bedankt/index.html', T.thanksPage(ctx));
 await write('privacy/index.html', T.privacyPage(ctx));
@@ -66,7 +76,7 @@ await write('404.html', T.notFoundPage(ctx));
 
 // 6. sitemap en robots
 const base = ctx.site.url.replace(/\/$/, '');
-const urls = ['/', ...ctx.services.map((s) => `/werk/${s.slug}/`), '/over-claro/', '/contact/', '/privacy/'];
+const urls = ['/', '/cases/', ...ctx.projects.map((p) => `/cases/${p.slug}/`), '/wat-we-doen/', ...ctx.services.map((s) => `/wat-we-doen/${s.slug}/`), '/over-ons/', '/contact/', '/privacy/'];
 await writeFile(
   path.join(dist, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
@@ -76,5 +86,4 @@ await writeFile(
 await writeFile(path.join(dist, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${base}/sitemap.xml\n`);
 
 console.log(`✓ ${pages.length} pagina's gebouwd in ${Date.now() - started} ms`);
-console.log(`  inhoud: ${content.source} · ${ctx.services.length} diensten · ${ctx.clients.length} klantlogo's`);
-console.log(`  lettertype: ${(await exists(localFont)) ? 'eigen bestand (public/fonts)' : 'Google Fonts'}`);
+console.log(`  inhoud: ${content.source} · ${ctx.projects.length} projecten · ${ctx.services.length} diensten · ${ctx.clients.length} klantlogo's`);
