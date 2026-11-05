@@ -77,8 +77,8 @@ function ctaBlock(ctx) {
   return `<section class="mod cta">
   <div class="wrap">
     <h2 class="cta__title" data-reveal>
-      <span>${esc(site.ctaTitle)}</span>
-      ${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}
+      <span class="cta__line"><span>${esc(site.ctaTitle)}</span>${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}</span>
+      <span class="cta__break"></span>
       <span>${esc(site.ctaEnd || '')}</span>
     </h2>
     <div class="cta__row">
@@ -232,6 +232,12 @@ export function homePage(ctx) {
   <div class="clients__marquee" data-reveal>
     <ul class="clients__track">${[...clients, ...clients]
       .map((c, i) => `<li class="client"${i >= clients.length ? ' aria-hidden="true"' : ''}>${c.svg}</li>`)
+      .join('')}</ul>
+  </div>
+  <div class="clients__marquee" aria-hidden="true">
+    <ul class="clients__track clients__track--rev">${[...clients, ...clients]
+      .reverse()
+      .map((c) => `<li class="client">${c.svg}</li>`)
       .join('')}</ul>
   </div>
 </section>`
