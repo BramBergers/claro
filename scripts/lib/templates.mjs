@@ -37,7 +37,7 @@ const tagsList = (services, cls = 'tags') =>
 /* Onderdelen                                                          */
 /* ------------------------------------------------------------------ */
 
-/** Projectkaart: groot beeld, tags op het beeld, bedrijf en titel eronder. */
+/** Projectkaart: groot beeld met tags erop, bedrijf en titel eronder. */
 function projectCard(p, { variant = '', eager = false, speed = 0 } = {}) {
   const first = p.media[0];
   return `<a class="pcard${variant ? ` pcard--${variant}` : ''}" href="/cases/${esc(p.slug)}/" data-case data-services="${esc(p.services.map((s) => s.slug).join(' '))}"${speed ? ` data-speed="${speed}"` : ''}>
@@ -46,11 +46,10 @@ function projectCard(p, { variant = '', eager = false, speed = 0 } = {}) {
 </a>`;
 }
 
-/** Speels raster: twee kolommen die verspringen, met afwisselende beeldverhoudingen. */
+/** Raster zoals bij Kaliber: twee kolommen met grote staande beelden, de rechterkolom verspringt. */
 function projectGrid(projects, { empty = 'Hier verschijnen binnenkort onze cases.' } = {}) {
   if (!projects.length) return `<p class="empty">${esc(empty)}</p>`;
-  const variants = ['tall', 'wide', 'square', 'wide', 'tall', 'square'];
-  const cards = projects.map((p, i) => projectCard(p, { variant: variants[i % variants.length] }));
+  const cards = projects.map((p) => projectCard(p));
   const left = cards.filter((_, i) => i % 2 === 0).join('');
   const right = cards.filter((_, i) => i % 2 === 1).join('');
   return `<div class="pgrid" data-grid>
@@ -70,18 +69,32 @@ function sectionHead({ sub, heading, text = '', link = null, h = 'h2' }) {
 </div>`;
 }
 
+function quickLinks(site, { email = true } = {}) {
+  const tel = site.phone ? `<a class="btn btn--line" href="tel:${esc(site.phone.replace(/[^\d+]/g, ''))}"><span>Bel ons</span></a>` : '';
+  const app = site.whatsapp ? `<a class="btn btn--line" href="https://wa.me/${esc(site.whatsapp.replace(/\D/g, ''))}" target="_blank" rel="noopener"><span>WhatsApp</span></a>` : '';
+  const mail = email && site.email ? `<a class="btn btn--line" href="mailto:${esc(site.email)}"><span>Mail ons</span></a>` : '';
+  return app + tel + mail;
+}
+
+function sticker(text, cls = '') {
+  const t = esc(text || '');
+  return `<span class="sticker sticker--${cls}" aria-hidden="true"><svg viewBox="0 0 200 200"><defs><path id="ring-${cls || 'x'}" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs><text><textPath href="#ring-${cls || 'x'}" textLength="462" lengthAdjust="spacingAndGlyphs">${t} ✦ ${t} ✦ </textPath></text></svg><span class="sticker__core">⚡</span></span>`;
+}
+
 function ctaBlock(ctx) {
   const { site } = ctx;
-  return `<section class="mod cta">
+  const words = (site.ctaWords || []).filter(Boolean);
+  const rotator = words.length
+    ? `<span class="rotator" data-rotator><span class="rotator__word is-on">${esc(words[0])}?</span>${words.slice(1).map((w) => `<span class="rotator__word">${esc(w)}?</span>`).join('')}</span>`
+    : '';
+  return `<section class="cta">
   <div class="wrap cta__inner">
-    <div class="cta__badge" aria-hidden="true">
-      <svg viewBox="0 0 200 200"><defs><path id="cta-ring" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><text><textPath href="#cta-ring">${esc(site.ctaLabel)} ✦ ${esc(site.ctaLabel)} ✦ ${esc(site.ctaLabel)} ✦</textPath></text></svg>
-      <span class="cta__badge-logo">${renderLogo(ctx.logo, { variant: 'mono' })}</span>
-    </div>
-    <div class="cta__text">
-      <h2 class="h-big" data-split>${title(site.ctaTitle)}</h2>
-      <p class="lead" data-reveal>${esc(site.ctaText)}</p>
-      <a class="btn btn--dark" href="/contact/" data-reveal><span>${esc(site.ctaLabel)}</span></a>
+    ${sticker(site.responseTime, 'cta')}
+    <h2 class="cta__title"><span class="cta__start">${esc(site.ctaTitle)}</span>${rotator || '<span class="cta__q">?</span>'}</h2>
+    <p class="cta__text" data-reveal>${esc(site.ctaText)}</p>
+    <div class="btns" data-reveal>
+      <a class="btn btn--pop" href="/contact/"><span>${esc(site.ctaLabel)}</span></a>
+      ${quickLinks(site)}
     </div>
   </div>
 </section>`;
@@ -135,6 +148,32 @@ function footer(ctx) {
 </footer>`;
 }
 
+const FILLED_A = 'M919.88,327.47 C919.69,327.47 830.44,50.64 830.44,50.64 C826.94,39.97 821.24,30.48 813.57,22.51 C804.88,13.48 794.18,7.63 782.32,3.85 C762.09,-2.60 740.71,-0.96 721.79,8.70 C703.25,18.16 690.65,32.77 684.56,52.92 L601.43,327.47 Z';
+
+/** Potlood dat CLARO schrijft en daarna in de A drukt (zie main.js). Punt ligt op (0,0) en wijst naar links. */
+const PENCIL = `<g class="pencil">
+  <path class="pencil__eraser" d="M890,-55 H935 Q965,-55 965,-25 V25 Q965,55 935,55 H890 Z"/>
+  <rect class="pencil__ferrule" x="820" y="-58" width="72" height="116" rx="6"/>
+  <path class="pencil__band" d="M838,-58 V58 M856,-58 V58 M874,-58 V58"/>
+  <path class="pencil__wood" d="M60,-14 L178,-55 L178,55 L60,14 Z"/>
+  <path class="pencil__body" d="M170,-55 Q148,-37 170,-18 Q148,0 170,18 Q148,37 170,55 L822,55 L822,-55 Z"/>
+  <path class="pencil__shade" d="M170,18 Q160,30 158,37 Q160,46 170,55 L822,55 L822,18 Z"/>
+  <path class="pencil__light" d="M170,-55 Q160,-46 158,-37 Q160,-27 170,-18 L822,-18 L822,-55 Z"/>
+  <path class="pencil__lead" d="M0,0 L60,-14 L60,14 Z"/>
+</g>`;
+
+function introOverlay(logo) {
+  const letters = logo.shapes.replace(/<path[^>]*logo__pencil[^>]*\/>/, '');
+  const pencilA = (logo.shapes.match(/<path[^>]*logo__pencil[^>]*\/>/) || [''])[0].replace('class="logo__shape logo__pencil"', 'class="logo__pencil intro__a"');
+  return `<div class="intro" aria-hidden="true">
+  <svg class="intro__svg" viewBox="-300 -560 2150 1240" preserveAspectRatio="xMidYMid meet">
+    <defs><clipPath id="intro-ink"><rect class="intro__ink" x="-300" y="-600" width="0" height="1400"/></clipPath></defs>
+    <g class="intro__word" clip-path="url(#intro-ink)">${letters}<path class="intro__afill" d="${FILLED_A}"/>${pencilA}</g>
+    ${PENCIL}
+  </svg>
+</div>`;
+}
+
 /** Complete pagina: <head>, logo, inhoud, footer, menu en overgang. */
 export function page(ctx, { title: pageTitle, description, path, body, bodyClass = '', home = false, noindex = false, cta = true }) {
   const { site, assets, fonts, logo } = ctx;
@@ -168,7 +207,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${fonts}
 <link rel="stylesheet" href="${assets.css}">
-<script>(function(d){d.documentElement.classList.add('js');try{if(sessionStorage.getItem('claro:swipe'))d.documentElement.classList.add('is-entering')}catch(e){}})(document)</script>
+<script>(function(d){var r=d.documentElement;r.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;try{if(!sessionStorage.getItem('claro:intro'))r.classList.add('is-intro');else if(sessionStorage.getItem('claro:swipe'))r.classList.add('is-entering')}catch(e){}})(document)</script>
 ${ld}
 </head>
 <body class="${bodyClass}">
@@ -183,7 +222,7 @@ ${cta ? ctaBlock(ctx) : ''}
 ${footer(ctx)}
 ${menu(ctx, path)}
 <div class="bubble" aria-hidden="true"><span>Bekijk<br>case</span></div>
-<div class="swipe" aria-hidden="true"><div class="swipe__logo">${renderLogo(logo, { variant: 'mono' })}</div></div>
+${introOverlay(logo)}
 <script src="${assets.js}" defer></script>
 </body>
 </html>`;
@@ -199,19 +238,18 @@ export function homePage(ctx) {
   const hero = site.heroVideo;
 
   const recentHtml = recent.length
-    ? `<div class="recent">${recent.map((p, i) => projectCard(p, { variant: ['lead', 'side', 'third'][i], speed: [0, 0.12, 0.06][i] })).join('')}</div>`
+    ? `<div class="recent">${recent.map((p, i) => projectCard(p, { variant: ['feature', 'left', 'right'][i], speed: [0, 0, 0.08][i], eager: i === 0 })).join('')}</div>`
     : '<p class="empty">Hier verschijnen binnenkort onze nieuwste projecten.</p>';
 
   const count = (slug) => projects.filter((p) => p.services.some((s) => s.slug === slug)).length;
   const servicesHtml = services
     .map(
-      (s, i) => `<li class="srow" data-reveal style="--d:${i * 70}ms">
-  <a class="srow__link" href="/wat-we-doen/${esc(s.slug)}/">
-    <span class="srow__num">0${i + 1}</span>
-    <span class="srow__title">${esc(s.title)}</span>
-    <span class="srow__short">${esc(s.short)}</span>
-    <span class="srow__count">${count(s.slug)} ${count(s.slug) === 1 ? 'case' : 'cases'}</span>
-    <span class="srow__arrow">${ARROW}</span>
+      (s, i) => `<li class="stile" data-reveal style="--d:${i * 80}ms">
+  <a class="stile__link" href="/wat-we-doen/${esc(s.slug)}/">
+    <span class="stile__num">0${i + 1}</span>
+    <span class="stile__title">${esc(s.title)}</span>
+    <span class="stile__short">${esc(s.short)}</span>
+    <span class="stile__foot"><span class="stile__count">${count(s.slug)} ${count(s.slug) === 1 ? 'case' : 'cases'}</span><span class="stile__arrow">${ARROW}</span></span>
   </a>
 </li>`
     )
@@ -220,7 +258,7 @@ export function homePage(ctx) {
   const clientsHtml = clients.length
     ? `<section class="mod clients">
   <div class="wrap">
-    <p class="sub center" data-reveal>${esc(site.clientsTitle)}</p>
+    <h2 class="clients__title" data-reveal>${esc(site.clientsTitle)}</h2>
   </div>
   <div class="clients__marquee" data-reveal>
     <ul class="clients__track">${[...clients, ...clients]
@@ -255,11 +293,9 @@ export function homePage(ctx) {
 </section>
 
 <section class="mod services">
-  <div class="wrap services__grid">
-    <div class="services__head">
-      ${sectionHead({ sub: 'Diensten', heading: site.servicesTitle, text: site.servicesIntro, link: { href: '/wat-we-doen/', label: 'Alles over onze diensten' } })}
-    </div>
-    <ul class="srows">${servicesHtml}</ul>
+  <div class="wrap">
+    ${sectionHead({ sub: 'Diensten', heading: site.servicesTitle, text: site.servicesIntro, link: { href: '/wat-we-doen/', label: 'Alles over onze diensten' } })}
+    <ul class="stiles">${servicesHtml}</ul>
   </div>
 </section>
 ${clientsHtml}`;
@@ -296,34 +332,30 @@ export function servicesPage(ctx) {
   const { site, services, projects } = ctx;
   const blocks = services
     .map((s, i) => {
-      const n = projects.filter((p) => p.services.some((x) => x.slug === s.slug));
-      const thumbs = n
-        .slice(0, 3)
-        .map((p) => (p.media[0] ? `<span class="sblock__thumb">${media(p.media[0], { cls: 'sblock__asset' })}</span>` : ''))
-        .join('');
-      return `<article class="sblock" data-reveal>
-  <a class="sblock__link" href="/wat-we-doen/${esc(s.slug)}/">
-    <span class="sblock__num">0${i + 1}</span>
-    <span class="sblock__body">
-      <span class="sblock__title">${esc(s.title)}</span>
-      <span class="sblock__short">${esc(s.short || s.intro)}</span>
-      ${s.offer.length ? `<span class="sblock__offer">${s.offer.map((o) => `<span>${esc(o.title)}</span>`).join('')}</span>` : ''}
-    </span>
-    <span class="sblock__thumbs">${thumbs}</span>
-    <span class="sblock__more">${n.length} ${n.length === 1 ? 'case' : 'cases'} ${ARROW_R}</span>
-  </a>
+      const list = projects.filter((p) => p.services.some((x) => x.slug === s.slug));
+      const img = list.find((p) => p.media[0]);
+      return `<article class="feature${i % 2 ? ' feature--flip' : ''}">
+  <div class="feature__text">
+    <span class="feature__num" data-reveal>0${i + 1}</span>
+    <h2 class="h-section" data-split>${esc(s.title)}</h2>
+    <p class="feature__intro" data-reveal>${esc(s.intro || s.short)}</p>
+    ${s.offer.length ? `<ul class="feature__offer" data-reveal>${s.offer.map((o) => `<li><b>${esc(o.title)}</b><span>${esc(o.text)}</span></li>`).join('')}</ul>` : ''}
+    <a class="btn btn--dark" href="/wat-we-doen/${esc(s.slug)}/" data-reveal><span>Bekijk ${list.length} ${list.length === 1 ? 'case' : 'cases'}</span></a>
+  </div>
+  <a class="feature__media" href="/wat-we-doen/${esc(s.slug)}/" tabindex="-1" aria-hidden="true" data-reveal>${img ? media(img.media[0], { cls: 'feature__asset' }) : ''}</a>
 </article>`;
     })
     .join('');
   const body = `
 <section class="mod phead">
   <div class="wrap">
+    <p class="sub" data-reveal>Diensten</p>
     <h1 class="h-hero" data-split>${title(site.servicesPageTitle)}</h1>
     <p class="lead" data-reveal>${esc(site.servicesPageIntro)}</p>
   </div>
 </section>
 <section class="mod">
-  <div class="wrap sblocks">${blocks}</div>
+  <div class="wrap features">${blocks}</div>
 </section>`;
   return page(ctx, { title: 'Wat we doen', description: site.servicesPageIntro, path: '/wat-we-doen/', body, bodyClass: 'page-services' });
 }
@@ -422,13 +454,16 @@ ${
 export function aboutPage(ctx) {
   const { about, projects } = ctx;
   const cards = projects.filter((p) => p.media[0]).slice(0, 4);
+  const facts = (about.facts || [])
+    .map((f, i) => `<li class="fact" data-reveal style="--d:${i * 90}ms"><span class="fact__value">${esc(f.value)}</span><span class="fact__label">${esc(f.label)}</span></li>`)
+    .join('');
   const pillars = (about.pillars || [])
     .map((pl, i) => `<li class="pillar"><span class="pillar__num">0${i + 1}</span><span class="pillar__title">${esc(pl.title)}</span><span class="pillar__text">${esc(pl.text)}</span></li>`)
     .join('');
   const team = (about.team || [])
     .map(
-      (m, i) => `<li class="person" data-reveal style="--d:${i * 100}ms">
-  <span class="person__photo">${m.photo ? `<img src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy">` : `<span>${esc(m.name.split(' ').map((w) => w[0]).join('').slice(0, 2))}</span>`}</span>
+      (m, i) => `<li class="person" data-reveal style="--d:${i * 120}ms">
+  <span class="person__photo" style="--r:${i % 2 ? 3 : -3}deg">${m.photo ? `<img src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy">` : `<span>${esc(m.name.split(' ').map((w) => w[0]).join('').slice(0, 2))}</span>`}</span>
   <span class="person__name">${esc(m.name)}</span>
   <span class="person__role">${esc(m.role)}</span>
   <span class="person__bio">${esc(m.bio)}</span>
@@ -436,15 +471,17 @@ export function aboutPage(ctx) {
     )
     .join('');
   const steps = (about.steps || [])
-    .map((s, i) => `<li class="step" data-reveal style="--d:${i * 80}ms"><span class="step__num">0${i + 1}</span><span class="step__title">${esc(s.title)}</span><span class="step__text">${esc(s.text)}</span></li>`)
+    .map((s, i) => `<li class="step" data-reveal style="--d:${i * 100}ms"><span class="step__num">0${i + 1}</span><span class="step__title">${esc(s.title)}</span><span class="step__text">${esc(s.text)}</span></li>`)
     .join('');
+  const story = (about.story || []).join(' ');
 
   const body = `
-<section class="mod phead">
+<section class="mod phead about-hero">
   <div class="wrap">
     <p class="sub" data-reveal>${esc(about.title)}</p>
-    <h1 class="h-hero" data-split>${title(about.statement)}</h1>
+    <h1 class="h-mega" data-split>${title(about.statement)}</h1>
     <p class="lead" data-reveal>${esc(about.intro)}</p>
+    ${facts ? `<ul class="facts-row">${facts}</ul>` : ''}
   </div>
 </section>
 
@@ -452,6 +489,7 @@ export function aboutPage(ctx) {
   <div class="values__sticky">
     <div class="wrap values__grid">
       <div class="values__text">
+        <p class="sub">Waar we voor staan</p>
         <h2 class="h-section">${title(about.pillarsTitle)}</h2>
         <ol class="pillars">${pillars}</ol>
       </div>
@@ -463,22 +501,38 @@ export function aboutPage(ctx) {
 </section>
 
 ${
+  story
+    ? `<section class="mod">
+  <div class="wrap">
+    <p class="sub center" data-reveal>Ons verhaal</p>
+    <p class="statement" data-split>${esc(story)}</p>
+  </div>
+</section>`
+    : ''
+}
+
+${
   about.quote
     ? `<section class="mod quote">
   <div class="wrap">
-    <blockquote class="quote__text" data-split>“${esc(about.quote)}”</blockquote>
+    <span class="quote__mark" aria-hidden="true">“</span>
+    <blockquote class="quote__text" data-split>${esc(about.quote)}</blockquote>
     ${about.quoteAuthor ? `<p class="quote__author" data-reveal>${esc(about.quoteAuthor)}</p>` : ''}
   </div>
 </section>`
     : ''
 }
 
-<section class="mod">
+${
+  steps
+    ? `<section class="mod">
   <div class="wrap">
-    <div class="story story--cols">${(about.story || []).map((t) => `<p data-reveal>${esc(t)}</p>`).join('')}</div>
-    ${steps ? `${sectionHead({ sub: 'Werkwijze', heading: about.stepsTitle })}<ol class="steps">${steps}</ol>` : ''}
+    ${sectionHead({ sub: 'Werkwijze', heading: about.stepsTitle })}
+    <ol class="steps">${steps}</ol>
   </div>
-</section>
+</section>`
+    : ''
+}
 
 ${
   team
@@ -496,39 +550,43 @@ ${
 export function contactPage(ctx) {
   const { contact, site, services } = ctx;
   const chips = services
-    .map((s, i) => `<label class="pick"><input type="checkbox" name="dienst" value="${esc(s.title)}"><span>${esc(s.title)}</span></label>`)
+    .map((s) => `<label class="pick"><input type="checkbox" name="dienst" value="${esc(s.title)}"><span>${esc(s.title)}</span></label>`)
     .join('');
   const body = `
 <section class="mod phead contact">
   <div class="wrap contact__grid">
-    <div>
+    <div class="contact__intro">
+      <p class="sub" data-reveal>Contact</p>
       <h1 class="h-hero" data-split>${title(contact.title)}</h1>
       <p class="lead" data-reveal>${esc(contact.intro)}</p>
-      <ul class="contact__details" data-reveal>
-        ${site.email ? `<li><span>E-mail</span><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></li>` : ''}
-        <li><span>Instagram</span><a href="${esc(site.instagram)}" target="_blank" rel="noopener">@wijzijnclaro</a></li>
-        <li><span>LinkedIn</span><a href="${esc(site.linkedin)}" target="_blank" rel="noopener">Claro op LinkedIn</a></li>
-        <li><span>KvK</span><b>${esc(site.kvk)}</b></li>
+      <div class="btns" data-reveal>${quickLinks(site)}</div>
+      <ul class="promises" data-reveal>
+        ${site.responseTime ? `<li><span class="promises__icon">⚡</span>${esc(site.responseTime)}</li>` : ''}
+        <li><span class="promises__icon">☕</span>Vrijblijvende kennismaking</li>
+        <li><span class="promises__icon">✦</span>Eén vast aanspreekpunt</li>
       </ul>
+      ${sticker(site.responseTime, 'contact')}
     </div>
     <div class="card" data-reveal>
       <form class="form" name="contact" method="POST" action="/bedankt/" data-netlify="true" netlify-honeypot="bot-field" data-form>
         <h2 class="form__title">${esc(contact.formTitle)}</h2>
         <input type="hidden" name="form-name" value="contact">
         <p class="visually-hidden"><label>Niet invullen: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
-        <label class="field"><span>Naam</span><input name="naam" type="text" required autocomplete="name"></label>
+        <fieldset class="picks"><legend>Waar kunnen we je mee helpen?</legend><div class="picks__row">${chips}<label class="pick"><input type="checkbox" name="dienst" value="Weet ik nog niet"><span>Weet ik nog niet</span></label></div></fieldset>
+        <div class="form__row">
+          <label class="field"><span>Naam</span><input name="naam" type="text" required autocomplete="name"></label>
+          <label class="field"><span>Bedrijf (optioneel)</span><input name="bedrijf" type="text" autocomplete="organization"></label>
+        </div>
         <label class="field"><span>E-mailadres</span><input name="email" type="email" required autocomplete="email"></label>
-        <label class="field"><span>Bedrijf (optioneel)</span><input name="bedrijf" type="text" autocomplete="organization"></label>
-        <fieldset class="picks"><legend>Waar kunnen we mee helpen?</legend><div class="picks__row">${chips}</div></fieldset>
-        <label class="field"><span>Je bericht</span><textarea name="bericht" required rows="5"></textarea></label>
-        <button class="btn btn--dark" type="submit"><span>Verstuur</span></button>
+        <label class="field"><span>Vertel kort over je idee</span><textarea name="bericht" required rows="5" placeholder="Bijvoorbeeld: we openen in het voorjaar een nieuwe zaak en zoeken een logo en website."></textarea></label>
+        <button class="btn btn--dark btn--big" type="submit"><span>Verstuur je bericht</span></button>
         <p class="form__note">Door te versturen ga je akkoord met onze <a href="/privacy/">privacyverklaring</a>.</p>
         <p class="form__status" role="status" aria-live="polite"></p>
       </form>
       <div class="form-success" hidden>
         <h2 class="form__title">${esc(contact.successTitle)}</h2>
         <p>${esc(contact.successText)}</p>
-        <a class="btn btn--line" href="/"><span>Terug naar home</span></a>
+        <a class="btn btn--line" href="/cases/"><span>Bekijk ons werk</span></a>
       </div>
     </div>
   </div>

@@ -41,7 +41,8 @@ export const siteSettings = defineType({
     defineField({ name: 'servicesTitle', title: 'Titel boven de diensten', type: 'string', group: 'home' }),
     defineField({ name: 'servicesIntro', title: 'Tekst bij de diensten', type: 'text', rows: 2, group: 'home' }),
     defineField({ name: 'clientsTitle', title: 'Titel boven de klantlogo\'s', type: 'string', group: 'home' }),
-    defineField({ name: 'ctaTitle', title: 'Contactblok: titel', type: 'string', group: 'home' }),
+    defineField({ name: 'ctaTitle', title: 'Contactblok: begin van de zin', type: 'string', group: 'home', description: 'Bijvoorbeeld "Zin in". Daarachter wisselen de woorden hieronder elkaar af.' }),
+    defineField({ name: 'ctaWords', title: 'Contactblok: wisselende woorden', type: 'array', of: [{ type: 'string' }], group: 'home', description: 'Bijvoorbeeld "een sterk merk", "een frisse website".' }),
     defineField({ name: 'ctaText', title: 'Contactblok: tekst', type: 'text', rows: 2, group: 'home' }),
     defineField({ name: 'ctaLabel', title: 'Tekst van de contactknop', type: 'string', group: 'home' }),
     defineField({ name: 'casesTitle', title: 'Cases-pagina: titel', type: 'string', group: 'pages' }),
@@ -51,6 +52,9 @@ export const siteSettings = defineType({
     defineField({ name: 'instagram', title: 'Instagram-link', type: 'url', group: 'contact' }),
     defineField({ name: 'linkedin', title: 'LinkedIn-link', type: 'url', group: 'contact' }),
     defineField({ name: 'email', title: 'E-mailadres', type: 'string', group: 'contact' }),
+    defineField({ name: 'phone', title: 'Telefoonnummer (voor de belknop)', type: 'string', group: 'contact', description: 'Bijvoorbeeld 06 12345678. Leeg = geen belknop.' }),
+    defineField({ name: 'whatsapp', title: 'WhatsApp-nummer', type: 'string', group: 'contact', description: 'Internationaal, zonder + of spaties, bijv. 31612345678. Leeg = geen WhatsApp-knop.' }),
+    defineField({ name: 'responseTime', title: 'Belofte reactietijd', type: 'string', group: 'contact', description: 'Bijvoorbeeld "Binnen 24 uur reactie".' }),
     defineField({ name: 'kvk', title: 'KvK-nummer', type: 'string', group: 'contact' }),
     defineField({ name: 'byline', title: 'Namen in de footer ("by ...")', type: 'string', group: 'contact' }),
     defineField({ name: 'description', title: 'Beschrijving voor Google', type: 'text', rows: 3, group: 'contact' })
@@ -144,6 +148,12 @@ export const aboutPage = defineType({
     defineField({ name: 'title', title: 'Kleine titel boven de kop', type: 'string' }),
     defineField({ name: 'statement', title: 'Grote kop', type: 'string' }),
     defineField({ name: 'intro', title: 'Korte inleiding', type: 'text', rows: 3 }),
+    defineField({
+      name: 'facts',
+      title: 'Kerncijfers (bijv. "2" + "makers, één team")',
+      type: 'array',
+      of: [{ type: 'object', fields: [defineField({ name: 'value', title: 'Getal of woord', type: 'string' }), defineField({ name: 'label', title: 'Uitleg', type: 'string' })], preview: { select: { title: 'value', subtitle: 'label' } } }]
+    }),
     defineField({ name: 'pillarsTitle', title: 'Titel: waar staan we voor', type: 'string' }),
     defineField({
       name: 'pillars',

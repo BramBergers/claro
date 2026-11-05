@@ -14,8 +14,8 @@
     "servicesTitle": "Wat we doen",
     "servicesIntro": "Van logo tot livegang. We denken mee vanaf het eerste idee en ontwerpen alles wat je merk nodig heeft om op te vallen.",
     "clientsTitle": "Zij gingen je voor",
-    "ctaTitle": "Zin in iets helders?",
-    "ctaText": "Vertel ons waar je naartoe wilt. We denken graag mee, zonder verplichtingen.",
+    "ctaTitle": "Zin in",
+    "ctaText": "Vertel ons waar je naartoe wilt. We denken graag mee, vrijblijvend en zonder poespas.",
     "ctaLabel": "Let's chat!",
     "casesTitle": "Heldere cases",
     "casesIntro": "Een greep uit ons werk. Van complete huisstijlen tot korte animaties: elk project begint met dezelfde vraag, wat moet er blijven hangen?",
@@ -25,7 +25,16 @@
     "linkedin": "https://www.linkedin.com/",
     "email": "hallo@clarodesign.nl",
     "kvk": "12345678",
-    "byline": "Nicole Timmer en Bram Bergers"
+    "byline": "Nicole Timmer en Bram Bergers",
+    "ctaWords": [
+      "een sterk merk",
+      "een frisse website",
+      "een animatie",
+      "een opvallende stand"
+    ],
+    "responseTime": "Binnen 24 uur reactie",
+    "phone": "",
+    "whatsapp": ""
   },
   "services": [
     {
@@ -333,11 +342,29 @@
         "role": "Oprichter",
         "bio": "Voorbeeldtekst. Hier komt een korte introductie."
       }
+    ],
+    "facts": [
+      {
+        "value": "2",
+        "label": "makers, één team"
+      },
+      {
+        "value": "4",
+        "label": "vakgebieden onder één dak"
+      },
+      {
+        "value": "1",
+        "label": "vast aanspreekpunt"
+      },
+      {
+        "value": "24u",
+        "label": "en je hebt een reactie"
+      }
     ]
   },
   "contact": {
-    "title": "Let's chat!",
-    "intro": "Een vraag, een idee of gewoon benieuwd wat we voor je kunnen doen? Laat het ons weten, we reageren zo snel mogelijk.",
+    "title": "Laten we iets moois maken.",
+    "intro": "Een idee, een vraag of gewoon benieuwd wat we voor je kunnen doen? Stuur een berichtje, bel of app ons. We denken graag mee, vrijblijvend.",
     "formTitle": "Stuur ons een bericht",
     "successTitle": "Bedankt voor je bericht!",
     "successText": "We hebben het ontvangen en komen zo snel mogelijk bij je terug."

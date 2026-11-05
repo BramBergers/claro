@@ -10,7 +10,7 @@ const mediaProjection = `{ "url": file.asset->url, "mime": file.asset->mimeType,
 const QUERY = `{
   "site": *[_type == "siteSettings"][0]{
     heroTitle, heroIntro, recentTitle, servicesTitle, servicesIntro, clientsTitle,
-    ctaTitle, ctaText, ctaLabel, casesTitle, casesIntro, servicesPageTitle, servicesPageIntro,
+    ctaTitle, ctaWords, ctaText, ctaLabel, responseTime, phone, whatsapp, casesTitle, casesIntro, servicesPageTitle, servicesPageIntro,
     instagram, linkedin, email, kvk, byline, description,
     "heroVideo": heroVideo${mediaProjection}
   },
@@ -25,7 +25,7 @@ const QUERY = `{
   },
   "clients": *[_type == "client"] | order(order asc, name asc){ name, "url": logo.asset->url },
   "about": *[_type == "aboutPage"][0]{
-    title, statement, intro, pillarsTitle, pillars[]{ title, text }, quote, quoteAuthor,
+    title, statement, intro, facts[]{ value, label }, pillarsTitle, pillars[]{ title, text }, quote, quoteAuthor,
     story, stepsTitle, steps[]{ title, text }, teamTitle,
     team[]{ name, role, bio, "photo": photo.asset->url }
   },
