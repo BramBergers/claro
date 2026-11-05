@@ -227,7 +227,7 @@
   function isInternal(a, e) {
     if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return false;
     if (a.target && a.target !== '_self') return false;
-    if (a.hasAttribute('download') || a.getAttribute('href').startsWith('#') || a.getAttribute('href').startsWith('mailto:')) return false;
+    if (a.hasAttribute('download') || /^(#|mailto:|tel:)/.test(a.getAttribute('href'))) return false;
     const url = new URL(a.href, location.href);
     if (url.origin !== location.origin) return false;
     if (url.pathname === location.pathname && url.hash) return false;
@@ -240,19 +240,16 @@
     e.preventDefault();
     if (reduced) { location.href = url.href; return; }
     leaving = true;
-    const sx = `${((e.clientX || innerWidth / 2) / innerWidth) * 100}%`;
-    const sy = `${((e.clientY || innerHeight / 2) / innerHeight) * 100}%`;
-    swipe.style.setProperty('--sx', sx);
-    swipe.style.setProperty('--sy', sy);
     swipe.classList.remove('is-out');
     void swipe.offsetWidth;
     swipe.classList.add('is-in');
+    root.classList.add('is-leaving');
     pencilBoost = 9;
     store.set('claro:swipe', '1');
     setTimeout(() => {
       if (menuOpen) setMenu(false);
       location.href = url.href;
-    }, 900);
+    }, 850);
   });
   function enter() {
     if (root.classList.contains('is-entering') && swipe) {
@@ -260,11 +257,12 @@
       pencilBoost = 6;
       setTimeout(() => {
         swipe.classList.add('is-out');
+        root.classList.add('is-arriving');
         root.classList.remove('is-entering');
         pencilBoost = 0;
         startReveal();
-        setTimeout(() => swipe.classList.remove('is-out'), 900);
-      }, 350);
+        setTimeout(() => { swipe.classList.remove('is-out'); root.classList.remove('is-arriving'); }, 1150);
+      }, 380);
     } else {
       startReveal();
     }
@@ -275,7 +273,7 @@
       leaving = false;
       pencilBoost = 0;
       swipe && swipe.classList.remove('is-in', 'is-out');
-      root.classList.remove('is-entering', 'menu-open');
+      root.classList.remove('is-entering', 'is-leaving', 'is-arriving', 'menu-open');
     }
   });
 
