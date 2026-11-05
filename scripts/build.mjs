@@ -30,19 +30,17 @@ await mkdir(path.join(dist, 'assets'), { recursive: true });
 await writeFile(path.join(dist, 'assets', cssName), css);
 await writeFile(path.join(dist, 'assets', jsName), js);
 
-// 3. lettertypen: eigen bestanden in public/fonts (Inter en Inter Display, SIL Open Font License); Instrument Serif via Google Fonts
+// 3. lettertypen: eigen bestanden in public/fonts (Inter, Inter Display en Lora, SIL Open Font License)
 const fontFaces = [
   ['Display', 'InterDisplay-Black', 900, 'normal'],
   ['Display', 'InterDisplay-ExtraBold', 800, 'normal'],
   ['Text', 'Inter-Regular', 400, 'normal'],
   ['Text', 'Inter-Medium', 500, 'normal'],
   ['Text', 'Inter-SemiBold', 600, 'normal'],
+  ['Serif', 'Lora-Italic', '400 700', 'italic']
 ];
 const fonts = `<link rel="preload" href="/fonts/InterDisplay-Black.woff" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="/fonts/Inter-Regular.woff" as="font" type="font/woff" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap">
 <style>${fontFaces.map(([fam, file, w, st]) => `@font-face{font-family:'${fam}';src:url('/fonts/${file}.woff') format('woff');font-weight:${w};font-style:${st};font-display:swap}`).join('')}</style>`;
 
 // 4. inhoud en logo

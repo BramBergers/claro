@@ -218,124 +218,13 @@
   }
   requestAnimationFrame(tick);
 
-  /* ---------- Intro en overgang: een potlood schrijft CLARO en drukt in de A ---------- */
-  const intro = $('.intro');
-  const isvg = intro && $('.intro__svg', intro);
-  const ink = intro && $('.intro__ink', intro);
-  const pencil = intro && $('.pencil', intro);
-  const aFill = intro && $('.intro__afill', intro);
-  const aReal = intro && $('.intro__a', intro);
-  const word = intro && $('.intro__word', intro);
-  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-  const seg = (t, a, b) => clamp((t - a) / (b - a));
-  const setPencil = (x, y, rot, sc, op = 1) => {
-    pencil.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(2)}) scale(${sc.toFixed(3)})`);
-    pencil.style.opacity = op;
-  };
-  const writeY = (x) => 166 + 118 * Math.sin(x / 52) * Math.sin(x / 210 + 0.6);
-  const A_X = 760, A_TOP = -70, A_IN = 205;
-
-  /** Tijdlijn afspelen; fn(t in seconden). Resolve als de duur voorbij is. */
-  function play(duration, fn) {
-    return new Promise((resolve) => {
-      const start = performance.now();
-      const frame = (now) => {
-        const t = (now - start) / 1000;
-        fn(Math.min(t, duration));
-        if (t < duration) requestAnimationFrame(frame); else resolve();
-      };
-      requestAnimationFrame(frame);
-    });
-  }
-
-  function resetWord(full) {
-    ink.setAttribute('width', full ? 2400 : 0);
-    aFill.style.opacity = 1;
-    aReal.style.opacity = 0;
-    word.removeAttribute('transform');
-  }
-
-  /** Het potlood drukt van boven in de A; de dichte A wordt de potlood-A. */
-  async function pressIntoA(dur = 0.75) {
-    await play(dur, (t) => {
-      const p = t / dur;
-      const down = ease(seg(p, 0, 0.62));
-      const y = lerp(A_TOP - 260, A_IN, down);
-      setPencil(A_X, y, -90, 1, 1 - seg(p, 0.5, 0.72));
-      const swap = seg(p, 0.48, 0.62);
-      aFill.style.opacity = 1 - swap;
-      aReal.style.opacity = swap;
-      // het woord veert even in als het potlood drukt
-      const squash = Math.sin(seg(p, 0.45, 0.95) * Math.PI) * 0.045;
-      word.setAttribute('transform', `translate(0 ${(332 * squash).toFixed(1)}) scale(1 ${(1 - squash).toFixed(3)})`);
-    });
-    pencilBoost = 4;
-  }
-
-  async function longIntro() {
-    resetWord(false);
-    await play(2.15, (t) => {
-      // 1. groot potlood komt binnen en wordt kleiner
-      const inP = easeOut(seg(t, 0, 0.75));
-      const sx = lerp(2300, -40, inP), sy = lerp(520, writeY(-40), inP);
-      // 2. schrijven van links naar rechts
-      const wP = seg(t, 0.75, 2.15);
-      const tipX = lerp(-40, 1580, ease(wP));
-      if (t < 0.75) setPencil(sx, sy, lerp(-8, -38, inP), lerp(2.6, 1, inP));
-      else setPencil(tipX, writeY(tipX), -38 + Math.sin(t * 18) * 2, 1);
-      ink.setAttribute('width', Math.max(0, tipX + 300 + 30));
-    });
-    // 3. potlood richting de A, rechtop
-    const from = { x: 1580, y: writeY(1580) };
-    await play(0.55, (t) => {
-      const p = ease(t / 0.55);
-      setPencil(lerp(from.x, A_X, p), lerp(from.y, A_TOP - 260, p), lerp(-38, -90, p), 1);
-    });
-    await pressIntoA(0.8);
-  }
-
-  /** Logo vliegt naar zijn plek bovenaan terwijl de achtergrond verdwijnt; anders een cirkel naar onderen. */
-  async function leaveIntro() {
-    const target = $('.top__logo .logo');
-    const canFly = target && scrollY < 40 && !menuOpen;
-    if (canFly) {
-      const from = word.getBoundingClientRect();
-      const to = target.getBoundingClientRect();
-      const s = to.width / from.width;
-      intro.classList.add('is-fade');
-      intro.style.background = 'transparent';
-      const box = isvg.getBoundingClientRect();
-      await play(0.75, (t) => {
-        const p = ease(t / 0.75);
-        const sc = lerp(1, s, p);
-        const left = lerp(from.left, to.left, p), top = lerp(from.top, to.top, p);
-        const dx = left - box.left - (from.left - box.left) * sc;
-        const dy = top - box.top - (from.top - box.top) * sc;
-        isvg.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${sc.toFixed(4)})`;
-        if (p > 0.15) intro.style.color = 'var(--ink)';
-      });
-      done();
-    } else {
-      intro.classList.add('is-out');
-      await play(0.85, () => {});
-      done();
-    }
-    function done() {
-      root.classList.remove('is-intro', 'is-entering');
-      intro.classList.remove('is-out', 'is-fade', 'is-in');
-      intro.removeAttribute('style');
-      isvg.removeAttribute('style');
-      pencilBoost = 0;
-    }
-  }
-
+  /* ---------- Overgang tussen pagina's ---------- */
+  const swipe = $('.swipe');
   let leaving = false;
   function isInternal(a, e) {
     if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return false;
     if (a.target && a.target !== '_self') return false;
-    const href = a.getAttribute('href') || '';
-    if (a.hasAttribute('download') || href.startsWith('#') || /^(mailto|tel):/.test(href)) return false;
+    if (a.hasAttribute('download') || a.getAttribute('href').startsWith('#') || a.getAttribute('href').startsWith('mailto:')) return false;
     const url = new URL(a.href, location.href);
     if (url.origin !== location.origin) return false;
     if (url.pathname === location.pathname && url.hash) return false;
@@ -344,35 +233,36 @@
   d.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
     const url = isInternal(a, e);
-    if (!url || leaving || !intro) return;
+    if (!url || leaving || !swipe) return;
     e.preventDefault();
     if (reduced) { location.href = url.href; return; }
     leaving = true;
-    resetWord(true);
-    pencil.style.opacity = 0;
-    intro.style.setProperty('--sx', `${((e.clientX || innerWidth / 2) / innerWidth) * 100}%`);
-    intro.style.setProperty('--sy', `${((e.clientY || innerHeight / 2) / innerHeight) * 100}%`);
-    intro.classList.remove('is-out', 'is-fade');
-    void intro.offsetWidth;
-    intro.classList.add('is-in');
-    pencilBoost = 6;
+    const sx = `${((e.clientX || innerWidth / 2) / innerWidth) * 100}%`;
+    const sy = `${((e.clientY || innerHeight / 2) / innerHeight) * 100}%`;
+    swipe.style.setProperty('--sx', sx);
+    swipe.style.setProperty('--sy', sy);
+    swipe.classList.remove('is-out');
+    void swipe.offsetWidth;
+    swipe.classList.add('is-in');
+    pencilBoost = 9;
     store.set('claro:swipe', '1');
-    setTimeout(() => { if (menuOpen) setMenu(false); location.href = url.href; }, 820);
+    setTimeout(() => {
+      if (menuOpen) setMenu(false);
+      location.href = url.href;
+    }, 900);
   });
-
-  async function enter() {
-    const isIntro = root.classList.contains('is-intro');
-    const isEntering = root.classList.contains('is-entering');
-    if (!intro || (!isIntro && !isEntering)) { startReveal(); return; }
-    store.del('claro:swipe');
-    store.set('claro:intro', '1');
-    try {
-      if (isIntro) await longIntro();
-      else { resetWord(true); await pressIntoA(0.7); }
-      startReveal();
-      await leaveIntro();
-    } catch (err) {
-      root.classList.remove('is-intro', 'is-entering');
+  function enter() {
+    if (root.classList.contains('is-entering') && swipe) {
+      store.del('claro:swipe');
+      pencilBoost = 6;
+      setTimeout(() => {
+        swipe.classList.add('is-out');
+        root.classList.remove('is-entering');
+        pencilBoost = 0;
+        startReveal();
+        setTimeout(() => swipe.classList.remove('is-out'), 900);
+      }, 350);
+    } else {
       startReveal();
     }
   }
@@ -381,23 +271,9 @@
     if (e.persisted) {
       leaving = false;
       pencilBoost = 0;
-      intro && intro.classList.remove('is-in', 'is-out', 'is-fade');
-      root.classList.remove('is-intro', 'is-entering', 'menu-open');
+      swipe && swipe.classList.remove('is-in', 'is-out');
+      root.classList.remove('is-entering', 'menu-open');
     }
-  });
-
-  /* ---------- Wisselende woorden in het contactblok ---------- */
-  $$('[data-rotator]').forEach((r) => {
-    const words = $$('.rotator__word', r);
-    if (words.length < 2 || reduced) return;
-    let i = 0;
-    setInterval(() => {
-      const cur = words[i];
-      i = (i + 1) % words.length;
-      cur.classList.remove('is-on'); cur.classList.add('is-off');
-      words[i].classList.remove('is-off'); words[i].classList.add('is-on');
-      setTimeout(() => cur.classList.remove('is-off'), 700);
-    }, 2400);
   });
 
   /* ---------- Case-beelden groot bekijken (lightbox) ---------- */
