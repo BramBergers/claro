@@ -9,19 +9,24 @@ const mediaProjection = `{ "url": file.asset->url, "mime": file.asset->mimeType,
 
 const QUERY = `{
   "site": *[_type == "siteSettings"][0]{
-    heroTitle, ctaLabel, servicesTitle, clientsTitle, marquee,
+    heroTitle, heroIntro, recentTitle, servicesTitle, servicesIntro, clientsTitle,
+    ctaTitle, ctaWords, ctaEnd, ctaText, ctaLabel, phone, casesTitle, casesIntro, servicesPageTitle, servicesPageIntro,
     instagram, linkedin, email, kvk, byline, description,
-    "heroVideo": heroVideo${mediaProjection},
-    "heroVideoMobile": heroVideoMobile${mediaProjection}
+    "heroVideo": heroVideo${mediaProjection}
   },
   "services": *[_type == "service"] | order(order asc, title asc){
-    title, "slug": slug.current, tags, intro, offer[]{ title, text },
-    "media": media${mediaProjection},
-    cases[]{ title, client, year, description, "media": media[]${mediaProjection} }
+    title, "slug": slug.current, short, intro, offer[]{ title, text },
+    "legacyCases": cases[]{ title, client, year, description, "media": media[]${mediaProjection} }
+  },
+  "projects": *[_type == "project" && defined(slug.current)] | order(date desc){
+    title, client, "slug": slug.current, date, intro, body,
+    "services": services[]->slug.current,
+    "media": media[]${mediaProjection}
   },
   "clients": *[_type == "client"] | order(order asc, name asc){ name, "url": logo.asset->url },
   "about": *[_type == "aboutPage"][0]{
-    title, statement, intro, story, stepsTitle, steps[]{ title, text }, teamTitle,
+    title, statement, intro, pillarsTitle, pillars[]{ title, text }, quote, quoteAuthor,
+    story, stepsTitle, steps[]{ title, text }, teamTitle,
     team[]{ name, role, bio, "photo": photo.asset->url }
   },
   "contact": *[_type == "contactPage"][0]{ title, intro, formTitle, successTitle, successText }
@@ -30,7 +35,17 @@ const QUERY = `{
 const isEmpty = (v) => v == null || v === '' || (Array.isArray(v) && v.length === 0);
 const strip = (obj) => Object.fromEntries(Object.entries(obj || {}).filter(([, v]) => !isEmpty(v)));
 
-/** {url, mime, poster} uit Sanity -> {type, src, poster} */
+export const slugify = (s = '') =>
+  s
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/&/g, ' en ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 70);
+
+/** {url, mime, poster} uit Sanity of {src, poster} lokaal -> {type, src, poster} */
 function toMedia(m) {
   if (!m) return null;
   if (m.src) return { type: guessType(m.src), src: m.src, poster: m.poster || null };
@@ -43,10 +58,6 @@ function guessType(src = '') {
   return /\.(png|jpe?g|webp|avif|gif|svg)(\?|$)/i.test(src) ? 'image' : 'video';
 }
 
-function normalizeMedia(obj) {
-  return toMedia(obj);
-}
-
 async function fetchSanity(projectId, dataset) {
   const url = `https://${projectId}.api.sanity.io/v${API_VERSION}/data/query/${dataset}?query=${encodeURIComponent(QUERY)}`;
   const res = await fetch(url);
@@ -54,6 +65,8 @@ async function fetchSanity(projectId, dataset) {
   const json = await res.json();
   return json.result;
 }
+
+const toParagraphs = (v) => (Array.isArray(v) ? v : String(v || '').split(/\n\s*\n/)).map((p) => String(p).trim()).filter(Boolean);
 
 export async function loadContent(root) {
   const local = JSON.parse(await readFile(path.join(root, 'src/content/content.json'), 'utf8'));
@@ -67,27 +80,60 @@ export async function loadContent(root) {
   }
 
   const site = { ...local.site, ...strip(remote?.site) };
-  // De mobiele video hoort bij de gekozen desktopvideo: komt die uit Sanity, dan ook de mobiele (of geen).
-  const remoteHero = normalizeMedia(remote?.site?.heroVideo);
-  site.heroVideo = remoteHero || normalizeMedia(local.site.heroVideo);
-  site.heroVideoMobile = remoteHero ? normalizeMedia(remote.site.heroVideoMobile) : normalizeMedia(local.site.heroVideoMobile);
+  site.heroVideo = toMedia(remote?.site?.heroVideo) || toMedia(local.site.heroVideo);
 
+  // diensten
   const remoteServices = (remote?.services || []).filter((s) => s.title && s.slug);
   const services = (remoteServices.length ? remoteServices : local.services).map((s) => ({
     title: s.title,
     slug: s.slug,
-    tags: s.tags || [],
+    short: s.short || '',
     intro: s.intro || '',
     offer: s.offer || [],
-    media: normalizeMedia(s.media),
-    cases: (s.cases || []).map((c) => ({
-      title: c.title,
-      client: c.client || '',
-      year: c.year || '',
-      description: c.description || '',
-      media: (c.media || []).map(normalizeMedia).filter(Boolean)
-    }))
+    legacyCases: s.legacyCases || []
   }));
+
+  // projecten: losse projecten uit Sanity; anders de oude cases die nog onder een dienst staan; anders lokaal
+  let rawProjects = (remote?.projects || []).filter((p) => p.title);
+  if (!rawProjects.length && remoteServices.length) {
+    const seen = new Map();
+    for (const s of remoteServices) {
+      for (const c of s.legacyCases || []) {
+        if (!c?.title) continue;
+        const key = slugify(`${c.client || ''} ${c.title}`);
+        if (seen.has(key)) {
+          seen.get(key).services.push(s.slug);
+          continue;
+        }
+        const p = { title: c.title, client: c.client, slug: key, date: c.year ? `${c.year}-01-01` : '', intro: c.description, body: [], services: [s.slug], media: c.media };
+        seen.set(key, p);
+        rawProjects.push(p);
+      }
+    }
+  }
+  if (!rawProjects.length) rawProjects = local.projects || [];
+
+  const serviceBySlug = new Map(services.map((s) => [s.slug, s]));
+  const usedSlugs = new Set();
+  const projects = rawProjects
+    .map((p, i) => {
+      let slug = p.slug || slugify(`${p.client || ''} ${p.title}`) || `case-${i + 1}`;
+      while (usedSlugs.has(slug)) slug += '-2';
+      usedSlugs.add(slug);
+      const tags = (p.services || []).filter(Boolean).map((sl) => serviceBySlug.get(sl)).filter(Boolean);
+      return {
+        title: p.title,
+        client: p.client || '',
+        slug,
+        date: p.date || '',
+        year: (p.date || '').slice(0, 4),
+        intro: p.intro || '',
+        body: toParagraphs(p.body),
+        services: tags.map((t) => ({ title: t.title, slug: t.slug })),
+        media: (p.media || []).map(toMedia).filter(Boolean)
+      };
+    })
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
   // klantlogo's: SVG-tekst ophalen (uit Sanity) of lezen (lokaal) en inline zetten
   const remoteClients = (remote?.clients || []).filter((c) => c.url);
@@ -116,6 +162,7 @@ export async function loadContent(root) {
     source: projectId ? `Sanity (${projectId}/${dataset})` : 'lokale inhoud',
     site,
     services,
+    projects,
     clients,
     about,
     contact,

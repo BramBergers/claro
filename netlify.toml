@@ -29,3 +29,14 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Frame-Options = "SAMEORIGIN"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Oude adressen doorsturen naar de nieuwe
+[[redirects]]
+  from = "/werk/:slug/*"
+  to = "/wat-we-doen/:slug/"
+  status = 301
+
+[[redirects]]
+  from = "/over-claro/*"
+  to = "/over-ons/"
+  status = 301

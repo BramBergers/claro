@@ -29,8 +29,9 @@ export async function loadLogo(file) {
 
   const shapes = tags.map((tag, i) => {
     const isDot = /\sid="dot"/i.test(tag);
+    const isPencil = /\sdata-pencil=/i.test(tag);
     const clean = tag.replace(/\sfill="(?!none)[^"]*"/g, '').replace(/\sid="[^"]*"/g, '');
-    const cls = isDot ? 'logo__shape logo__dot' : 'logo__shape';
+    const cls = isDot ? 'logo__shape logo__dot' : isPencil ? 'logo__shape logo__pencil' : 'logo__shape';
     return clean.replace(/^<(\w+)/, `<$1 class="${cls}" style="--i:${rank.get(i)}"`);
   });
 
