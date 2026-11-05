@@ -202,7 +202,7 @@ export function homePage(ctx) {
   const hero = site.heroVideo;
 
   const recentHtml = recent.length
-    ? `<div class="recent">${recent.map((p, i) => projectCard(p, { eager: i < 2 })).join('')}</div>
+    ? `${projectGrid(recent)}
     <div class="recent__more" data-reveal><a class="btn btn--dark btn--big" href="/cases/"><span>Bekijk al ons werk</span></a></div>`
     : '<p class="empty">Hier verschijnen binnenkort onze nieuwste projecten.</p>';
 
