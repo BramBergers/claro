@@ -85,7 +85,7 @@
   }
 
   /* ---------- In beeld komen ---------- */
-  const revealEls = $$('[data-reveal], [data-split], .pcard');
+  const revealEls = $$('[data-reveal], [data-split], .pcard, .process__track');
   let revealIO = null;
   if (reduced || !('IntersectionObserver' in window)) {
     revealEls.forEach((el) => el.classList.add('is-in'));
@@ -118,7 +118,7 @@
     menuOpen = open;
     root.classList.toggle('menu-open', open);
     menuBtn.setAttribute('aria-expanded', String(open));
-    $('.menubtn__label', menuBtn).textContent = open ? 'Sluiten' : 'Menu';
+    menuBtn.setAttribute('aria-label', open ? 'Menu sluiten' : 'Menu openen');
     if (open) setTimeout(() => $('.menu__link', menuEl)?.focus({ preventScroll: true }), 300);
   }
   if (menuBtn && menuEl) {

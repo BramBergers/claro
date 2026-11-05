@@ -102,8 +102,8 @@ function menu(ctx, path) {
     ['/contact/', 'Contact']
   ];
   const cur = (href) => (href === '/' ? path === '/' : path.startsWith(href)) ? ' aria-current="page"' : '';
-  return `<button class="menubtn" type="button" aria-expanded="false" aria-controls="menu" data-menu-btn>
-  <span class="menubtn__icon" aria-hidden="true"><i></i><i></i></span><span class="menubtn__label">Menu</span>
+  return `<button class="menubtn" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu openen" data-menu-btn>
+  <span class="menubtn__icon" aria-hidden="true"><i></i><i></i></span>
 </button>
 <div class="menu" id="menu" aria-label="Menu" data-menu>
   <div class="menu__panel">
@@ -212,7 +212,6 @@ export function homePage(ctx) {
     .map(
       (s, i) => `<li class="srow" data-reveal style="--d:${i * 70}ms">
   <a class="srow__link" href="/wat-we-doen/${esc(s.slug)}/" data-case data-bubble="Bekijk cases">
-    <span class="srow__num">0${i + 1}</span>
     <span class="srow__title">${esc(s.title)}</span>
     <span class="srow__short">${esc(s.short)}</span>
     <span class="srow__count">${count(s.slug)} ${count(s.slug) === 1 ? 'case' : 'cases'}</span>
@@ -304,12 +303,12 @@ export function casesPage(ctx) {
 
 export function servicesPage(ctx) {
   const { site, services, projects } = ctx;
+  const steps = (ctx.about && ctx.about.steps) || [];
   const blocks = services
     .map((s, i) => {
       const n = projects.filter((p) => p.services.some((x) => x.slug === s.slug));
       return `<article class="sblock" data-reveal>
   <a class="sblock__link" href="/wat-we-doen/${esc(s.slug)}/" data-case data-bubble="Bekijk cases">
-    <span class="sblock__num">0${i + 1}</span>
     <span class="sblock__body">
       <span class="sblock__title">${esc(s.title)}</span>
       <span class="sblock__short">${esc(s.short || s.intro)}</span>
@@ -321,16 +320,37 @@ export function servicesPage(ctx) {
     })
     .join('');
   const body = `
-<section class="mod phead">
+<section class="mod phead wwd-intro">
   <div class="wrap">
+    <p class="sub" data-reveal>Diensten</p>
     <h1 class="h-hero" data-split>${title(site.servicesPageTitle)}</h1>
-    <p class="lead" data-reveal>${esc(site.servicesPageIntro)}</p>
+    <p class="lead lead--big" data-reveal>${esc(site.servicesPageIntro)}</p>
+    ${
+      steps.length
+        ? `<div class="process">
+      <p class="sub" data-reveal>${esc(ctx.about.stepsTitle || 'Zo werken we')}</p>
+      <div class="process__track">
+      <svg class="process__wave" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 1000 24"><path d="${processWave()}"/></svg>
+      <ol class="process__list">
+        ${steps.map((st, i) => `<li class="process__step" data-reveal style="--d:${i * 140}ms"><span class="process__dot">${i + 1}</span><span class="process__title">${esc(st.title)}</span><span class="process__text">${esc(st.text)}</span></li>`).join('')}
+      </ol>
+      </div>
+    </div>`
+        : ''
+    }
   </div>
 </section>
 <section class="mod">
   <div class="wrap sblocks">${blocks}</div>
 </section>`;
   return page(ctx, { title: 'Wat we doen', description: site.servicesPageIntro, path: '/wat-we-doen/', body, bodyClass: 'page-services' });
+}
+
+/** Golvende lijn tussen de stappen, in de vorm van de potloodpunt. */
+function processWave() {
+  let d = 'M0,6';
+  for (let x = 0; x <= 1000; x += 5) d += ` L${x},${(4 + 14 * Math.abs(Math.sin((Math.PI * x) / 62))).toFixed(1)}`;
+  return d;
 }
 
 export function servicePage(ctx, s) {
