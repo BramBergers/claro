@@ -6,7 +6,7 @@
 
 :root {
   /* oranje, lichtoranje, zwart en wit */
-  --orange: #4b84ee;
+  --orange: #2166ff;
   --peach: #f8ede7;
   --black: #3b2d28;
   --white: #ffffff;
@@ -466,7 +466,7 @@ html.lb-open { overflow: hidden; }
   .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .values[data-stack] { height: auto; }
   .values__sticky { position: static; height: auto; padding: var(--space) 0; }
-  .values__stage { height: 60svh; }
+  .values__stage { display: none; }
   .foot__inner { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
