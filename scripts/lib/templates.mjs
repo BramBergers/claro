@@ -73,21 +73,14 @@ function sectionHead({ sub, heading, text = '', link = null, h = 'h2' }) {
 function ctaBlock(ctx) {
   const { site } = ctx;
   const words = (site.ctaWords || []).filter(Boolean);
-  const tel = site.phone ? site.phone.replace(/[^\d+]/g, '') : '';
-  return `<section class="mod cta">
-  <div class="wrap">
+  return `<section class="mod cta" data-balls>
+  <canvas class="cta__balls" aria-hidden="true"></canvas>
+  <div class="wrap cta__inner">
     <h2 class="cta__title" data-reveal>
       <span class="cta__first">${esc(site.ctaTitle)}</span>
       <span class="cta__line">${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}<span>${esc(site.ctaEnd || '')}</span></span>
     </h2>
-    <div class="cta__row">
-      <p class="cta__text" data-reveal>${esc(site.ctaText)}</p>
-      <div class="cta__links" data-reveal>
-        ${site.email ? `<a class="cta__link" href="mailto:${esc(site.email)}"><span class="cta__label">Mail</span><span class="cta__value">${esc(site.email)}</span>${ARROW}</a>` : ''}
-        ${tel ? `<a class="cta__link" href="tel:${esc(tel)}"><span class="cta__label">Bel</span><span class="cta__value">${esc(site.phone)}</span>${ARROW}</a>` : ''}
-        <a class="btn btn--dark" href="/contact/"><span>${esc(site.ctaLabel)}</span></a>
-      </div>
-    </div>
+    <a class="btn btn--dark btn--big" href="/contact/" data-reveal><span>${esc(site.ctaLabel)}</span></a>
   </div>
 </section>`;
 }
@@ -95,6 +88,7 @@ function ctaBlock(ctx) {
 function menu(ctx, path) {
   const { site } = ctx;
   const links = [
+    ['/', 'Home'],
     ['/cases/', 'Cases'],
     ['/over-ons/', 'Over ons'],
     ['/wat-we-doen/', 'Wat we doen'],
@@ -106,11 +100,11 @@ function menu(ctx, path) {
 </button>
 <div class="menu" id="menu" aria-label="Menu" data-menu>
   <div class="menu__panel">
+    <svg class="menu__neck" viewBox="0 0 109.6 29.8" aria-hidden="true"><path d="M0,0 C14.3,0 22.9,1.9 28.9,12.7 A28.8,28.8 0 0 0 80.7,12.7 C86.7,1.9 95.3,0 109.6,0 Z"/></svg>
     <nav class="menu__nav" aria-label="Hoofdmenu">
-      <ul>${links.map(([href, label], i) => `<li style="--i:${i}"><a class="menu__link" href="${href}"${cur(href)}><span class="menu__arrow" aria-hidden="true"><svg viewBox="0 0 64 24"><path class="menu__arrow-line" d="M2,12 Q8,4 14,12 T26,12 T38,12 T50,12 L58,12"/><path class="menu__arrow-head" d="M50,4 L60,12 L50,20"/></svg></span><span class="menu__label">${label}</span><sup>0${i + 1}</sup></a></li>`).join('')}</ul>
+      <ul>${links.map(([href, label], i) => `<li style="--i:${i}"><a class="menu__link" href="${href}"${cur(href)}><span class="menu__arrow" aria-hidden="true"><svg viewBox="0 0 64 24"><path class="menu__arrow-line" d="M2,12 Q8,4 14,12 T26,12 T38,12 T50,12 L58,12"/><path class="menu__arrow-head" d="M50,4 L60,12 L50,20"/></svg></span><span class="menu__label">${label}</span></a></li>`).join('')}</ul>
     </nav>
     <div class="menu__foot">
-      <a class="menu__home" href="/"${cur('/')}>Home</a>
       ${site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : ''}
       <span class="menu__social"><a href="${esc(site.instagram)}" target="_blank" rel="noopener">Instagram</a><a href="${esc(site.linkedin)}" target="_blank" rel="noopener">LinkedIn</a></span>
     </div>
@@ -333,27 +327,28 @@ export function servicesPage(ctx) {
   return page(ctx, { title: 'Wat we doen', description: site.servicesPageIntro, path: '/wat-we-doen/', body, bodyClass: 'page-services' });
 }
 
-/** Werkwijze: genummerde stappen verbonden door een golvende lijn (Wat we doen en Over ons). */
+/** Werkwijze: stappen die één voor één over elkaar heen schuiven tijdens het scrollen. */
 function processBlock(ctx, { heading = false } = {}) {
   const steps = (ctx.about && ctx.about.steps) || [];
   if (!steps.length) return '';
   const label = esc(ctx.about.stepsTitle || 'Zo werken we');
-  return `<div class="process${heading ? ' process--page' : ''}">
-      ${heading ? `${sectionHead({ sub: 'Werkwijze', heading: ctx.about.stepsTitle || 'Zo werken we' })}` : `<p class="sub" data-reveal>${label}</p>`}
-      <div class="process__track">
-      <svg class="process__wave" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 1000 24"><path d="${processWave()}"/></svg>
+  return `<div class="process${heading ? ' process--page' : ''}" style="--n:${steps.length}" data-process>
+    <div class="process__sticky">
+      <div class="process__head">${heading ? `${sectionHead({ sub: 'Werkwijze', heading: ctx.about.stepsTitle || 'Zo werken we' })}` : `<p class="sub">${label}</p>`}</div>
       <ol class="process__list">
-        ${steps.map((st, i) => `<li class="process__step" data-reveal style="--d:${i * 140}ms"><span class="process__dot">${i + 1}</span><span class="process__title">${esc(st.title)}</span><span class="process__text">${esc(st.text)}</span></li>`).join('')}
+        ${steps
+          .map(
+            (st, i) => `<li class="process__step" style="--i:${i}">
+          <div class="process__card">
+            <span class="process__num">${i + 1}</span>
+            <span class="process__body"><span class="process__title">${esc(st.title)}</span><span class="process__text">${esc(st.text)}</span></span>
+          </div>
+        </li>`
+          )
+          .join('')}
       </ol>
-      </div>
-    </div>`;
-}
-
-/** Golvende lijn tussen de stappen, in de vorm van de potloodpunt. */
-function processWave() {
-  let d = 'M0,6';
-  for (let x = 0; x <= 1000; x += 5) d += ` L${x},${(4 + 14 * Math.abs(Math.sin((Math.PI * x) / 62))).toFixed(1)}`;
-  return d;
+    </div>
+  </div>`;
 }
 
 export function servicePage(ctx, s) {
@@ -503,7 +498,6 @@ ${
 
 <section class="mod">
   <div class="wrap">
-    <div class="story story--cols">${(about.story || []).map((t) => `<p data-reveal>${esc(t)}</p>`).join('')}</div>
     ${processBlock(ctx, { heading: true })}
   </div>
 </section>

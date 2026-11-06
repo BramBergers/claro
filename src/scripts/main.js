@@ -38,7 +38,7 @@
     return `${PRE}${w} ${SUF}`;
   }
   const pencils = $$('.logo__pencil').map((el) => ({ el, on: true }));
-  let pencilSpeed = 1.3, pencilBoost = 0, phase = 0;
+  let pencilSpeed = 0.85, pencilBoost = 0, phase = 0;
   if (pencils.length && !reduced) {
     if ('IntersectionObserver' in window) {
       const pio = new IntersectionObserver((es) => es.forEach((e) => { const p = pencils.find((x) => x.el.closest('svg') === e.target); if (p) p.on = e.isIntersecting; }));
@@ -152,6 +152,97 @@
     d.addEventListener('mouseleave', () => { active = false; bubble.classList.remove('is-on'); });
   }
 
+  /* ---------- Muiscursor: stip en ring ---------- */
+  if (finePointer && !reduced) {
+    const cur = d.createElement('div');
+    cur.className = 'cursor';
+    cur.setAttribute('aria-hidden', 'true');
+    cur.innerHTML = '<span class="cursor__dot"></span>';
+    body.appendChild(cur);
+    const dot = $('.cursor__dot', cur);
+    let mx = -100, my = -100, rx = -100, ry = -100, raf = 0;
+    const move = () => {
+      rx = lerp(rx, mx, 0.35); ry = lerp(ry, my, 0.35);
+      dot.style.transform = `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0)`;
+      raf = Math.abs(rx - mx) + Math.abs(ry - my) > 0.3 ? requestAnimationFrame(move) : 0;
+    };
+    addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      mx = e.clientX; my = e.clientY;
+      if (!cur.classList.contains('is-on')) { rx = mx; ry = my; cur.classList.add('is-on'); }
+      const t = e.target instanceof Element ? e.target : null;
+      cur.classList.toggle('is-link', !!(t && t.closest('a, button, label, .chip, [role="button"]')));
+      cur.classList.toggle('is-hidden', !!(t && (t.closest('[data-case]') || t.closest('input, textarea'))));
+      cur.classList.toggle('on-blue', !!(t && t.closest('main > .mod:nth-of-type(even), .menu__panel, .menubtn, .swipe, .btn--dark')));
+      if (!raf) raf = requestAnimationFrame(move);
+    }, { passive: true });
+    d.addEventListener('mouseleave', () => cur.classList.remove('is-on'));
+    addEventListener('pointerdown', () => cur.classList.add('is-down'));
+    addEventListener('pointerup', () => cur.classList.remove('is-down'));
+  }
+
+  /* ---------- Contactblok: klik voor gekleurde balletjes die onderaan verzamelen ---------- */
+  $$('[data-balls]').forEach((sec) => {
+    const cv = $('.cta__balls', sec);
+    const g = cv.getContext('2d');
+    const COLORS = ['#2166ff', '#0a3fb8', '#ff8ad8', '#ffd25e', '#5ef2b4', '#3b2d28', '#ff7a59'];
+    const LIFE = 5, FADE = 0.28;
+    let W = 0, H = 0, dpr = 1, balls = [], raf = 0, last = 0;
+    const size = () => {
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      W = sec.clientWidth; H = sec.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+    };
+    size(); addEventListener('resize', size);
+    const spawn = (x, y) => {
+      const n = 1;
+      for (let i = 0; i < n; i++) {
+        const a = -Math.PI / 2 + (Math.random() - 0.5) * 1.2;
+        const sp = 200 + Math.random() * 250;
+        balls.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: 14 + Math.random() * 16, c: COLORS[Math.floor(Math.random() * COLORS.length)], t: 0, life: LIFE - Math.random() * 1.2 });
+      }
+      if (balls.length > 160) balls.splice(0, balls.length - 160);
+      if (!raf) { last = 0; raf = requestAnimationFrame(step); }
+    };
+    function step(now) {
+      const dt = last ? Math.min(0.033, (now - last) / 1000) : 0.016;
+      last = now;
+      for (const b of balls) {
+        b.t += dt;
+        b.vy += 1500 * dt;
+        b.x += b.vx * dt; b.y += b.vy * dt;
+        if (b.y + b.r > H - 16) { b.y = H - 16 - b.r; b.vy *= -0.32; b.vx *= 0.9; if (Math.abs(b.vy) < 30) b.vy = 0; }
+        if (b.x - b.r < 0) { b.x = b.r; b.vx *= -0.5; }
+        if (b.x + b.r > W) { b.x = W - b.r; b.vx *= -0.5; }
+      }
+      // balletjes duwen elkaar weg, zodat ze op een hoopje liggen
+      for (let i = 0; i < balls.length; i++) for (let j = i + 1; j < balls.length; j++) {
+        const a = balls[i], b = balls[j], dx = b.x - a.x, dy = b.y - a.y, min = a.r + b.r, d2 = dx * dx + dy * dy;
+        if (d2 > 0 && d2 < min * min) {
+          const d = Math.sqrt(d2), o = (min - d) / 2, nx = dx / d, ny = dy / d;
+          a.x -= nx * o; a.y -= ny * o; b.x += nx * o; b.y += ny * o;
+          const rv = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+          if (rv < 0) { const k = rv * 0.55; a.vx += k * nx; a.vy += k * ny; b.vx -= k * nx; b.vy -= k * ny; }
+        }
+      }
+      balls = balls.filter((b) => b.t < b.life);
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.clearRect(0, 0, W, H);
+      for (const b of balls) {
+        const left = b.life - b.t;
+        const s = left < FADE ? left / FADE : Math.min(1, b.t / 0.12);
+        g.fillStyle = b.c;
+        g.beginPath(); g.arc(b.x, b.y, Math.max(0.1, b.r * s), 0, 6.2832); g.fill();
+      }
+      raf = balls.length ? requestAnimationFrame(step) : 0;
+    }
+    sec.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('a, button')) return;
+      const r = sec.getBoundingClientRect();
+      spawn(e.clientX - r.left, e.clientY - r.top);
+    });
+  });
+
   /* ---------- Filters op de cases-pagina ---------- */
   const filters = $('[data-filters]');
   const grid = $('[data-grid]');
@@ -186,8 +277,24 @@
   const phones = stack ? $$('.phone', stack) : [];
   if (stack) stack.style.setProperty('--stack-n', String(Math.max(1, phones.length)));
   const wide = matchMedia('(min-width: 961px)');
+  const processes = reduced ? [] : $$('[data-process]').map((el) => ({ el, list: $('.process__list', el), steps: $$('.process__step', el) }));
+  const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function tick() {
     const vh = innerHeight;
+    // werkwijze: stappen schuiven één voor één over elkaar; daarna scrolt alles samen weg
+    for (const pr of processes) {
+      const r = pr.el.getBoundingClientRect();
+      if (r.bottom < -50 || r.top > vh + 50) continue;
+      const n = pr.steps.length, total = Math.max(1, r.height - vh);
+      const p = clamp(-r.top / total) * (n - 1) * 1.08;
+      const areaH = vh - pr.list.getBoundingClientRect().top + 30;
+      pr.steps.forEach((st, i) => {
+        const local = i === 0 ? 1 : clamp(p - (i - 1));
+        const covered = clamp(p - i, 0, 2);
+        st.style.setProperty('--y', `${((1 - easeIO(local)) * areaH).toFixed(1)}px`);
+        st.style.setProperty('--s', (1 - covered * 0.035).toFixed(4));
+      });
+    }
     if (!reduced) {
       // header-video wordt kleiner en vervaagt als je naar beneden scrolt
       if (hero && heroMedia) {
@@ -244,17 +351,17 @@
     void swipe.offsetWidth;
     swipe.classList.add('is-in');
     root.classList.add('is-leaving');
-    pencilBoost = 9;
+    pencilBoost = 4;
     store.set('claro:swipe', '1');
     setTimeout(() => {
       if (menuOpen) setMenu(false);
       location.href = url.href;
-    }, 850);
+    }, 1850);
   });
   function enter() {
     if (root.classList.contains('is-entering') && swipe) {
       store.del('claro:swipe');
-      pencilBoost = 6;
+      pencilBoost = 3;
       setTimeout(() => {
         swipe.classList.add('is-out');
         root.classList.add('is-arriving');
@@ -262,7 +369,7 @@
         pencilBoost = 0;
         startReveal();
         setTimeout(() => { swipe.classList.remove('is-out'); root.classList.remove('is-arriving'); }, 1150);
-      }, 380);
+      }, 200);
     } else {
       startReveal();
     }
@@ -272,7 +379,7 @@
     if (e.persisted) {
       leaving = false;
       pencilBoost = 0;
-      swipe && swipe.classList.remove('is-in', 'is-out');
+      swipe && swipe.classList.remove('is-in', 'is-out', 'is-reveal');
       root.classList.remove('is-entering', 'is-leaving', 'is-arriving', 'menu-open');
     }
   });
