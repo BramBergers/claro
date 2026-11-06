@@ -36,7 +36,7 @@ export const siteSettings = defineType({
   fields: [
     defineField({ name: 'heroTitle', title: 'Grote titel bovenaan', type: 'string', group: 'home' }),
     defineField({ name: 'heroIntro', title: 'Korte intro onder de titel', type: 'text', rows: 3, group: 'home' }),
-    defineField({ name: 'heroVideo', title: 'Video naast de titel (showreel)', type: 'media', group: 'home', description: 'Korte, snelle montage van jullie werk. Staand of vierkant werkt het mooist (bijv. 4:5). Liefst onder de 8 MB.' }),
+    defineField({ name: 'showreel', title: 'Video naast de titel (showreel)', type: 'media', group: 'home', description: 'Korte, snelle montage van jullie werk. Staand of vierkant werkt het mooist (bijv. 4:5). Liefst onder de 8 MB.' }),
     defineField({ name: 'recentTitle', title: 'Titel boven de recente projecten', type: 'string', group: 'home' }),
     defineField({ name: 'servicesTitle', title: 'Titel boven de diensten', type: 'string', group: 'home' }),
     defineField({ name: 'servicesIntro', title: 'Tekst bij de diensten', type: 'text', rows: 2, group: 'home' }),

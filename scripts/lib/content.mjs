@@ -12,7 +12,7 @@ const QUERY = `{
     heroTitle, heroIntro, recentTitle, servicesTitle, servicesIntro, clientsTitle,
     ctaTitle, ctaWords, ctaEnd, ctaText, ctaLabel, phone, casesTitle, casesIntro, servicesPageTitle, servicesPageIntro,
     instagram, linkedin, email, kvk, byline, description,
-    "heroVideo": heroVideo${mediaProjection}
+    "heroVideo": showreel${mediaProjection}
   },
   "services": *[_type == "service"] | order(order asc, title asc){
     title, "slug": slug.current, short, intro, offer[]{ title, text },

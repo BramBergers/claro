@@ -165,7 +165,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${fonts}
 <link rel="stylesheet" href="${assets.css}">
-<script>(function(d){d.documentElement.classList.add('js');try{if(sessionStorage.getItem('claro:swipe'))d.documentElement.classList.add('is-entering')}catch(e){}})(document)</script>
+<script>(function(d){d.documentElement.classList.add('js');try{if(sessionStorage.getItem('claro:zoom')){sessionStorage.removeItem('claro:zoom');sessionStorage.removeItem('claro:swipe');d.documentElement.classList.add('is-zoomed')}else if(sessionStorage.getItem('claro:swipe'))d.documentElement.classList.add('is-entering')}catch(e){}})(document)</script>
 ${ld}
 </head>
 <body class="${bodyClass}">
