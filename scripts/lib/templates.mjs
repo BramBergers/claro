@@ -12,7 +12,6 @@ const ARROW = '<svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d
 const ARROW_R = '<svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg>';
 const ARROW_L = '<svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5M11 6l-6 6 6 6"/></svg>';
 
-const mime = (src) => (/\.webm(\?|$)/i.test(src) ? 'video/webm' : 'video/mp4');
 
 /** Beeld of video. Video's spelen alleen af als ze in beeld zijn (zie main.js). */
 export function media(m, { cls = '', alt = '', eager = false } = {}) {
@@ -21,7 +20,8 @@ export function media(m, { cls = '', alt = '', eager = false } = {}) {
     return `<img class="${cls}" src="${esc(m.src)}" alt="${esc(alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async">`;
   }
   const poster = m.poster ? ` poster="${esc(m.poster)}"` : '';
-  return `<video class="${cls}" muted loop playsinline preload="metadata"${poster} data-autoplay disablepictureinpicture aria-hidden="true"><source src="${esc(m.src)}" type="${mime(m.src)}"></video>`;
+  const auto = eager ? ' autoplay preload="auto"' : ' preload="metadata"';
+  return `<video class="${cls}" src="${esc(m.src)}" muted loop playsinline${auto}${poster} data-autoplay disablepictureinpicture aria-hidden="true"></video>`;
 }
 
 /** Titel waarvan de woorden één voor één uit een masker komen; de punt aan het eind krijgt de accentkleur. */

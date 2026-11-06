@@ -98,17 +98,27 @@
 
   /* ---------- Video's spelen alleen als je ze ziet ---------- */
   const videos = $$('video[data-autoplay]');
-  if (reduced) {
-    videos.forEach((v) => v.pause());
-  } else if ('IntersectionObserver' in window) {
+  const tryPlay = (v) => {
+    v.muted = true; v.defaultMuted = true; v.playsInline = true;
+    if (v.readyState === 0 && v.preload !== 'auto') { v.preload = 'auto'; v.load(); }
+    const p = v.play();
+    if (p) p.catch(() => { v.dataset.blocked = '1'; });
+  };
+  const visible = new Set();
+  if ('IntersectionObserver' in window) {
     const vio = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
         const v = en.target;
-        if (en.isIntersecting) { const p = v.play(); if (p) p.catch(() => {}); } else v.pause();
+        if (en.isIntersecting) { visible.add(v); tryPlay(v); } else { visible.delete(v); v.pause(); }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.01 });
     videos.forEach((v) => vio.observe(v));
+  } else {
+    videos.forEach(tryPlay);
   }
+  // sommige telefoons (bijv. in energiebesparingsmodus) spelen pas af na een eerste aanraking
+  const unlock = () => { visible.forEach(tryPlay); };
+  ['touchstart', 'pointerdown', 'scroll'].forEach((ev) => addEventListener(ev, unlock, { passive: true, once: true }));
 
   /* ---------- Menu onderaan ---------- */
   const menuBtn = $('[data-menu-btn]');
