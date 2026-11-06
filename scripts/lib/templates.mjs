@@ -81,7 +81,6 @@ function ctaBlock(ctx) {
       <span class="cta__line">${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}<span>${esc(site.ctaEnd || '')}</span></span>
     </h2>
     <a class="btn btn--dark btn--big" href="/contact/" data-reveal><span>${esc(site.ctaLabel)}</span></a>
-    <p class="cta__hint" aria-hidden="true">klik ergens ✦</p>
   </div>
 </section>`;
 }

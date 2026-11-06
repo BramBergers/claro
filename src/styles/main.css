@@ -8,6 +8,7 @@
   /* oranje, lichtoranje, zwart en wit */
   --orange: #2166ff;
   --navy: #0a3fb8;
+  --menu: #3d7bff;
   --peach: #f8ede7;
   --black: #3b2d28;
   --white: #ffffff;
@@ -136,7 +137,7 @@ main > .mod:nth-of-type(even) {
 .menubtn {
   position: fixed; left: 50%; bottom: clamp(1rem, 2.4vh, 1.6rem); z-index: 220; translate: -50% 0;
   display: grid; place-items: center; width: 3.6rem; height: 3.6rem; padding: 0;
-  border-radius: 50%; background: var(--navy); color: var(--white);
+  border-radius: 50%; background: var(--menu); color: var(--white);
   font-weight: 600; font-size: 0.95rem; letter-spacing: 0.01em;
   box-shadow: 0 16px 36px -12px rgba(10, 30, 90, 0.55);
   transition: transform 0.45s var(--ease-out), background 0.3s, color 0.3s;
@@ -156,24 +157,24 @@ main > .mod:nth-of-type(even) {
   --btn: 3.6rem; --gapb: clamp(1rem, 2.4vh, 1.6rem);
   position: absolute; left: 50%; bottom: calc(var(--gapb) + var(--btn) * 0.5); width: min(100% - 1.2rem, 760px); translate: -50% 0;
   padding: clamp(2rem, 4vw, 3.2rem) clamp(1.6rem, 4vw, 3.2rem) clamp(2.4rem, 4vw, 3rem);
-  border-radius: 30px; background: var(--navy); color: var(--white);
+  border-radius: 30px; background: var(--menu); color: var(--white);
   transform-origin: 50% 100%; transform: translateY(24px) scale(0.12, 0.04); opacity: 0;
   transition: transform 0.65s cubic-bezier(0.7, 0, 0.2, 1), opacity 0.25s 0.15s, border-radius 0.65s;
 }
-.menu__neck { position: absolute; left: 50%; top: calc(100% - 1px); width: 109.6px; height: 29.8px; translate: -50% 0; fill: var(--navy); overflow: visible; }
+.menu__neck { position: absolute; left: 50%; top: calc(100% - 1px); width: 109.6px; height: 29.8px; translate: -50% 0; fill: var(--menu); overflow: visible; }
 .menu-open .menu { pointer-events: auto; }
 .menu-open .menu::before { opacity: 1; }
 .menu-open .menu__panel { transform: none; opacity: 1; transition: transform 0.7s cubic-bezier(0.2, 1.2, 0.3, 1), opacity 0.2s; }
 .menu__nav ul { display: grid; gap: clamp(0.35rem, 1vh, 0.7rem); }
 .menu__link { display: inline-flex; align-items: flex-start; gap: 0; font-family: var(--f-display); font-weight: 900; font-size: clamp(2.4rem, 7vw, 4rem); line-height: 1.06; letter-spacing: -0.035em; transition: color 0.3s, transform 0.5s var(--ease-out); }
-.menu__link[aria-current] { color: #9ec0ff; }
+.menu__link[aria-current] { color: #cfe0ff; }
 .menu__label { margin-right: 0.4rem; }
 .menu__arrow { display: inline-block; width: 0; overflow: hidden; align-self: center; transition: width 0.55s var(--ease-out); }
 .menu__arrow svg { display: block; width: 0.95em; height: 0.36em; margin-right: 0.22em; fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
 .menu__arrow-line { stroke-dasharray: 80; stroke-dashoffset: 80; transition: stroke-dashoffset 0.6s var(--ease-out) 0.05s; }
 .menu__arrow-head { stroke-dasharray: 30; stroke-dashoffset: 30; transition: stroke-dashoffset 0.35s var(--ease-out) 0.35s; }
 @media (hover: hover) {
-  .menu__link:hover { color: #9ec0ff; }
+  .menu__link:hover { color: #cfe0ff; }
   .menu__link:hover .menu__arrow { width: 1.17em; }
   .menu__link:hover .menu__arrow-line, .menu__link:hover .menu__arrow-head { stroke-dashoffset: 0; }
 }
@@ -181,7 +182,7 @@ main > .mod:nth-of-type(even) {
 .menu-open .menu__nav li { opacity: 1; transform: none; transition: opacity 0.6s var(--ease-out), transform 0.8s var(--ease-out); transition-delay: calc(0.15s + var(--i) * 0.06s); }
 .menu__foot { display: flex; flex-wrap: wrap; gap: 0.6rem 1.6rem; margin-top: 2rem; font-size: 0.88rem; }
 .menu__foot a { opacity: 0.8; transition: opacity 0.3s, color 0.3s; }
-.menu__foot a:hover { opacity: 1; color: #9ec0ff; }
+.menu__foot a:hover { opacity: 1; color: #cfe0ff; }
 .menu__social { display: inline-flex; gap: 1.2rem; }
 html.menu-open { overflow: hidden; }
 
