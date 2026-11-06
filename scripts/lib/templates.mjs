@@ -318,7 +318,6 @@ export function servicesPage(ctx) {
     <p class="sub" data-reveal>Diensten</p>
     <h1 class="h-hero" data-split>${title(site.servicesPageTitle)}</h1>
     <p class="lead lead--big" data-reveal>${esc(site.servicesPageIntro)}</p>
-    ${processBlock(ctx)}
   </div>
 </section>
 <section class="mod">
