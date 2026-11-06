@@ -279,8 +279,15 @@
   const wide = matchMedia('(min-width: 961px)');
   const processes = reduced ? [] : $$('[data-process]').map((el) => ({ el, list: $('.process__list', el), steps: $$('.process__step', el) }));
   const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const chero = $('[data-chero]');
   function tick() {
     const vh = innerHeight;
+    // case: het grote beeld zoomt rustig in en wordt donkerder terwijl de case eroverheen schuift
+    if (chero && !reduced) {
+      const p = clamp(scrollY / vh);
+      chero.style.transform = `scale(${(1.06 - p * 0.06 + p * p * 0.12).toFixed(4)}) translate3d(0, ${(p * -4).toFixed(2)}vh, 0)`;
+      chero.style.filter = `brightness(${(1 - p * 0.45).toFixed(3)})`;
+    }
     // werkwijze: stappen schuiven één voor één over elkaar; daarna scrolt alles samen weg
     for (const pr of processes) {
       const r = pr.el.getBoundingClientRect();

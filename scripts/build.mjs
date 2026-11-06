@@ -61,8 +61,7 @@ async function write(rel, html) {
 await write('index.html', T.homePage(ctx));
 await write('cases/index.html', T.casesPage(ctx));
 for (const [i, p] of ctx.projects.entries()) {
-  const next = ctx.projects[(i + 1) % ctx.projects.length];
-  await write(`cases/${p.slug}/index.html`, T.casePage(ctx, p, ctx.projects.length > 1 ? next : null));
+  await write(`cases/${p.slug}/index.html`, T.casePage(ctx, p));
 }
 await write('wat-we-doen/index.html', T.servicesPage(ctx));
 for (const s of ctx.services) {

@@ -386,54 +386,52 @@ export function servicePage(ctx, s) {
   return page(ctx, { title: s.title, description: s.intro, path: `/wat-we-doen/${s.slug}/`, body, bodyClass: 'page-service' });
 }
 
-export function casePage(ctx, p, next) {
+export function casePage(ctx, p) {
   const [first, ...rest] = p.media;
-  const tile = (m, cls) =>
-    `<button type="button" class="gal__item ${cls}" data-lb data-kind="${m.type}" data-src="${esc(m.src)}"${m.poster ? ` data-poster="${esc(m.poster)}"` : ''} aria-label="Bekijk groot">${media(m, { cls: 'gal__asset', alt: p.title })}</button>`;
-  // beelden afwisselend: één breed, twee naast elkaar
-  const restHtml = [];
-  for (let i = 0; i < rest.length; ) {
-    const mode = restHtml.length % 2 === 0 ? 2 : 1;
-    const chunk = rest.slice(i, i + mode);
-    restHtml.push(`<div class="gal__row gal__row--${chunk.length}">${chunk.map((m) => tile(m, '')).join('')}</div>`);
-    i += mode;
-  }
+  const tile = (m) =>
+    `<button type="button" class="gal__item" data-lb data-kind="${m.type}" data-src="${esc(m.src)}"${m.poster ? ` data-poster="${esc(m.poster)}"` : ''} aria-label="Bekijk groot">${media(m, { cls: 'gal__asset', alt: p.title })}</button>`;
+  // beelden groot onder elkaar, met de alinea's van het verhaal ertussen
+  const flow = [];
+  const paras = [...p.body];
+  rest.forEach((m) => {
+    flow.push(`<div class="gal" data-reveal>${tile(m)}</div>`);
+    if (paras.length) flow.push(`<p class="case__para" data-reveal>${esc(paras.shift())}</p>`);
+  });
+  paras.forEach((t) => flow.push(`<p class="case__para" data-reveal>${esc(t)}</p>`));
+
+  // twee andere cases (de volgende in de lijst)
+  const all = ctx.projects;
+  const idx = all.findIndex((x) => x.slug === p.slug);
+  const others = [1, 2].map((k) => all[(idx + k) % all.length]).filter((x, i, arr) => x && x.slug !== p.slug && arr.findIndex((y) => y.slug === x.slug) === i);
+
   const body = `
-<section class="mod chead">
+<div class="chero" aria-hidden="${first ? 'false' : 'true'}">
+  <div class="chero__media" data-chero>${first ? media(first, { cls: 'chero__asset', alt: `${p.client}: ${p.title}`, eager: true }) : ''}</div>
+</div>
+<section class="mod case">
   <div class="wrap">
     <a class="back" href="/cases/">${ARROW_L} Alle cases</a>
     <p class="sub" data-reveal>${esc(p.client)}</p>
-    <h1 class="h-hero" data-split>${title(p.title)}</h1>
-    <div class="chead__cols">
+    <h1 class="h-hero case__title" data-split>${title(p.title)}</h1>
+    ${p.services.length ? `<ul class="case__tags" data-reveal>${p.services.map((s) => `<li><a href="/wat-we-doen/${esc(s.slug)}/">${esc(s.title)}</a></li>`).join('')}</ul>` : ''}
+    <div class="case__intro">
       <p class="lead" data-reveal>${esc(p.intro)}</p>
       <dl class="facts" data-reveal>
         <div><dt>Klant</dt><dd>${esc(p.client)}</dd></div>
         ${p.year ? `<div><dt>Jaar</dt><dd>${esc(p.year)}</dd></div>` : ''}
-        ${p.services.length ? `<div><dt>Diensten</dt><dd>${p.services.map((s) => `<a href="/wat-we-doen/${esc(s.slug)}/">${esc(s.title)}</a>`).join('')}</dd></div>` : ''}
+        ${p.services.length ? `<div><dt>Diensten</dt><dd>${p.services.map((s) => esc(s.title)).join(', ')}</dd></div>` : ''}
       </dl>
     </div>
-    ${first ? `<div class="gal gal--lead" data-reveal>${tile(first, 'gal__item--lead')}</div>` : ''}
+    ${flow.length ? `<div class="case__flow">${flow.join('')}</div>` : ''}
   </div>
 </section>
 ${
-  p.body.length || rest.length
-    ? `<section class="mod">
+  others.length
+    ? `<section class="mod more">
   <div class="wrap">
-    ${p.body.length ? `<div class="story">${p.body.map((t) => `<p data-reveal>${esc(t)}</p>`).join('')}</div>` : ''}
-    ${rest.length ? `<div class="gal">${restHtml.join('')}</div>` : ''}
-  </div>
-</section>`
-    : ''
-}
-${
-  next
-    ? `<section class="mod next">
-  <div class="wrap">
-    <a class="next__link" href="/cases/${esc(next.slug)}/" data-case>
-      <span class="next__text"><span class="sub">Volgende case</span><span class="next__title">${esc(next.client)}: ${esc(next.title)}</span></span>
-      <span class="next__media">${next.media[0] ? media(next.media[0], { cls: 'next__asset' }) : ''}</span>
-    </a>
-    <a class="back back--bottom" href="/cases/">${ARROW_L} Terug naar alle cases</a>
+    <h2 class="h-section more__title" data-split>Nog meer helder werk.</h2>
+    <div class="more__grid">${others.map((o) => projectCard(o)).join('')}</div>
+    <div class="more__btn" data-reveal><a class="btn btn--dark btn--big" href="/cases/"><span>Bekijk al ons werk</span></a></div>
   </div>
 </section>`
     : ''
