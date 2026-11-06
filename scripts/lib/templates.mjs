@@ -73,20 +73,15 @@ function sectionHead({ sub, heading, text = '', link = null, h = 'h2' }) {
 function ctaBlock(ctx) {
   const { site } = ctx;
   const words = (site.ctaWords || []).filter(Boolean);
-  const tel = site.phone ? site.phone.replace(/[^\d+]/g, '') : '';
-  return `<section class="mod cta">
-  <div class="wrap">
+  return `<section class="mod cta" data-balls>
+  <canvas class="cta__balls" aria-hidden="true"></canvas>
+  <div class="wrap cta__inner">
     <h2 class="cta__title" data-reveal>
       <span class="cta__first">${esc(site.ctaTitle)}</span>
       <span class="cta__line">${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}<span>${esc(site.ctaEnd || '')}</span></span>
     </h2>
-    <div class="cta__row">
-      <div class="cta__links" data-reveal>
-        ${site.email ? `<a class="cta__link" href="mailto:${esc(site.email)}"><span class="cta__label">Mail</span><span class="cta__value">${esc(site.email)}</span>${ARROW}</a>` : ''}
-        ${tel ? `<a class="cta__link" href="tel:${esc(tel)}"><span class="cta__label">Bel</span><span class="cta__value">${esc(site.phone)}</span>${ARROW}</a>` : ''}
-        <a class="btn btn--dark" href="/contact/"><span>${esc(site.ctaLabel)}</span></a>
-      </div>
-    </div>
+    <a class="btn btn--dark btn--big" href="/contact/" data-reveal><span>${esc(site.ctaLabel)}</span></a>
+    <p class="cta__hint" aria-hidden="true">klik ergens ✦</p>
   </div>
 </section>`;
 }
