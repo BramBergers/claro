@@ -78,7 +78,7 @@ function ctaBlock(ctx) {
   <div class="wrap">
     <h2 class="cta__title" data-reveal>
       <span class="cta__first">${esc(site.ctaTitle)}</span>
-      <span class="cta__line">${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__bg" aria-hidden="true"></span><span class="swap__word">${esc(words[0])}</span></span>` : ''}<span>${esc(site.ctaEnd || '')}</span></span>
+      <span class="cta__line">${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}<span>${esc(site.ctaEnd || '')}</span></span>
     </h2>
     <div class="cta__row">
       <div class="cta__links" data-reveal>
@@ -106,7 +106,7 @@ function menu(ctx, path) {
 </button>
 <div class="menu" id="menu" aria-label="Menu" data-menu>
   <div class="menu__panel">
-    <span class="menu__neck" aria-hidden="true"></span>
+    <svg class="menu__neck" viewBox="0 0 109.6 29.8" aria-hidden="true"><path d="M0,0 C14.3,0 22.9,1.9 28.9,12.7 A28.8,28.8 0 0 0 80.7,12.7 C86.7,1.9 95.3,0 109.6,0 Z"/></svg>
     <nav class="menu__nav" aria-label="Hoofdmenu">
       <ul>${links.map(([href, label], i) => `<li style="--i:${i}"><a class="menu__link" href="${href}"${cur(href)}><span class="menu__arrow" aria-hidden="true"><svg viewBox="0 0 64 24"><path class="menu__arrow-line" d="M2,12 Q8,4 14,12 T26,12 T38,12 T50,12 L58,12"/><path class="menu__arrow-head" d="M50,4 L60,12 L50,20"/></svg></span><span class="menu__label">${label}</span></a></li>`).join('')}</ul>
     </nav>
@@ -339,13 +339,13 @@ function processBlock(ctx, { heading = false } = {}) {
   if (!steps.length) return '';
   const label = esc(ctx.about.stepsTitle || 'Zo werken we');
   return `<div class="process${heading ? ' process--page' : ''}">
-      ${heading ? `${sectionHead({ sub: 'Werkwijze', heading: ctx.about.stepsTitle || 'Zo werken we' })}` : `<p class="sub" data-reveal>${label}</p>`}
+      <div class="process__head">${heading ? `${sectionHead({ sub: 'Werkwijze', heading: ctx.about.stepsTitle || 'Zo werken we' })}` : `<p class="sub" data-reveal>${label}</p>`}</div>
       <ol class="process__list" style="--n:${steps.length}">
         ${steps
           .map(
             (st, i) => `<li class="process__step" style="--i:${i}">
           <div class="process__card">
-            <span class="process__num">0${i + 1}<small>/0${steps.length}</small></span>
+            <span class="process__num">${i + 1}</span>
             <span class="process__body"><span class="process__title">${esc(st.title)}</span><span class="process__text">${esc(st.text)}</span></span>
           </div>
         </li>`

@@ -157,14 +157,13 @@
     const cur = d.createElement('div');
     cur.className = 'cursor';
     cur.setAttribute('aria-hidden', 'true');
-    cur.innerHTML = '<span class="cursor__ring"></span><span class="cursor__dot"></span>';
+    cur.innerHTML = '<span class="cursor__dot"></span>';
     body.appendChild(cur);
-    const dot = $('.cursor__dot', cur), ring = $('.cursor__ring', cur);
+    const dot = $('.cursor__dot', cur);
     let mx = -100, my = -100, rx = -100, ry = -100, raf = 0;
     const move = () => {
-      rx = lerp(rx, mx, 0.2); ry = lerp(ry, my, 0.2);
-      dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
-      ring.style.transform = `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0)`;
+      rx = lerp(rx, mx, 0.35); ry = lerp(ry, my, 0.35);
+      dot.style.transform = `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0)`;
       raf = Math.abs(rx - mx) + Math.abs(ry - my) > 0.3 ? requestAnimationFrame(move) : 0;
     };
     addEventListener('pointermove', (e) => {
@@ -181,6 +180,14 @@
     addEventListener('pointerdown', () => cur.classList.add('is-down'));
     addEventListener('pointerup', () => cur.classList.remove('is-down'));
   }
+
+  /* ---------- Werkwijze: hoogte van de vaste titel doorgeven ---------- */
+  $$('.process').forEach((pr) => {
+    const head = $('.process__head', pr);
+    if (!head) return;
+    const set = () => pr.style.setProperty('--ph', `${head.offsetHeight}px`);
+    set(); addEventListener('resize', set); addEventListener('load', set);
+  });
 
   /* ---------- Filters op de cases-pagina ---------- */
   const filters = $('[data-filters]');
@@ -279,22 +286,20 @@
     setTimeout(() => {
       if (menuOpen) setMenu(false);
       location.href = url.href;
-    }, 850);
+    }, 1250);
   });
   function enter() {
     if (root.classList.contains('is-entering') && swipe) {
       store.del('claro:swipe');
       pencilBoost = 3;
-      // eerst alleen de grote A, dan L en R, dan C en O, terwijl het logo uitzoomt
-      requestAnimationFrame(() => requestAnimationFrame(() => swipe.classList.add('is-reveal')));
       setTimeout(() => {
         swipe.classList.add('is-out');
         root.classList.add('is-arriving');
         root.classList.remove('is-entering');
         pencilBoost = 0;
         startReveal();
-        setTimeout(() => { swipe.classList.remove('is-out', 'is-reveal'); root.classList.remove('is-arriving'); }, 1150);
-      }, 1000);
+        setTimeout(() => { swipe.classList.remove('is-out'); root.classList.remove('is-arriving'); }, 1150);
+      }, 450);
     } else {
       startReveal();
     }
