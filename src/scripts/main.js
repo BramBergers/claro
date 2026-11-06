@@ -38,7 +38,7 @@
     return `${PRE}${w} ${SUF}`;
   }
   const pencils = $$('.logo__pencil').map((el) => ({ el, on: true }));
-  let pencilSpeed = 1.3, pencilBoost = 0, phase = 0;
+  let pencilSpeed = 0.85, pencilBoost = 0, phase = 0;
   if (pencils.length && !reduced) {
     if ('IntersectionObserver' in window) {
       const pio = new IntersectionObserver((es) => es.forEach((e) => { const p = pencils.find((x) => x.el.closest('svg') === e.target); if (p) p.on = e.isIntersecting; }));
@@ -152,6 +152,36 @@
     d.addEventListener('mouseleave', () => { active = false; bubble.classList.remove('is-on'); });
   }
 
+  /* ---------- Muiscursor: stip en ring ---------- */
+  if (finePointer && !reduced) {
+    const cur = d.createElement('div');
+    cur.className = 'cursor';
+    cur.setAttribute('aria-hidden', 'true');
+    cur.innerHTML = '<span class="cursor__ring"></span><span class="cursor__dot"></span>';
+    body.appendChild(cur);
+    const dot = $('.cursor__dot', cur), ring = $('.cursor__ring', cur);
+    let mx = -100, my = -100, rx = -100, ry = -100, raf = 0;
+    const move = () => {
+      rx = lerp(rx, mx, 0.2); ry = lerp(ry, my, 0.2);
+      dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+      ring.style.transform = `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0)`;
+      raf = Math.abs(rx - mx) + Math.abs(ry - my) > 0.3 ? requestAnimationFrame(move) : 0;
+    };
+    addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      mx = e.clientX; my = e.clientY;
+      if (!cur.classList.contains('is-on')) { rx = mx; ry = my; cur.classList.add('is-on'); }
+      const t = e.target instanceof Element ? e.target : null;
+      cur.classList.toggle('is-link', !!(t && t.closest('a, button, label, .chip, [role="button"]')));
+      cur.classList.toggle('is-hidden', !!(t && (t.closest('[data-case]') || t.closest('input, textarea'))));
+      cur.classList.toggle('on-blue', !!(t && t.closest('main > .mod:nth-of-type(even), .menu__panel, .menubtn, .swipe, .btn--dark')));
+      if (!raf) raf = requestAnimationFrame(move);
+    }, { passive: true });
+    d.addEventListener('mouseleave', () => cur.classList.remove('is-on'));
+    addEventListener('pointerdown', () => cur.classList.add('is-down'));
+    addEventListener('pointerup', () => cur.classList.remove('is-down'));
+  }
+
   /* ---------- Filters op de cases-pagina ---------- */
   const filters = $('[data-filters]');
   const grid = $('[data-grid]');
@@ -244,7 +274,7 @@
     void swipe.offsetWidth;
     swipe.classList.add('is-in');
     root.classList.add('is-leaving');
-    pencilBoost = 9;
+    pencilBoost = 4;
     store.set('claro:swipe', '1');
     setTimeout(() => {
       if (menuOpen) setMenu(false);
@@ -254,15 +284,17 @@
   function enter() {
     if (root.classList.contains('is-entering') && swipe) {
       store.del('claro:swipe');
-      pencilBoost = 6;
+      pencilBoost = 3;
+      // eerst alleen de grote A, dan L en R, dan C en O, terwijl het logo uitzoomt
+      requestAnimationFrame(() => requestAnimationFrame(() => swipe.classList.add('is-reveal')));
       setTimeout(() => {
         swipe.classList.add('is-out');
         root.classList.add('is-arriving');
         root.classList.remove('is-entering');
         pencilBoost = 0;
         startReveal();
-        setTimeout(() => { swipe.classList.remove('is-out'); root.classList.remove('is-arriving'); }, 1150);
-      }, 380);
+        setTimeout(() => { swipe.classList.remove('is-out', 'is-reveal'); root.classList.remove('is-arriving'); }, 1150);
+      }, 1000);
     } else {
       startReveal();
     }
@@ -272,7 +304,7 @@
     if (e.persisted) {
       leaving = false;
       pencilBoost = 0;
-      swipe && swipe.classList.remove('is-in', 'is-out');
+      swipe && swipe.classList.remove('is-in', 'is-out', 'is-reveal');
       root.classList.remove('is-entering', 'is-leaving', 'is-arriving', 'menu-open');
     }
   });
