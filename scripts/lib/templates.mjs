@@ -332,9 +332,10 @@ function processBlock(ctx, { heading = false } = {}) {
   const steps = (ctx.about && ctx.about.steps) || [];
   if (!steps.length) return '';
   const label = esc(ctx.about.stepsTitle || 'Zo werken we');
-  return `<div class="process${heading ? ' process--page' : ''}">
-      <div class="process__head">${heading ? `${sectionHead({ sub: 'Werkwijze', heading: ctx.about.stepsTitle || 'Zo werken we' })}` : `<p class="sub" data-reveal>${label}</p>`}</div>
-      <ol class="process__list" style="--n:${steps.length}">
+  return `<div class="process${heading ? ' process--page' : ''}" style="--n:${steps.length}" data-process>
+    <div class="process__sticky">
+      <div class="process__head">${heading ? `${sectionHead({ sub: 'Werkwijze', heading: ctx.about.stepsTitle || 'Zo werken we' })}` : `<p class="sub">${label}</p>`}</div>
+      <ol class="process__list">
         ${steps
           .map(
             (st, i) => `<li class="process__step" style="--i:${i}">
@@ -346,7 +347,8 @@ function processBlock(ctx, { heading = false } = {}) {
           )
           .join('')}
       </ol>
-    </div>`;
+    </div>
+  </div>`;
 }
 
 export function servicePage(ctx, s) {
