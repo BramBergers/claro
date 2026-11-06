@@ -165,7 +165,7 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${fonts}
 <link rel="stylesheet" href="${assets.css}">
-<script>(function(d){d.documentElement.classList.add('js');try{if(sessionStorage.getItem('claro:zoom')){sessionStorage.removeItem('claro:zoom');sessionStorage.removeItem('claro:swipe');d.documentElement.classList.add('is-zoomed')}else if(sessionStorage.getItem('claro:swipe'))d.documentElement.classList.add('is-entering')}catch(e){}})(document)</script>
+<script>(function(d){d.documentElement.classList.add('js');try{if(sessionStorage.getItem('claro:swipe'))d.documentElement.classList.add('is-entering')}catch(e){}})(document)</script>
 ${ld}
 </head>
 <body class="${bodyClass}">
@@ -391,7 +391,7 @@ export function casePage(ctx, p) {
   const tile = (m) =>
     `<button type="button" class="gal__item" data-lb data-kind="${m.type}" data-src="${esc(m.src)}"${m.poster ? ` data-poster="${esc(m.poster)}"` : ''} aria-label="Bekijk groot">${media(m, { cls: 'gal__asset', alt: p.title })}</button>`;
   // beelden groot onder elkaar, met de alinea's van het verhaal ertussen
-  const flow = [];
+  const flow = first ? [`<div class="gal" data-reveal>${tile(first)}</div>`] : [];
   const paras = [...p.body];
   rest.forEach((m) => {
     flow.push(`<div class="gal" data-reveal>${tile(m)}</div>`);
@@ -405,10 +405,7 @@ export function casePage(ctx, p) {
   const others = [1, 2].map((k) => all[(idx + k) % all.length]).filter((x, i, arr) => x && x.slug !== p.slug && arr.findIndex((y) => y.slug === x.slug) === i);
 
   const body = `
-<div class="chero" aria-hidden="${first ? 'false' : 'true'}">
-  <div class="chero__media" data-chero>${first ? media(first, { cls: 'chero__asset', alt: `${p.client}: ${p.title}`, eager: true }) : ''}</div>
-</div>
-<section class="mod case">
+<section class="mod case phead">
   <div class="wrap">
     <a class="back" href="/cases/">${ARROW_L} Alle cases</a>
     <p class="sub" data-reveal>${esc(p.client)}</p>

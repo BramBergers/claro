@@ -279,15 +279,8 @@
   const wide = matchMedia('(min-width: 961px)');
   const processes = reduced ? [] : $$('[data-process]').map((el) => ({ el, list: $('.process__list', el), steps: $$('.process__step', el) }));
   const easeIO = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const chero = $('[data-chero]');
   function tick() {
     const vh = innerHeight;
-    // case: het grote beeld zoomt rustig in en wordt donkerder terwijl de case eroverheen schuift
-    if (chero && !reduced) {
-      const p = clamp(scrollY / vh);
-      chero.style.transform = `scale(${(1 + p * 0.1).toFixed(4)}) translate3d(0, ${(p * -4).toFixed(2)}vh, 0)`;
-      chero.style.filter = `brightness(${(1 - p * 0.45).toFixed(3)})`;
-    }
     // werkwijze: stappen schuiven één voor één over elkaar; daarna scrolt alles samen weg
     for (const pr of processes) {
       const r = pr.el.getBoundingClientRect();
@@ -352,36 +345,6 @@
     const url = isInternal(a, e);
     if (!url || leaving || !swipe) return;
     e.preventDefault();
-    // project aangeklikt: het beeld zoomt in tot het hele scherm, daarna staat de case-pagina er
-    const cardMedia = !reduced && a.matches('.pcard') && $('.pcard__media', a);
-    const asset = cardMedia && $('.pcard__asset', cardMedia);
-    if (asset) {
-      leaving = true;
-      const r = cardMedia.getBoundingClientRect();
-      const z = d.createElement('div');
-      z.className = 'zoomer';
-      let clone;
-      if (asset.tagName === 'VIDEO') {
-        clone = d.createElement('video');
-        clone.muted = true; clone.playsInline = true; clone.autoplay = true; clone.loop = true;
-        clone.src = asset.currentSrc || ($('source', asset) || {}).src || '';
-        if (asset.poster) clone.poster = asset.poster;
-        try { clone.currentTime = asset.currentTime; } catch (err) {}
-      } else {
-        clone = d.createElement('img');
-        clone.src = asset.currentSrc || asset.src; clone.alt = '';
-      }
-      z.appendChild(clone);
-      Object.assign(z.style, { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` });
-      body.appendChild(z);
-      if (menuOpen) setMenu(false);
-      void z.offsetWidth;
-      z.classList.add('is-full');
-      root.classList.add('is-zooming');
-      store.set('claro:zoom', '1');
-      setTimeout(() => { location.href = url.href; }, 850);
-      return;
-    }
     if (reduced) { location.href = url.href; return; }
     leaving = true;
     swipe.classList.remove('is-out');
@@ -417,8 +380,7 @@
       leaving = false;
       pencilBoost = 0;
       swipe && swipe.classList.remove('is-in', 'is-out', 'is-reveal');
-      root.classList.remove('is-entering', 'is-leaving', 'is-arriving', 'is-zooming', 'menu-open');
-      $$('.zoomer').forEach((z) => z.remove());
+      root.classList.remove('is-entering', 'is-leaving', 'is-arriving', 'menu-open');
     }
   });
 
