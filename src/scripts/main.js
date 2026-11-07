@@ -37,6 +37,20 @@
     }
     return `${PRE}${w} ${SUF}`;
   }
+  /** De witruimte van de A: het driehoekje en het golvende stuk tussen de benen (voor de cursor). */
+  function holePath(phase) {
+    const TOP = 220.5, AMP = 26.5, N = 40, BOT = 327.4;
+    const yEnd = TOP + AMP * Math.abs(Math.sin(phase));
+    const xl = onLeg(L0, L1, yEnd), xr = onLeg(R0, R1, yEnd), cx = (xl + xr) / 2, r = (xr - xl) / 2;
+    let w = '';
+    for (let i = 0; i <= N; i++) {
+      const u = -Math.PI / 2 + (i / N) * Math.PI;
+      w += `${i ? ' L' : 'M'}${(cx + r * Math.sin(u)).toFixed(1)},${(TOP + AMP * Math.abs(Math.sin(2 * u + phase))).toFixed(1)}`;
+    }
+    const bl = onLeg(L0, L1, BOT), br = onLeg(R0, R1, BOT);
+    const tri = 'M796.64,175.10 C795.50,178.05 788.17,177.79 783.02,177.85 L727.40,178.44 C725.36,178.46 723.66,177.65 722.76,176.46 C721.62,174.96 721.24,173.28 721.91,171.24 L754.15,72.74 C754.80,70.77 755.97,68.67 757.92,68.33 C760.19,67.94 761.90,69.94 762.66,72.12 L796.98,170.61 C797.55,172.25 797.21,173.60 796.64,175.09 Z';
+    return `${tri} ${w} L${br.toFixed(1)},${BOT} L${bl.toFixed(1)},${BOT} Z`;
+  }
   const pencils = $$('.logo__pencil').map((el) => ({ el, on: true }));
   let pencilSpeed = 0.85, pencilBoost = 0, phase = 0;
   if (pencils.length && !reduced) {
@@ -50,7 +64,7 @@
       last = t;
       phase += dt * (pencilSpeed + pencilBoost);
       const dStr = pencilPath(phase);
-      for (const p of pencils) if (p.on) p.el.setAttribute('d', dStr);
+      for (const p of pencils) if (p.on) p.el.setAttribute('d', p.fn ? p.fn(phase) : dStr);
       requestAnimationFrame(spin);
     };
     requestAnimationFrame(spin);
@@ -168,12 +182,12 @@
     cur.className = 'cursor';
     cur.setAttribute('aria-hidden', 'true');
     // de cursor is de A van Claro: een potloodpunt met de draaiende golf
-    cur.innerHTML = '<span class="cursor__dot"><svg viewBox="596 -6 330 340" aria-hidden="true"><path class="cursor__pencil"/></svg></span>';
+    cur.innerHTML = '<span class="cursor__dot"><svg viewBox="676 62 164 268" aria-hidden="true"><path class="cursor__pencil"/></svg></span>';
     body.appendChild(cur);
     const dot = $('.cursor__dot', cur);
     const cpath = $('.cursor__pencil', cur);
-    cpath.setAttribute('d', pencilPath(0));
-    pencils.push({ el: cpath, on: true });
+    cpath.setAttribute('d', holePath(0));
+    pencils.push({ el: cpath, on: true, fn: holePath });
     root.classList.add('has-pencil-cursor');
     let mx = -100, my = -100, rx = -100, ry = -100, raf = 0;
     const move = () => {
