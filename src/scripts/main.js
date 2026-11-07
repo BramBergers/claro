@@ -162,17 +162,22 @@
     d.addEventListener('mouseleave', () => { active = false; bubble.classList.remove('is-on'); });
   }
 
-  /* ---------- Muiscursor: stip en ring ---------- */
+  /* ---------- Muiscursor: de potloodpunt uit het logo ---------- */
   if (finePointer && !reduced) {
     const cur = d.createElement('div');
     cur.className = 'cursor';
     cur.setAttribute('aria-hidden', 'true');
-    cur.innerHTML = '<span class="cursor__dot"></span>';
+    // de cursor is de A van Claro: een potloodpunt met de draaiende golf
+    cur.innerHTML = '<span class="cursor__dot"><svg viewBox="596 -6 330 340" aria-hidden="true"><path class="cursor__pencil"/></svg></span>';
     body.appendChild(cur);
     const dot = $('.cursor__dot', cur);
+    const cpath = $('.cursor__pencil', cur);
+    cpath.setAttribute('d', pencilPath(0));
+    pencils.push({ el: cpath, on: true });
+    root.classList.add('has-pencil-cursor');
     let mx = -100, my = -100, rx = -100, ry = -100, raf = 0;
     const move = () => {
-      rx = lerp(rx, mx, 0.35); ry = lerp(ry, my, 0.35);
+      rx = lerp(rx, mx, 0.55); ry = lerp(ry, my, 0.55);
       dot.style.transform = `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0)`;
       raf = Math.abs(rx - mx) + Math.abs(ry - my) > 0.3 ? requestAnimationFrame(move) : 0;
     };
@@ -182,7 +187,7 @@
       if (!cur.classList.contains('is-on')) { rx = mx; ry = my; cur.classList.add('is-on'); }
       const t = e.target instanceof Element ? e.target : null;
       cur.classList.toggle('is-link', !!(t && t.closest('a, button, label, .chip, [role="button"]')));
-      cur.classList.toggle('is-hidden', !!(t && (t.closest('[data-case]') || t.closest('input, textarea'))));
+      cur.classList.toggle('is-hidden', !!(t && (t.closest('[data-case]') || t.closest('input, textarea, select'))));
       cur.classList.toggle('on-blue', !!(t && t.closest('main > .mod:nth-of-type(even), .menu__panel, .menubtn, .swipe, .btn--dark')));
       if (!raf) raf = requestAnimationFrame(move);
     }, { passive: true });
