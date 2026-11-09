@@ -37,9 +37,10 @@ const fontFaces = [
   ['Text', 'Inter-Regular', 400, 'normal'],
   ['Text', 'Inter-Medium', 500, 'normal'],
   ['Text', 'Inter-SemiBold', 600, 'normal'],
+  ['Text', 'Inter-Bold', 700, 'normal'],
   ['Serif', 'Lora-Italic', '400 700', 'italic']
 ];
-const fonts = `<link rel="preload" href="/fonts/InterDisplay-Black.woff" as="font" type="font/woff" crossorigin>
+const fonts = `<link rel="preload" href="/fonts/Inter-Black.woff" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="/fonts/Inter-Regular.woff" as="font" type="font/woff" crossorigin>
 <style>${fontFaces.map(([fam, file, w, st]) => `@font-face{font-family:'${fam}';src:url('/fonts/${file}.woff') format('woff');font-weight:${w};font-style:${st};font-display:swap}`).join('')}</style>`;
 

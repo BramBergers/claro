@@ -53,7 +53,7 @@ function projectGrid(projects, { empty = 'Hier verschijnen binnenkort onze cases
   const cards = projects.map((p, i) => projectCard(p, { variant: variants[i % variants.length] }));
   const left = cards.filter((_, i) => i % 2 === 0).join('');
   const right = cards.filter((_, i) => i % 2 === 1).join('');
-  return `<div class="pgrid" data-grid>
+  return `<div class="pgrid${projects.length === 1 ? ' pgrid--single' : ''}" data-grid>
   <div class="pgrid__col">${left}</div>
   <div class="pgrid__col pgrid__col--offset">${right}</div>
 </div>`;
@@ -323,21 +323,23 @@ export function servicePage(ctx, s) {
   const list = projects.filter((p) => p.services.some((x) => x.slug === s.slug));
   const others = services.filter((x) => x.slug !== s.slug);
   const offer = s.offer.length
-    ? `<ul class="offer">${s.offer
-        .map((o, i) => `<li class="offer__item" data-reveal style="--d:${i * 80}ms"><span class="offer__title">${esc(o.title)}</span><span class="offer__text">${esc(o.text)}</span></li>`)
-        .join('')}</ul>`
+    ? `<section class="mod">
+  <div class="wrap">
+    <ul class="offer-cards" style="--n:${Math.min(s.offer.length, 3)}">${s.offer
+      .map((o, i) => `<li class="offer-card" data-reveal style="--d:${i * 90}ms"><span class="offer-card__title">${esc(o.title)}</span><span class="offer-card__text">${esc(o.text)}</span></li>`)
+      .join('')}</ul>
+  </div>
+</section>`
     : '';
   const body = `
-<section class="mod phead">
+<section class="mod phead phead--mid">
   <div class="wrap">
     <a class="back" href="/#diensten">${ARROW_L} Diensten</a>
     <h1 class="h-hero" data-split>${title(s.title)}</h1>
-    <div class="phead__cols">
-      <p class="lead" data-reveal>${esc(s.intro)}</p>
-      ${offer}
-    </div>
+    <p class="lead" data-reveal>${esc(s.intro)}</p>
   </div>
 </section>
+${offer}
 <section class="mod mod--light">
   <div class="wrap">
     ${sectionHead({ sub: 'Cases', heading: `${s.title} in de praktijk`, center: true })}
