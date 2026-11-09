@@ -638,7 +638,7 @@ html.lb-open { overflow: hidden; }
 
 /* homepage-header op mobiel gecentreerd */
 @media (max-width: 960px) {
-  .hero__text { text-align: center; }
+  .hero__text { text-align: center; padding-top: 0.5rem; }
   .hero__text .lead { margin-inline: auto; }
   .hero__text .btns { justify-content: center; }
 }
