@@ -168,7 +168,7 @@ ${fonts}
 <script>(function(d){d.documentElement.classList.add('js');try{if(sessionStorage.getItem('claro:swipe'))d.documentElement.classList.add('is-entering')}catch(e){}})(document)</script>
 ${ld}
 </head>
-<body class="${bodyClass}" data-pal="${/page-(home|cases|case|service)\b/.test(bodyClass) ? 2 : [...String(path || '/')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7) % 4}">
+<body class="${bodyClass}" data-pal="${/page-home\b/.test(bodyClass) ? 0 : [...String(path || '/')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7) % 4}">
 <a class="skip" href="#inhoud">Naar de inhoud</a>
 <header class="top">
   <a class="top__logo" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
@@ -249,7 +249,7 @@ export function homePage(ctx) {
   </div>
 </section>
 
-<section class="mod">
+<section class="mod mod--light">
   <div class="wrap">
     ${sectionHead({ sub: 'Recent werk', heading: site.recentTitle })}
     ${recentHtml}
@@ -288,7 +288,7 @@ export function casesPage(ctx) {
     ${filters}
   </div>
 </section>
-<section class="mod">
+<section class="mod mod--light">
   <div class="wrap">${projectGrid(projects)}</div>
 </section>`;
   return page(ctx, { title: 'Cases', description: site.casesIntro, path: '/cases/', body, bodyClass: 'page-cases' });
@@ -370,7 +370,7 @@ export function servicePage(ctx, s) {
     </div>
   </div>
 </section>
-<section class="mod">
+<section class="mod mod--light">
   <div class="wrap">
     ${sectionHead({ sub: 'Cases', heading: `${s.title} in de praktijk` })}
     ${projectGrid(list, { empty: 'Binnenkort verschijnen hier cases binnen deze dienst.' })}
@@ -424,7 +424,7 @@ export function casePage(ctx, p) {
 </section>
 ${
   others.length
-    ? `<section class="mod more">
+    ? `<section class="mod more mod--light">
   <div class="wrap">
     <h2 class="h-section more__title" data-split>Nog meer helder werk.</h2>
     <div class="more__grid">${others.map((o) => projectCard(o)).join('')}</div>

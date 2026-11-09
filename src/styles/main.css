@@ -115,7 +115,8 @@ input, textarea { font: inherit; color: inherit; }
 /* ---------- Blokken: lichtoranje en oranje wisselen elkaar af ---------- */
 .mod { position: relative; background: var(--bg); color: var(--ink); padding: var(--space) 0; }
 main > .mod:nth-of-type(odd) { --bg: var(--cream); }
-main > .mod:nth-of-type(even) {
+main > .mod:nth-of-type(even),
+.page-home main > .mod:nth-of-type(odd) {
   --bg: var(--a1);
   --ink: var(--black);
   --lime: var(--bg);
@@ -132,6 +133,7 @@ main > .mod:nth-of-type(even) {
 main > .mod:nth-of-type(8n+4) { --bg: var(--a2); }
 main > .mod:nth-of-type(8n+6) { --bg: var(--a3); }
 main > .mod:nth-of-type(8n+8) { --bg: var(--a4); }
+.page-home main > .mod:nth-of-type(4n+3) { --bg: var(--a2); }
 /* elke pagina begint met een andere kleur */
 body[data-pal="1"] { --a1: var(--c-yellow); --a2: var(--c-blue); --a3: var(--c-lime); --a4: var(--c-orange); }
 body[data-pal="2"] { --a1: var(--c-blue); --a2: var(--c-lime); --a3: var(--c-orange); --a4: var(--c-yellow); }
@@ -271,7 +273,8 @@ html.menu-open { overflow: hidden; }
 .swap__word.is-in i { transform: translateY(115%) rotate(12deg); opacity: 0; }
 .swap__word.is-out { position: absolute; left: 0; }
 /* het contactblok staat altijd op crème */
-main > .mod.cta.cta { --bg: var(--peach); --ink: var(--black); --lime: var(--peach); --paars: var(--orange); --muted: rgba(93, 13, 11, 0.75); --line: rgba(93, 13, 11, 0.18); --card: rgba(255, 255, 255, 0.45); --hover: var(--black); --solid: var(--a1); --on-solid: var(--black); --orange: var(--a1); }
+/* lichte blokken: contactblok, cases en op de homepage de even blokken */
+main > .mod.cta.cta, main > .mod.mod--light.mod--light, .page-home main > .mod:nth-of-type(even) { --bg: var(--peach); --ink: var(--black); --lime: var(--peach); --paars: var(--orange); --muted: rgba(93, 13, 11, 0.75); --line: rgba(93, 13, 11, 0.18); --card: rgba(255, 255, 255, 0.45); --hover: var(--black); --solid: var(--a1); --on-solid: var(--black); --orange: var(--a1); }
 .cta__row { display: flex; flex-direction: column; align-items: flex-start; gap: 2rem; margin-top: clamp(2.5rem, 5vw, 4.5rem); }
 .cta__text { max-width: 32em; font-size: clamp(1.05rem, 1.4vw, 1.3rem); color: var(--muted); }
 .cta__links { display: grid; gap: 0.2rem; justify-items: start; width: min(100%, 520px); }

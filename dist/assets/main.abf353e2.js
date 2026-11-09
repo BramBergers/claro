@@ -183,8 +183,9 @@
       const t = e.target instanceof Element ? e.target : null;
       cur.classList.toggle('is-link', !!(t && t.closest('a, button, label, .chip, [role="button"]')));
       cur.classList.toggle('is-hidden', !!(t && (t.closest('[data-case]') || t.closest('input, textarea'))));
-      cur.classList.toggle('on-blue', !!(t && t.closest('main > .mod:nth-of-type(even):not(.cta), .swipe')));
-      const onCol = !!(t && t.closest('main > .mod:nth-of-type(even):not(.cta)'));
+      const sec = t && t.closest('main > .mod');
+      const onCol = !!(sec && (sec._col ??= getComputedStyle(sec).getPropertyValue('--solid').trim().toLowerCase() === '#5d0d0b'));
+      cur.classList.toggle('on-blue', onCol || !!(t && t.closest('.swipe')));
       cur.classList.toggle('on-dark', !!(t && (t.closest('.menu__panel, .foot, .menu-open .menubtn') || (!onCol && t.closest('.btn--dark')))));
       if (!raf) raf = requestAnimationFrame(move);
     }, { passive: true });
