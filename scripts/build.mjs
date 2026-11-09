@@ -32,8 +32,8 @@ await writeFile(path.join(dist, 'assets', jsName), js);
 
 // 3. lettertypen: eigen bestanden in public/fonts (Inter, Inter Display en Lora, SIL Open Font License)
 const fontFaces = [
-  ['Display', 'InterDisplay-Black', 900, 'normal'],
-  ['Display', 'InterDisplay-ExtraBold', 800, 'normal'],
+  ['Display', 'Inter-Black', 900, 'normal'],
+  ['Display', 'Inter-ExtraBold', 800, 'normal'],
   ['Text', 'Inter-Regular', 400, 'normal'],
   ['Text', 'Inter-Medium', 500, 'normal'],
   ['Text', 'Inter-SemiBold', 600, 'normal'],

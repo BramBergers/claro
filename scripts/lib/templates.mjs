@@ -161,14 +161,14 @@ ${noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${esc(canonical)}">
-<meta name="theme-color" content="#F8EDE7">
+<meta name="theme-color" content="#FFEFCE">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${fonts}
 <link rel="stylesheet" href="${assets.css}">
 <script>(function(d){d.documentElement.classList.add('js');try{if(sessionStorage.getItem('claro:swipe'))d.documentElement.classList.add('is-entering')}catch(e){}})(document)</script>
 ${ld}
 </head>
-<body class="${bodyClass}">
+<body class="${bodyClass}" data-pal="${[...String(path || '/')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7) % 4}">
 <a class="skip" href="#inhoud">Naar de inhoud</a>
 <header class="top">
   <a class="top__logo" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
