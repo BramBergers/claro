@@ -287,7 +287,7 @@
   const hero = $('[data-hero]');
   const speedEls = $$('[data-speed]').map((el) => ({ el, s: parseFloat(el.dataset.speed) || 0 }));
   const stack = $('[data-stack]');
-  const phones = stack ? $$('.phone', stack) : [];
+  const phones = stack ? $$('.pillar', stack) : [];
   if (stack) stack.style.setProperty('--stack-n', String(Math.max(1, phones.length)));
   const wide = matchMedia('(min-width: 961px)');
   const processes = reduced ? [] : $$('[data-process]').map((el) => ({ el, list: $('.process__list', el), steps: $$('.process__step', el) }));
@@ -327,13 +327,10 @@
       if (stack && phones.length && wide.matches) {
         const r = stack.getBoundingClientRect();
         const total = r.height - vh;
-        const p = clamp(-r.top / total) * phones.length;
+        const act = Math.min(phones.length - 1, Math.floor(clamp(-r.top / total) * phones.length));
         phones.forEach((ph, i) => {
-          const local = clamp(p - i + 0.6);
-          const y = (1 - local) * 110;
-          const rot = (i % 2 ? 1 : -1) * (3 + i) * (1 - local * 0.4);
-          ph.style.setProperty('--y', `${y.toFixed(2)}svh`);
-          ph.style.setProperty('--r', `${rot.toFixed(2)}deg`);
+          ph.classList.toggle('is-active', i === act);
+          ph.classList.toggle('is-past', i < act);
         });
       }
     }

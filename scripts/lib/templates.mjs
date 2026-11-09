@@ -264,7 +264,7 @@ export function homePage(ctx) {
 
 <section class="mod services" id="diensten">
   <div class="wrap">
-    ${sectionHead({ sub: 'Diensten', heading: site.servicesTitle, text: site.servicesIntro, center: true })}
+    ${sectionHead({ sub: 'Diensten', heading: String(site.servicesTitle || '').trim().replace(/\.$/, ''), text: site.servicesIntro, center: true })}
     <ul class="srows">${servicesHtml}</ul>
   </div>
 </section>
@@ -408,9 +408,8 @@ ${
 
 export function aboutPage(ctx) {
   const { about, projects } = ctx;
-  const cards = projects.filter((p) => p.media[0]).slice(0, 4);
   const pillars = (about.pillars || [])
-    .map((pl, i) => `<li class="pillar"><span class="pillar__num">0${i + 1}</span><span class="pillar__title">${esc(pl.title)}</span><span class="pillar__text">${esc(pl.text)}</span></li>`)
+    .map((pl, i) => `<li class="pillar${i === 0 ? ' is-active' : ''}"><span class="pillar__title">${esc(pl.title)}</span><span class="pillar__text">${esc(pl.text)}</span></li>`)
     .join('');
   const team = (about.team || [])
     .map(
@@ -440,11 +439,8 @@ export function aboutPage(ctx) {
     <div class="wrap values__grid">
       <div class="values__text">
         <h2 class="h-section">${title(about.pillarsTitle)}</h2>
-        <ol class="pillars">${pillars}</ol>
       </div>
-      <div class="values__stage" aria-hidden="true">
-        ${cards.map((p, i) => `<div class="phone" style="--i:${i}">${media(p.media[0], { cls: 'phone__asset' })}<span class="phone__label">${esc(p.client)}</span></div>`).join('')}
-      </div>
+      <ol class="pillars">${pillars}</ol>
     </div>
   </div>
 </section>
