@@ -59,8 +59,8 @@ function projectGrid(projects, { empty = 'Hier verschijnen binnenkort onze cases
 </div>`;
 }
 
-function sectionHead({ sub, heading, text = '', link = null, h = 'h2' }) {
-  return `<div class="shead">
+function sectionHead({ sub, heading, text = '', link = null, h = 'h2', center = false }) {
+  return `<div class="shead${center ? ' shead--center' : ''}">
   <div class="shead__main">
     ${sub ? `<p class="sub" data-reveal>${esc(sub)}</p>` : ''}
     <${h} class="h-section" data-split>${title(heading)}</${h}>
@@ -70,17 +70,24 @@ function sectionHead({ sub, heading, text = '', link = null, h = 'h2' }) {
 </div>`;
 }
 
+const CTA_LABEL = 'Neem contact op';
+
+/** "Klaar om iets [wisselend woord] te maken?" */
+function ctaTitle(site, tag = 'h2', cls = '') {
+  const words = (site.ctaWords || []).filter(Boolean);
+  return `<${tag} class="cta__title${cls ? ` ${cls}` : ''}" data-reveal>
+      <span class="cta__first">${esc(site.ctaTitle)}</span>
+      <span class="cta__line">${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}<span>${esc(site.ctaEnd || '')}</span></span>
+    </${tag}>`;
+}
+
 function ctaBlock(ctx) {
   const { site } = ctx;
-  const words = (site.ctaWords || []).filter(Boolean);
   return `<section class="mod cta" data-balls>
   <canvas class="cta__balls" aria-hidden="true"></canvas>
   <div class="wrap cta__inner">
-    <h2 class="cta__title" data-reveal>
-      <span class="cta__first">${esc(site.ctaTitle)}</span>
-      <span class="cta__line">${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}<span>${esc(site.ctaEnd || '')}</span></span>
-    </h2>
-    <a class="btn btn--dark btn--big" href="/contact/" data-reveal><span>${esc(site.ctaLabel)}</span></a>
+    ${ctaTitle(site)}
+    <a class="btn btn--dark btn--big" href="/contact/" data-reveal><span>${CTA_LABEL}</span></a>
   </div>
 </section>`;
 }
@@ -236,7 +243,7 @@ export function homePage(ctx) {
 <section class="mod hero" data-hero>
   <div class="wrap hero__grid">
     <div class="hero__text">
-      <h1 class="h-hero" data-split>${title(site.heroTitle)}</h1>
+      <h1 class="h-hero" data-split>${esc(String(site.heroTitle || '').trim().replace(/\.$/, ''))}</h1>
       <p class="lead" data-reveal>${esc(site.heroIntro)}</p>
       <div class="btns" data-reveal>
         <a class="btn btn--dark" href="/cases/"><span>Ons werk</span></a>
@@ -251,17 +258,16 @@ export function homePage(ctx) {
 
 <section class="mod mod--light">
   <div class="wrap">
-    ${sectionHead({ sub: 'Recent werk', heading: site.recentTitle })}
+    ${sectionHead({ sub: 'Recent werk', heading: site.recentTitle, center: true })}
     ${recentHtml}
   </div>
 </section>
 
 <section class="mod services">
-  <div class="wrap services__grid">
-    <div class="services__head">
-      ${sectionHead({ sub: 'Diensten', heading: site.servicesTitle, text: site.servicesIntro, link: { href: '/wat-we-doen/', label: 'Alles over onze diensten' } })}
-    </div>
+  <div class="wrap">
+    ${sectionHead({ sub: 'Diensten', heading: site.servicesTitle, text: site.servicesIntro, center: true })}
     <ul class="srows">${servicesHtml}</ul>
+    <div class="recent__more" data-reveal><a class="btn btn--dark btn--big" href="/wat-we-doen/"><span>Alles over onze diensten</span></a></div>
   </div>
 </section>
 ${clientsHtml}`;
@@ -281,7 +287,7 @@ export function casesPage(ctx) {
 </div>`
     : '';
   const body = `
-<section class="mod phead">
+<section class="mod phead phead--mid">
   <div class="wrap">
     <h1 class="h-hero" data-split>${title(site.casesTitle)}</h1>
     <p class="lead" data-reveal>${esc(site.casesIntro)}</p>
@@ -304,7 +310,6 @@ export function servicesPage(ctx) {
   <a class="sblock__link" href="/wat-we-doen/${esc(s.slug)}/" data-case data-bubble="Bekijk cases">
     <span class="sblock__body">
       <span class="sblock__title">${esc(s.title)}</span>
-      <span class="sblock__short">${esc(s.short || s.intro)}</span>
       ${s.offer.length ? `<span class="sblock__offer">${s.offer.map((o) => `<span>${esc(o.title)}</span>`).join('')}</span>` : ''}
     </span>
     <span class="sblock__more">${n.length} ${n.length === 1 ? 'case' : 'cases'}</span>
@@ -313,7 +318,7 @@ export function servicesPage(ctx) {
     })
     .join('');
   const body = `
-<section class="mod phead wwd-intro">
+<section class="mod phead phead--mid wwd-intro">
   <div class="wrap">
     <p class="sub" data-reveal>Diensten</p>
     <h1 class="h-hero" data-split>${title(site.servicesPageTitle)}</h1>
@@ -326,27 +331,23 @@ export function servicesPage(ctx) {
   return page(ctx, { title: 'Wat we doen', description: site.servicesPageIntro, path: '/wat-we-doen/', body, bodyClass: 'page-services' });
 }
 
-/** Werkwijze: stappen die één voor één over elkaar heen schuiven tijdens het scrollen. */
+/** Werkwijze: overzichtelijke stappen naast elkaar. */
 function processBlock(ctx, { heading = false } = {}) {
   const steps = (ctx.about && ctx.about.steps) || [];
   if (!steps.length) return '';
-  const label = esc(ctx.about.stepsTitle || 'Zo werken we');
-  return `<div class="process${heading ? ' process--page' : ''}" style="--n:${steps.length}" data-process>
-    <div class="process__sticky">
-      <div class="process__head">${heading ? `${sectionHead({ sub: 'Werkwijze', heading: ctx.about.stepsTitle || 'Zo werken we' })}` : `<p class="sub">${label}</p>`}</div>
-      <ol class="process__list">
-        ${steps
-          .map(
-            (st, i) => `<li class="process__step" style="--i:${i}">
-          <div class="process__card">
-            <span class="process__num">${i + 1}</span>
-            <span class="process__body"><span class="process__title">${esc(st.title)}</span><span class="process__text">${esc(st.text)}</span></span>
-          </div>
-        </li>`
-          )
-          .join('')}
-      </ol>
-    </div>
+  return `<div class="steps-block">
+    ${sectionHead({ sub: 'Werkwijze', heading: ctx.about.stepsTitle || 'Zo werken we', center: true })}
+    <ol class="wsteps" style="--n:${steps.length}">
+      ${steps
+        .map(
+          (st, i) => `<li class="wstep" data-reveal style="--d:${i * 90}ms">
+        <span class="wstep__num">${i + 1}</span>
+        <span class="wstep__title">${esc(st.title)}</span>
+        <span class="wstep__text">${esc(st.text)}</span>
+      </li>`
+        )
+        .join('')}
+    </ol>
   </div>`;
 }
 
@@ -372,7 +373,7 @@ export function servicePage(ctx, s) {
 </section>
 <section class="mod mod--light">
   <div class="wrap">
-    ${sectionHead({ sub: 'Cases', heading: `${s.title} in de praktijk` })}
+    ${sectionHead({ sub: 'Cases', heading: `${s.title} in de praktijk`, center: true })}
     ${projectGrid(list, { empty: 'Binnenkort verschijnen hier cases binnen deze dienst.' })}
     ${
       others.length
@@ -457,7 +458,7 @@ export function aboutPage(ctx) {
     .join('');
 
   const body = `
-<section class="mod phead">
+<section class="mod phead phead--mid">
   <div class="wrap">
     <p class="sub" data-reveal>${esc(about.title)}</p>
     <h1 class="h-hero" data-split>${title(about.statement)}</h1>
@@ -500,7 +501,7 @@ ${
   team
     ? `<section class="mod">
   <div class="wrap">
-    ${sectionHead({ sub: 'Team', heading: about.teamTitle })}
+    ${sectionHead({ sub: 'Team', heading: about.teamTitle, center: true })}
     <ul class="team">${team}</ul>
   </div>
 </section>`
@@ -518,7 +519,7 @@ export function contactPage(ctx) {
 <section class="mod phead contact">
   <div class="wrap contact__grid">
     <div>
-      <h1 class="h-hero" data-split>${title(contact.title)}</h1>
+      ${ctaTitle(site, 'h1', 'cta__title--left')}
       <p class="lead" data-reveal>${esc(contact.intro)}</p>
       <ul class="contact__details" data-reveal>
         ${site.email ? `<li><span>E-mail</span><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></li>` : ''}
