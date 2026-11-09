@@ -73,9 +73,9 @@ function sectionHead({ sub, heading, text = '', link = null, h = 'h2', center = 
 const CTA_LABEL = 'Neem contact op';
 
 /** "Klaar om iets [wisselend woord] te maken?" */
-function ctaTitle(site, tag = 'h2', cls = '') {
+function ctaTitle(site, tag = 'h2', cls = '', reveal = true) {
   const words = (site.ctaWords || []).filter(Boolean);
-  return `<${tag} class="cta__title${cls ? ` ${cls}` : ''}" data-reveal>
+  return `<${tag} class="cta__title${cls ? ` ${cls}` : ''}"${reveal ? ' data-reveal' : ''}>
       <span class="cta__first">${esc(site.ctaTitle)}</span>
       <span class="cta__line">${words.length ? `<span class="swap" data-swap='${esc(JSON.stringify(words))}'><span class="swap__word">${esc(words[0])}</span></span>` : ''}<span>${esc(site.ctaEnd || '')}</span></span>
     </${tag}>`;
@@ -98,7 +98,6 @@ function menu(ctx, path) {
     ['/', 'Home'],
     ['/cases/', 'Cases'],
     ['/over-ons/', 'Over ons'],
-    ['/wat-we-doen/', 'Wat we doen'],
     ['/contact/', 'Contact']
   ];
   const cur = (href) => (href === '/' ? path === '/' : path.startsWith(href)) ? ' aria-current="page"' : '';
@@ -263,11 +262,10 @@ export function homePage(ctx) {
   </div>
 </section>
 
-<section class="mod services">
+<section class="mod services" id="diensten">
   <div class="wrap">
     ${sectionHead({ sub: 'Diensten', heading: site.servicesTitle, text: site.servicesIntro, center: true })}
     <ul class="srows">${servicesHtml}</ul>
-    <div class="recent__more" data-reveal><a class="btn btn--dark btn--big" href="/wat-we-doen/"><span>Alles over onze diensten</span></a></div>
   </div>
 </section>
 ${clientsHtml}`;
@@ -298,37 +296,6 @@ export function casesPage(ctx) {
   <div class="wrap">${projectGrid(projects)}</div>
 </section>`;
   return page(ctx, { title: 'Cases', description: site.casesIntro, path: '/cases/', body, bodyClass: 'page-cases' });
-}
-
-export function servicesPage(ctx) {
-  const { site, services, projects } = ctx;
-  const steps = (ctx.about && ctx.about.steps) || [];
-  const blocks = services
-    .map((s, i) => {
-      const n = projects.filter((p) => p.services.some((x) => x.slug === s.slug));
-      return `<article class="sblock" data-reveal>
-  <a class="sblock__link" href="/wat-we-doen/${esc(s.slug)}/" data-case data-bubble="Bekijk cases">
-    <span class="sblock__body">
-      <span class="sblock__title">${esc(s.title)}</span>
-      ${s.offer.length ? `<span class="sblock__offer">${s.offer.map((o) => `<span>${esc(o.title)}</span>`).join('')}</span>` : ''}
-    </span>
-    <span class="sblock__more">${n.length} ${n.length === 1 ? 'case' : 'cases'}</span>
-  </a>
-</article>`;
-    })
-    .join('');
-  const body = `
-<section class="mod phead phead--mid wwd-intro">
-  <div class="wrap">
-    <p class="sub" data-reveal>Diensten</p>
-    <h1 class="h-hero" data-split>${title(site.servicesPageTitle)}</h1>
-    <p class="lead lead--big" data-reveal>${esc(site.servicesPageIntro)}</p>
-  </div>
-</section>
-<section class="mod">
-  <div class="wrap sblocks">${blocks}</div>
-</section>`;
-  return page(ctx, { title: 'Wat we doen', description: site.servicesPageIntro, path: '/wat-we-doen/', body, bodyClass: 'page-services' });
 }
 
 /** Werkwijze: overzichtelijke stappen naast elkaar. */
@@ -363,7 +330,7 @@ export function servicePage(ctx, s) {
   const body = `
 <section class="mod phead">
   <div class="wrap">
-    <a class="back" href="/wat-we-doen/">${ARROW_L} Wat we doen</a>
+    <a class="back" href="/#diensten">${ARROW_L} Diensten</a>
     <h1 class="h-hero" data-split>${title(s.title)}</h1>
     <div class="phead__cols">
       <p class="lead" data-reveal>${esc(s.intro)}</p>
@@ -519,9 +486,9 @@ export function contactPage(ctx) {
 <section class="mod phead contact">
   <div class="wrap contact__grid">
     <div>
-      ${ctaTitle(site, 'h1', 'cta__title--left')}
-      <p class="lead" data-reveal>${esc(contact.intro)}</p>
-      <ul class="contact__details" data-reveal>
+      ${ctaTitle(site, 'h1', 'cta__title--left', false)}
+      <p class="lead">${esc(contact.intro)}</p>
+      <ul class="contact__details">
         ${site.email ? `<li><span>E-mail</span><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></li>` : ''}
         ${site.phone ? `<li><span>Telefoon</span><a href="tel:${esc(site.phone.replace(/[^\d+]/g, ''))}">${esc(site.phone)}</a></li>` : ''}
         <li><span>Instagram</span><a href="${esc(site.instagram)}" target="_blank" rel="noopener">@wijzijnclaro</a></li>
@@ -529,7 +496,7 @@ export function contactPage(ctx) {
         <li><span>KvK</span><b>${esc(site.kvk)}</b></li>
       </ul>
     </div>
-    <div class="card" data-reveal>
+    <div class="card">
       <form class="form" name="contact" method="POST" action="/bedankt/" data-netlify="true" netlify-honeypot="bot-field" data-form>
         <h2 class="form__title">${esc(contact.formTitle)}</h2>
         <input type="hidden" name="form-name" value="contact">

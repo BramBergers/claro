@@ -571,7 +571,7 @@ html.lb-open { overflow: hidden; }
 .cta__title { font-size: clamp(1.8rem, 5.4vw, 6.4rem) !important; }
 
 /* ---------- Knoppen groter, in capitalen ---------- */
-.btn { min-height: 3.5rem; padding: 1rem 1.9rem; font-size: clamp(0.95rem, 1.1vw, 1.08rem); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.btn { min-height: 3.5rem; padding: 1rem 1.9rem; font-size: clamp(0.95rem, 1.1vw, 1.08rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
 .btn--big { min-height: 4rem; padding: 1.15rem 2.3rem; font-size: clamp(1rem, 1.25vw, 1.2rem); }
 
 /* ---------- Gecentreerde titels ---------- */
@@ -609,4 +609,7 @@ html.lb-open { overflow: hidden; }
 
 /* ---------- Contact: wisseltitel links uitgelijnd ---------- */
 .cta__title--left { align-items: flex-start; font-size: clamp(2rem, 3.7vw, 4.2rem) !important; }
-@media (max-width: 720px) { .cta__title--left { font-size: 9.6vw !important; } }
+@media (max-width: 720px) {
+  .cta__title--left { font-size: 11vw !important; }
+  .cta__title--left .cta__line { flex-direction: column; align-items: flex-start; gap: 0.06em; }
+}
