@@ -11,6 +11,16 @@
   const body = d.body;
   const $ = (s, r = d) => r.querySelector(s);
   const $$ = (s, r = d) => [...r.querySelectorAll(s)];
+
+  /* ---------- Knoppen: letters flippen in 3D bij hover ---------- */
+  $$('.btn > span').forEach((s) => {
+    const t = s.textContent.trim();
+    if (!t) return;
+    const esc = (ch) => (ch === ' ' ? '&nbsp;' : ch.replace(/&/g, '&amp;').replace(/</g, '&lt;'));
+    const row = (cls) => `<span class="btn__row${cls}" aria-hidden="true">${[...t].map((ch, k) => `<i style="--k:${k}">${esc(ch)}</i>`).join('')}</span>`;
+    s.classList.add('btn__label');
+    s.innerHTML = `<span class="visually-hidden">${esc(t).replace(/&nbsp;/g, ' ')}</span>${row('')}${row(' btn__row--b')}`;
+  });
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;

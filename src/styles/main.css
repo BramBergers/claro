@@ -671,3 +671,13 @@ html { overscroll-behavior-y: none; background: var(--peach); }
 .swap__word i { transform-origin: 50% 50% -0.35em; backface-visibility: hidden; transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease, filter 0.5s ease; transition-delay: calc(var(--k) * 45ms); }
 .swap__word.is-in i { transform: translateY(0.25em) rotateX(-95deg) scale(0.7); opacity: 0; filter: blur(6px); }
 .swap__word.is-out i { transform: translateY(-0.25em) rotateX(95deg) scale(0.7); opacity: 0; filter: blur(6px); transition: transform 0.5s cubic-bezier(0.55, 0, 0.75, 0), opacity 0.4s ease, filter 0.4s ease; transition-delay: calc(var(--k) * 30ms); }
+
+/* ---------- Knoppen: 3D-flip per letter bij hover ---------- */
+.btn__label { position: relative; display: inline-block; perspective: 400px; }
+.btn__row { display: inline-flex; transform-style: preserve-3d; }
+.btn__row--b { position: absolute; left: 0; top: 0; }
+.btn__row i { display: inline-block; font-style: normal; transform-origin: 50% 50% -0.4em; backface-visibility: hidden; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, filter 0.4s ease; transition-delay: calc(var(--k) * 25ms); }
+.btn__row--b i { transform: translateY(0.3em) rotateX(-95deg) scale(0.8); opacity: 0; filter: blur(4px); }
+.btn:hover .btn__row:not(.btn__row--b) i, .btn:focus-visible .btn__row:not(.btn__row--b) i { transform: translateY(-0.3em) rotateX(95deg) scale(0.8); opacity: 0; filter: blur(4px); }
+.btn:hover .btn__row--b i, .btn:focus-visible .btn__row--b i { transform: none; opacity: 1; filter: none; }
+@media (hover: none) { .btn__row--b { display: none; } .btn:hover .btn__row i { transform: none; opacity: 1; filter: none; } }
