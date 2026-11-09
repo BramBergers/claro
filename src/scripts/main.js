@@ -497,7 +497,7 @@
       requestAnimationFrame(() => requestAnimationFrame(() => next.classList.remove('is-in')));
       const old = cur;
       cur = next;
-      setTimeout(() => old.remove(), 800);
+      setTimeout(() => old.remove(), 1000);
     }, 2600);
   });
 
