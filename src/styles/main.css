@@ -681,3 +681,7 @@ html { overscroll-behavior-y: none; background: var(--peach); }
 .btn:hover .btn__row:not(.btn__row--b) i, .btn:focus-visible .btn__row:not(.btn__row--b) i { transform: translateY(-0.3em) rotateX(95deg) scale(0.8); opacity: 0; filter: blur(4px); }
 .btn:hover .btn__row--b i, .btn:focus-visible .btn__row--b i { transform: none; opacity: 1; filter: none; }
 @media (hover: none) { .btn__row--b { display: none; } .btn:hover .btn__row i { transform: none; opacity: 1; filter: none; } }
+
+/* cases-pagina: projecten dichter onder de header */
+.page-cases .phead { padding-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+.page-cases main > .mod.mod--light { padding-top: clamp(1rem, 2vw, 2rem); }
