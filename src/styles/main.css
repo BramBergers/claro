@@ -263,13 +263,14 @@ html.menu-open { overflow: hidden; }
 .cta__inner .btn { pointer-events: auto; }
 .cta__hint { font-family: var(--f-serif); font-style: italic; font-size: 1rem; color: var(--muted); opacity: 0.7; }
 .cta__title { display: flex; flex-direction: column; align-items: center; gap: 0.06em; font-size: clamp(2rem, 6.2vw, 7.4rem) !important; font-family: var(--f-display); font-weight: 900; font-size: clamp(2.6rem, 7vw, 7.4rem); line-height: 1.04; letter-spacing: -0.045em; }
-.swap { position: relative; display: inline-flex; align-items: center; height: 1.12em; padding: 0 0.32em 0.04em; border-radius: 999px; background: var(--orange); color: var(--white); overflow: hidden; transition: width 0.6s cubic-bezier(0.34, 1.4, 0.64, 1); transform: rotate(-2deg); }
+.swap { position: relative; display: inline-flex; align-items: center; height: 1.12em; padding: 0; color: var(--swap, var(--c-orange)); overflow: hidden; transition: width 0.6s cubic-bezier(0.34, 1.4, 0.64, 1), color 0.4s; }
 .swap__word { display: inline-flex; white-space: nowrap; }
 .swap__word i { display: inline-block; font-style: normal; transition: transform 0.55s cubic-bezier(0.34, 1.5, 0.64, 1), opacity 0.3s; transition-delay: calc(var(--k) * 35ms); }
 .swap__word.is-out i { transform: translateY(-115%) rotate(-12deg); opacity: 0; }
 .swap__word.is-in i { transform: translateY(115%) rotate(12deg); opacity: 0; }
-.swap__word.is-out { position: absolute; left: 0.32em; }
-main > .mod:nth-of-type(even) .swap { background: var(--black); color: var(--white); }
+.swap__word.is-out { position: absolute; left: 0; }
+/* het contactblok staat altijd op crème */
+main > .mod.cta.cta { --bg: var(--peach); --ink: var(--black); --lime: var(--peach); --paars: var(--orange); --muted: rgba(93, 13, 11, 0.75); --line: rgba(93, 13, 11, 0.18); --card: rgba(255, 255, 255, 0.45); --hover: var(--black); --solid: var(--a1); --on-solid: var(--black); --orange: var(--a1); }
 .cta__row { display: flex; flex-direction: column; align-items: flex-start; gap: 2rem; margin-top: clamp(2.5rem, 5vw, 4.5rem); }
 .cta__text { max-width: 32em; font-size: clamp(1.05rem, 1.4vw, 1.3rem); color: var(--muted); }
 .cta__links { display: grid; gap: 0.2rem; justify-items: start; width: min(100%, 520px); }
@@ -521,7 +522,7 @@ html.lb-open { overflow: hidden; }
 }
 
 /* contactblok: 'Klaar om iets' en daaronder '[woord] te maken?', nooit afbreken */
-.cta__line { display: inline-flex; align-items: center; gap: 0.24em; white-space: nowrap; }
+.cta__line { display: inline-flex; align-items: center; gap: 0.2em; white-space: nowrap; }
 @media (max-width: 720px) { .cta__title { font-size: 8.4vw !important; } }
 
 /* ---------- Wat we doen: grote intro met werkwijze ---------- */

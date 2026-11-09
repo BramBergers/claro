@@ -183,7 +183,7 @@
       const t = e.target instanceof Element ? e.target : null;
       cur.classList.toggle('is-link', !!(t && t.closest('a, button, label, .chip, [role="button"]')));
       cur.classList.toggle('is-hidden', !!(t && (t.closest('[data-case]') || t.closest('input, textarea'))));
-      cur.classList.toggle('on-blue', !!(t && t.closest('main > .mod:nth-of-type(even), .swipe')));
+      cur.classList.toggle('on-blue', !!(t && t.closest('main > .mod:nth-of-type(even):not(.cta), .swipe')));
       cur.classList.toggle('on-dark', !!(t && t.closest('.menu__panel, .btn--dark, .foot, .menu-open .menubtn')));
       if (!raf) raf = requestAnimationFrame(move);
     }, { passive: true });
@@ -482,8 +482,13 @@
     addEventListener('resize', () => fit(cur));
     if (words.length < 2 || reduced) return;
     let i = 0;
+    const SWAP_COLORS = ['#ff632f', '#ffc008', '#469dfd', '#c6db24'];
+    let ci = Math.floor(Math.random() * SWAP_COLORS.length);
+    sw.style.setProperty('--swap', SWAP_COLORS[ci]);
     setInterval(() => {
       i = (i + 1) % words.length;
+      ci = (ci + 1 + Math.floor(Math.random() * (SWAP_COLORS.length - 1))) % SWAP_COLORS.length;
+      sw.style.setProperty('--swap', SWAP_COLORS[ci]);
       const next = d.createElement('span');
       next.className = 'swap__word is-in';
       next.innerHTML = letters(words[i]);
