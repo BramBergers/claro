@@ -185,16 +185,8 @@
     cur.className = 'cursor';
     cur.setAttribute('aria-hidden', 'true');
     cur.innerHTML = '<span class="cursor__dot"></span>';
-    const xy = d.createElement('div');
-    xy.className = 'cursor-xy';
-    xy.setAttribute('aria-hidden', 'true');
-    xy.innerHTML = '<span>X <b>0</b></span><span>Y <b>0</b></span>';
-    body.appendChild(xy);
-    const [xv, yv] = $$('b', xy);
     body.appendChild(cur);
     const dot = $('.cursor__dot', cur);
-    const showXY = () => { xv.textContent = String(Math.round(mx)).padStart(4, '0'); yv.textContent = String(Math.round(my + scrollY)).padStart(4, '0'); };
-    addEventListener('scroll', () => { if (cur.classList.contains('is-on')) showXY(); }, { passive: true });
     let mx = -100, my = -100, rx = -100, ry = -100, raf = 0;
     const move = () => {
       rx = lerp(rx, mx, 0.35); ry = lerp(ry, my, 0.35);
@@ -203,7 +195,7 @@
     };
     addEventListener('pointermove', (e) => {
       if (e.pointerType !== 'mouse') return;
-      mx = e.clientX; my = e.clientY; showXY();
+      mx = e.clientX; my = e.clientY;
       if (!cur.classList.contains('is-on')) { rx = mx; ry = my; cur.classList.add('is-on'); }
       const t = e.target instanceof Element ? e.target : null;
       cur.classList.toggle('is-link', !!(t && t.closest('a, button, label, .chip, [role="button"]')));
@@ -214,8 +206,7 @@
       cur.classList.toggle('on-dark', !!(t && (t.closest('.menu__panel, .foot, .menu-open .menubtn') || (!onCol && t.closest('.btn--dark')))));
       if (!raf) raf = requestAnimationFrame(move);
     }, { passive: true });
-    d.addEventListener('mouseleave', () => { cur.classList.remove('is-on'); xy.classList.remove('is-on'); });
-    addEventListener('pointermove', () => xy.classList.add('is-on'), { passive: true });
+    d.addEventListener('mouseleave', () => cur.classList.remove('is-on'));
     addEventListener('pointerdown', () => cur.classList.add('is-down'));
     addEventListener('pointerup', () => cur.classList.remove('is-down'));
   }

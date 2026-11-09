@@ -241,6 +241,7 @@ export function homePage(ctx) {
   const body = `
 <section class="mod hero" data-hero>
   <div class="wrap hero__grid">
+    <span class="gl-dot gl-dot--tl" aria-hidden="true"></span><span class="gl-dot gl-dot--tr" aria-hidden="true"></span><span class="gl-dot gl-dot--bl" aria-hidden="true"></span><span class="gl-dot gl-dot--br" aria-hidden="true"></span>
     <div class="hero__text">
       <h1 class="h-hero" data-split>${esc(String(site.heroTitle || '').trim().replace(/\.$/, ''))}</h1>
       <p class="lead" data-reveal>${esc(site.heroIntro)}</p>
