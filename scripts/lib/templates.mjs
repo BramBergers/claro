@@ -168,7 +168,7 @@ ${fonts}
 <script>(function(d){d.documentElement.classList.add('js');try{if(sessionStorage.getItem('claro:swipe'))d.documentElement.classList.add('is-entering')}catch(e){}})(document)</script>
 ${ld}
 </head>
-<body class="${bodyClass}" data-pal="${[...String(path || '/')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7) % 4}">
+<body class="${bodyClass}" data-pal="${/page-(home|cases|case|service)\b/.test(bodyClass) ? 2 : [...String(path || '/')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7) % 4}">
 <a class="skip" href="#inhoud">Naar de inhoud</a>
 <header class="top">
   <a class="top__logo" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>

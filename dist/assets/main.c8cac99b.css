@@ -94,7 +94,7 @@ input, textarea { font: inherit; color: inherit; }
 .btn:hover::before, .btn:focus-visible::before { transform: none; }
 .btn:active { transform: scale(0.97); }
 .btn--dark { background: var(--solid); color: var(--on-solid); }
-.btn--dark:hover { color: var(--white); }
+.btn--dark:hover, .btn--dark:focus-visible { color: var(--on-hover, var(--white)); }
 .btn--line:hover, .btn--line:focus-visible { color: var(--white) !important; }
 .btn--line { box-shadow: inset 0 0 0 1.5px var(--ink); }
 .btn--line::before { background: var(--ink); }
@@ -124,6 +124,7 @@ main > .mod:nth-of-type(even) {
   --line: rgba(93, 13, 11, 0.25);
   --card: rgba(255, 239, 206, 0.3);
   --hover: var(--white);
+  --on-hover: var(--black);
   --solid: var(--black);
   --on-solid: var(--white);
   --orange: var(--black);
@@ -290,7 +291,7 @@ main > .mod.cta.cta { --bg: var(--peach); --ink: var(--black); --lime: var(--pea
 .foot__logo .logo { height: 24px; color: var(--lila); }
 .foot__contact { display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem; }
 .foot a { transition: color 0.3s; }
-.foot a:hover { color: var(--lime); }
+.foot a:hover { color: var(--a2); }
 .foot__bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 2rem; margin-top: 2.4rem; padding-top: 1.4rem; border-top: 1px solid rgba(231, 223, 255, 0.16); font-size: 0.8rem; opacity: 0.7; }
 
 /* ---------- Paginakop ---------- */
