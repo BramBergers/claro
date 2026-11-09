@@ -94,25 +94,8 @@
     });
   }
 
-  /* ---------- Zichtbaar grid: lijnen tekenen zich uit, met kruisjes op de snijpunten ---------- */
+  /* ---------- Zichtbaar grid in de homepage-header: lijnen tekenen zich uit ---------- */
   const gridMods = $$('main > .mod.hero');
-  const placeX = () => gridMods.forEach((m) => {
-    $$(':scope > .gl-x', m).forEach((x) => x.remove());
-    const wrap = $(':scope > .wrap, :scope > * > .wrap', m);
-    if (!wrap) return;
-    const mr = m.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
-    const cs = getComputedStyle(m, '::before'), cs2 = getComputedStyle(m, '::after');
-    const lx = parseFloat(cs.left) + 1, rx = mr.width - parseFloat(cs2.right) - 1;
-    const off = parseFloat(getComputedStyle(wrap, '::before').top);
-    const ty = wr.top - mr.top + off + 1, by = wr.bottom - mr.top - off - 1;
-    [[lx, ty], [rx, ty], [lx, by], [rx, by]].forEach(([x, y]) => {
-      const el = d.createElement('span'); el.className = 'gl-x'; el.setAttribute('aria-hidden', 'true');
-      el.style.left = `${x - 5.5}px`; el.style.top = `${y - 5.5}px`; m.appendChild(el);
-    });
-  });
-  placeX();
-  addEventListener('load', placeX);
-  let glT; addEventListener('resize', () => { clearTimeout(glT); glT = setTimeout(placeX, 200); });
   if ('IntersectionObserver' in window && !reduced) {
     const gio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('grid-in'); gio.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
     gridMods.forEach((m) => gio.observe(m));
@@ -201,18 +184,29 @@
     const cur = d.createElement('div');
     cur.className = 'cursor';
     cur.setAttribute('aria-hidden', 'true');
-    cur.innerHTML = '<span class="cursor__dot"></span>';
+    cur.innerHTML = '<span class="cursor__h"></span><span class="cursor__v"></span><span class="cursor__dot"></span>';
+    const xy = d.createElement('div');
+    xy.className = 'cursor-xy';
+    xy.setAttribute('aria-hidden', 'true');
+    xy.innerHTML = '<span>X <b>0</b></span><span>Y <b>0</b></span>';
+    body.appendChild(xy);
+    const [xv, yv] = $$('b', xy);
+    root.classList.add('has-cross');
     body.appendChild(cur);
-    const dot = $('.cursor__dot', cur);
+    const dot = $('.cursor__dot', cur), lh = $('.cursor__h', cur), lv = $('.cursor__v', cur);
+    const showXY = () => { xv.textContent = String(Math.round(mx)).padStart(4, '0'); yv.textContent = String(Math.round(my + scrollY)).padStart(4, '0'); };
+    addEventListener('scroll', () => { if (cur.classList.contains('is-on')) showXY(); }, { passive: true });
     let mx = -100, my = -100, rx = -100, ry = -100, raf = 0;
     const move = () => {
       rx = lerp(rx, mx, 0.35); ry = lerp(ry, my, 0.35);
       dot.style.transform = `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0)`;
+      lh.style.transform = `translate3d(0, ${ry.toFixed(1)}px, 0)`;
+      lv.style.transform = `translate3d(${rx.toFixed(1)}px, 0, 0)`;
       raf = Math.abs(rx - mx) + Math.abs(ry - my) > 0.3 ? requestAnimationFrame(move) : 0;
     };
     addEventListener('pointermove', (e) => {
       if (e.pointerType !== 'mouse') return;
-      mx = e.clientX; my = e.clientY;
+      mx = e.clientX; my = e.clientY; showXY();
       if (!cur.classList.contains('is-on')) { rx = mx; ry = my; cur.classList.add('is-on'); }
       const t = e.target instanceof Element ? e.target : null;
       cur.classList.toggle('is-link', !!(t && t.closest('a, button, label, .chip, [role="button"]')));
@@ -223,7 +217,8 @@
       cur.classList.toggle('on-dark', !!(t && (t.closest('.menu__panel, .foot, .menu-open .menubtn') || (!onCol && t.closest('.btn--dark')))));
       if (!raf) raf = requestAnimationFrame(move);
     }, { passive: true });
-    d.addEventListener('mouseleave', () => cur.classList.remove('is-on'));
+    d.addEventListener('mouseleave', () => { cur.classList.remove('is-on'); xy.classList.remove('is-on'); });
+    addEventListener('pointermove', () => xy.classList.add('is-on'), { passive: true });
     addEventListener('pointerdown', () => cur.classList.add('is-down'));
     addEventListener('pointerup', () => cur.classList.remove('is-down'));
   }
