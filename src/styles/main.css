@@ -654,3 +654,13 @@ html { overscroll-behavior-y: none; background: var(--peach); }
 .js .pcard.is-in .pcard__media { clip-path: none; opacity: 1; transform: none; }
 .js .pcard .pcard__meta { transform: translateY(8px); transition: opacity 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0.2s, transform 1.1s cubic-bezier(0.25, 0.1, 0.25, 1) 0.2s; }
 @media (prefers-reduced-motion: reduce) { .w > i, .js .pcard__media { opacity: 1; transform: none; } }
+
+/* waarden direct zichtbaar */
+.values .pillar { opacity: 1; transform: none; }
+.values__sticky { position: static; height: auto; padding: var(--space) 0; }
+/* wisselend woord: zacht infaden in plaats van stuiteren */
+.swap__word i { transition: transform 0.7s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1); transition-delay: calc(var(--k) * 25ms); }
+.swap__word.is-out i { transform: translateY(-0.35em); opacity: 0; }
+.swap__word.is-in i { transform: translateY(0.35em); opacity: 0; }
+.swap { transition: width 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), color 0.5s; }
+@media (max-width: 960px) { .wstep[data-reveal] { transition-delay: 0ms; } }

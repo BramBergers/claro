@@ -434,7 +434,7 @@ export function aboutPage(ctx) {
   </div>
 </section>
 
-<section class="mod values" data-stack>
+<section class="mod values">
   <div class="values__sticky">
     <div class="wrap values__grid">
       <div class="values__text">

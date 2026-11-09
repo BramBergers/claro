@@ -92,7 +92,7 @@
   } else {
     revealIO = new IntersectionObserver((entries) => {
       entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); revealIO.unobserve(en.target); } });
-    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
   }
   const startReveal = () => revealIO && revealEls.forEach((el) => revealIO.observe(el));
 
