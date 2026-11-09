@@ -184,24 +184,21 @@
     const cur = d.createElement('div');
     cur.className = 'cursor';
     cur.setAttribute('aria-hidden', 'true');
-    cur.innerHTML = '<span class="cursor__h"></span><span class="cursor__v"></span><span class="cursor__dot"></span>';
+    cur.innerHTML = '<span class="cursor__dot"></span>';
     const xy = d.createElement('div');
     xy.className = 'cursor-xy';
     xy.setAttribute('aria-hidden', 'true');
     xy.innerHTML = '<span>X <b>0</b></span><span>Y <b>0</b></span>';
     body.appendChild(xy);
     const [xv, yv] = $$('b', xy);
-    root.classList.add('has-cross');
     body.appendChild(cur);
-    const dot = $('.cursor__dot', cur), lh = $('.cursor__h', cur), lv = $('.cursor__v', cur);
+    const dot = $('.cursor__dot', cur);
     const showXY = () => { xv.textContent = String(Math.round(mx)).padStart(4, '0'); yv.textContent = String(Math.round(my + scrollY)).padStart(4, '0'); };
     addEventListener('scroll', () => { if (cur.classList.contains('is-on')) showXY(); }, { passive: true });
     let mx = -100, my = -100, rx = -100, ry = -100, raf = 0;
     const move = () => {
       rx = lerp(rx, mx, 0.35); ry = lerp(ry, my, 0.35);
       dot.style.transform = `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0)`;
-      lh.style.transform = `translate3d(0, ${ry.toFixed(1)}px, 0)`;
-      lv.style.transform = `translate3d(${rx.toFixed(1)}px, 0, 0)`;
       raf = Math.abs(rx - mx) + Math.abs(ry - my) > 0.3 ? requestAnimationFrame(move) : 0;
     };
     addEventListener('pointermove', (e) => {

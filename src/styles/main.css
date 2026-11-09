@@ -710,16 +710,7 @@ main > .mod.hero.grid-in > .wrap::before, main > .mod.hero.grid-in > .wrap::afte
   main > .mod.hero::before, main > .mod.hero::after, main > .mod.hero > .wrap::before, main > .mod.hero > .wrap::after, main > .mod.hero > * > .wrap::before, main > .mod.hero > * > .wrap::after { transform: none !important; }
 }
 
-/* ---------- Muiscursor als kruis van twee lijnen, met coördinaten (alleen desktop) ---------- */
-html.has-cross, html.has-cross * { cursor: none !important; }
-html.has-cross input, html.has-cross textarea { cursor: text !important; }
-.cursor { color: var(--black); }
-.cursor.on-dark { color: var(--white); }
-.cursor__h, .cursor__v { position: fixed; left: 0; top: 0; background: currentColor; opacity: 0.55; will-change: transform; }
-.cursor__h { width: 100vw; height: 1px; margin-top: -0.5px; }
-.cursor__v { height: 100vh; width: 1px; margin-left: -0.5px; }
-.cursor__dot { width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; background: currentColor !important; }
-.cursor.is-link .cursor__dot::after { transform: scale(5); opacity: 0.18; }
+/* ---------- Coördinaten linksonder (alleen desktop) ---------- */
 .cursor-xy { position: fixed; left: var(--gutter); bottom: 1.4rem; z-index: 270; display: flex; gap: 1rem; padding: 0.45rem 0.85rem; border-radius: 999px; background: var(--white); color: var(--black); box-shadow: 0 0 0 1px rgba(93, 13, 11, 0.15); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
 .cursor-xy b { font-weight: 800; }
 .cursor-xy.is-on { opacity: 1; }
