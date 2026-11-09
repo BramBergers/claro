@@ -429,7 +429,7 @@ export function aboutPage(ctx) {
 <section class="mod phead phead--mid">
   <div class="wrap">
     <p class="sub" data-reveal>${esc(about.title)}</p>
-    <h1 class="h-hero" data-split>${title(about.statement)}</h1>
+    <h1 class="h-hero" data-split>${esc(String(about.statement || '').trim().replace(/\.$/, ''))}</h1>
     <p class="lead" data-reveal>${esc(about.intro)}</p>
   </div>
 </section>
