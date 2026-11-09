@@ -625,8 +625,8 @@ html.lb-open { overflow: hidden; }
 .pgrid--single .pgrid__col--offset { display: none; }
 
 /* ---------- Over ons: waarden stapelen één voor één op ---------- */
-.values__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.values .pillars { margin: 0; }
+@media (min-width: 961px) { .values__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .values .pillars { margin: 0; } }
+@media (max-width: 960px) { .values__grid { gap: 0; } .values .pillars { margin-top: 1.2rem; } }
 .values .pillar { grid-template-columns: minmax(0, 1fr); opacity: 0; transform: translateY(1.8rem); transition: opacity 0.5s var(--ease), transform 0.7s var(--ease-out); }
 .values .pillar.is-active, .values .pillar.is-past { opacity: 1; transform: none; }
 @media (max-width: 960px) { .values .pillar { opacity: 1; transform: none; } }
@@ -634,4 +634,11 @@ html.lb-open { overflow: hidden; }
   .values[data-stack] { height: auto; }
   .values__sticky { position: static; height: auto; padding: var(--space) 0; }
   .values .pillar { opacity: 1; transform: none; }
+}
+
+/* homepage-header op mobiel gecentreerd */
+@media (max-width: 960px) {
+  .hero__text { text-align: center; }
+  .hero__text .lead { margin-inline: auto; }
+  .hero__text .btns { justify-content: center; }
 }
