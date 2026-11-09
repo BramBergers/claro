@@ -685,3 +685,33 @@ html { overscroll-behavior-y: none; background: var(--peach); }
 /* cases-pagina: projecten dichter onder de header */
 .page-cases .phead { padding-bottom: clamp(1.5rem, 3vw, 2.5rem); }
 .page-cases main > .mod.mod--light { padding-top: clamp(1rem, 2vw, 2rem); }
+
+/* ---------- Zichtbaar grid: dunne lijnen die zich uittekenen ---------- */
+:root { --gl-ink: rgba(93, 13, 11, 0.32); --gl-off: calc(var(--gutter) * 0.5); }
+main > .mod { isolation: isolate; overflow-x: clip; }
+main > .mod::before, main > .mod::after {
+  content: ''; position: absolute; top: 0; bottom: 0; z-index: -1; width: 1px; background: var(--gl-ink);
+  transform: scaleY(0); transform-origin: 50% 0; transition: transform 1.6s cubic-bezier(0.65, 0, 0.35, 1);
+  pointer-events: none;
+}
+main > .mod::before { left: max(var(--gl-off), calc((100% - var(--wrap)) / 2 + var(--gl-off))); }
+main > .mod::after { right: max(var(--gl-off), calc((100% - var(--wrap)) / 2 + var(--gl-off))); transition-delay: 0.15s; }
+main > .mod > .wrap, main > .mod > * > .wrap { position: relative; }
+main > .mod > .wrap::before, main > .mod > .wrap::after, main > .mod > * > .wrap::before, main > .mod > * > .wrap::after {
+  content: ''; position: absolute; left: calc(50% - 50vw); width: 100vw; height: 1px; z-index: -1; background: var(--gl-ink);
+  transform: scaleX(0); transform-origin: 0 50%; transition: transform 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.25s;
+  pointer-events: none;
+}
+main > .mod > .wrap::before, main > .mod > * > .wrap::before { top: calc(var(--gl-off) * -1.4); }
+main > .mod > .wrap::after, main > .mod > * > .wrap::after { bottom: calc(var(--gl-off) * -1.4); transform-origin: 100% 50%; transition-delay: 0.45s; }
+main > .mod.grid-in::before, main > .mod.grid-in::after { transform: scaleY(1); }
+main > .mod.grid-in > .wrap::before, main > .mod.grid-in > .wrap::after, main > .mod.grid-in > * > .wrap::before, main > .mod.grid-in > * > .wrap::after { transform: scaleX(1); }
+/* kleine kruisjes waar de lijnen elkaar raken */
+.gl-x { position: absolute; width: 9px; height: 9px; z-index: 1; pointer-events: none; opacity: 0; transition: opacity 0.6s ease 1.2s; }
+.gl-x::before, .gl-x::after { content: ''; position: absolute; background: var(--ink); }
+.gl-x::before { left: 4px; top: 0; width: 1px; height: 9px; }
+.gl-x::after { top: 4px; left: 0; height: 1px; width: 9px; }
+.grid-in .gl-x { opacity: 0.8; }
+@media (prefers-reduced-motion: reduce) {
+  main > .mod::before, main > .mod::after, main > .mod > .wrap::before, main > .mod > .wrap::after, main > .mod > * > .wrap::before, main > .mod > * > .wrap::after { transform: none !important; }
+}

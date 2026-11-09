@@ -94,6 +94,30 @@
     });
   }
 
+  /* ---------- Zichtbaar grid: lijnen tekenen zich uit, met kruisjes op de snijpunten ---------- */
+  const gridMods = $$('main > .mod');
+  const placeX = () => gridMods.forEach((m) => {
+    $$(':scope > .gl-x', m).forEach((x) => x.remove());
+    const wrap = $(':scope > .wrap, :scope > * > .wrap', m);
+    if (!wrap) return;
+    const mr = m.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
+    const cs = getComputedStyle(m, '::before'), cs2 = getComputedStyle(m, '::after');
+    const lx = parseFloat(cs.left), rx = mr.width - parseFloat(cs2.right) - 1;
+    const off = parseFloat(getComputedStyle(wrap, '::before').top);
+    const ty = wr.top - mr.top + off, by = wr.bottom - mr.top - off;
+    [[lx, ty], [rx, ty], [lx, by], [rx, by]].forEach(([x, y]) => {
+      const el = d.createElement('span'); el.className = 'gl-x'; el.setAttribute('aria-hidden', 'true');
+      el.style.left = `${x - 4}px`; el.style.top = `${y - 4}px`; m.appendChild(el);
+    });
+  });
+  placeX();
+  addEventListener('load', placeX);
+  let glT; addEventListener('resize', () => { clearTimeout(glT); glT = setTimeout(placeX, 200); });
+  if ('IntersectionObserver' in window && !reduced) {
+    const gio = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('grid-in'); gio.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+    gridMods.forEach((m) => gio.observe(m));
+  } else gridMods.forEach((m) => m.classList.add('grid-in'));
+
   /* ---------- In beeld komen ---------- */
   const revealEls = $$('[data-reveal], [data-split], .pcard, .process__track');
   let revealIO = null;
