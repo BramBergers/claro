@@ -1,2 +1,4 @@
 claro-sanity-import*.tar.gz
 sanity-import/
+dist/
+node_modules/

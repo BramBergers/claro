@@ -183,7 +183,10 @@
       const t = e.target instanceof Element ? e.target : null;
       cur.classList.toggle('is-link', !!(t && t.closest('a, button, label, .chip, [role="button"]')));
       cur.classList.toggle('is-hidden', !!(t && (t.closest('[data-case]') || t.closest('input, textarea'))));
-      cur.classList.toggle('on-blue', !!(t && t.closest('main > .mod:nth-of-type(even), .menu__panel, .menubtn, .swipe, .btn--dark')));
+      const sec = t && t.closest('main > .mod');
+      const onCol = !!(sec && (sec._col ??= getComputedStyle(sec).getPropertyValue('--solid').trim().toLowerCase() === '#5d0d0b'));
+      cur.classList.toggle('on-blue', onCol || !!(t && t.closest('.swipe')));
+      cur.classList.toggle('on-dark', !!(t && (t.closest('.menu__panel, .foot, .menu-open .menubtn') || (!onCol && t.closest('.btn--dark')))));
       if (!raf) raf = requestAnimationFrame(move);
     }, { passive: true });
     d.addEventListener('mouseleave', () => cur.classList.remove('is-on'));
@@ -195,7 +198,7 @@
   $$('[data-balls]').forEach((sec) => {
     const cv = $('.cta__balls', sec);
     const g = cv.getContext('2d');
-    const COLORS = ['#2166ff', '#0a3fb8', '#ff8ad8', '#ffd25e', '#5ef2b4', '#3b2d28', '#ff7a59'];
+    const COLORS = ['#ff632f', '#ffc008', '#469dfd', '#c6db24', '#5d0d0b'];
     const LIFE = 5, FADE = 0.28;
     let W = 0, H = 0, dpr = 1, balls = [], raf = 0, last = 0;
     const size = () => {
@@ -481,8 +484,13 @@
     addEventListener('resize', () => fit(cur));
     if (words.length < 2 || reduced) return;
     let i = 0;
+    const SWAP_COLORS = ['#ff632f', '#ffc008', '#469dfd', '#c6db24'];
+    let ci = Math.floor(Math.random() * SWAP_COLORS.length);
+    sw.style.setProperty('--swap', SWAP_COLORS[ci]);
     setInterval(() => {
       i = (i + 1) % words.length;
+      ci = (ci + 1 + Math.floor(Math.random() * (SWAP_COLORS.length - 1))) % SWAP_COLORS.length;
+      sw.style.setProperty('--swap', SWAP_COLORS[ci]);
       const next = d.createElement('span');
       next.className = 'swap__word is-in';
       next.innerHTML = letters(words[i]);

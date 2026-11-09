@@ -32,6 +32,16 @@
 
 # Oude adressen doorsturen naar de nieuwe
 [[redirects]]
+  from = "/wat-we-doen/"
+  to = "/#diensten"
+  status = 301
+
+[[redirects]]
+  from = "/wat-we-doen"
+  to = "/#diensten"
+  status = 301
+
+[[redirects]]
   from = "/werk/:slug/*"
   to = "/wat-we-doen/:slug/"
   status = 301

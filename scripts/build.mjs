@@ -32,14 +32,15 @@ await writeFile(path.join(dist, 'assets', jsName), js);
 
 // 3. lettertypen: eigen bestanden in public/fonts (Inter, Inter Display en Lora, SIL Open Font License)
 const fontFaces = [
-  ['Display', 'InterDisplay-Black', 900, 'normal'],
-  ['Display', 'InterDisplay-ExtraBold', 800, 'normal'],
+  ['Display', 'Inter-Black', 900, 'normal'],
+  ['Display', 'Inter-ExtraBold', 800, 'normal'],
   ['Text', 'Inter-Regular', 400, 'normal'],
   ['Text', 'Inter-Medium', 500, 'normal'],
   ['Text', 'Inter-SemiBold', 600, 'normal'],
+  ['Text', 'Inter-Bold', 700, 'normal'],
   ['Serif', 'Lora-Italic', '400 700', 'italic']
 ];
-const fonts = `<link rel="preload" href="/fonts/InterDisplay-Black.woff" as="font" type="font/woff" crossorigin>
+const fonts = `<link rel="preload" href="/fonts/Inter-Black.woff" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="/fonts/Inter-Regular.woff" as="font" type="font/woff" crossorigin>
 <style>${fontFaces.map(([fam, file, w, st]) => `@font-face{font-family:'${fam}';src:url('/fonts/${file}.woff') format('woff');font-weight:${w};font-style:${st};font-display:swap}`).join('')}</style>`;
 
@@ -63,7 +64,6 @@ await write('cases/index.html', T.casesPage(ctx));
 for (const [i, p] of ctx.projects.entries()) {
   await write(`cases/${p.slug}/index.html`, T.casePage(ctx, p));
 }
-await write('wat-we-doen/index.html', T.servicesPage(ctx));
 for (const s of ctx.services) {
   await write(`wat-we-doen/${s.slug}/index.html`, T.servicePage(ctx, s));
 }
@@ -75,7 +75,7 @@ await write('404.html', T.notFoundPage(ctx));
 
 // 6. sitemap en robots
 const base = ctx.site.url.replace(/\/$/, '');
-const urls = ['/', '/cases/', ...ctx.projects.map((p) => `/cases/${p.slug}/`), '/wat-we-doen/', ...ctx.services.map((s) => `/wat-we-doen/${s.slug}/`), '/over-ons/', '/contact/', '/privacy/'];
+const urls = ['/', '/cases/', ...ctx.projects.map((p) => `/cases/${p.slug}/`), ...ctx.services.map((s) => `/wat-we-doen/${s.slug}/`), '/over-ons/', '/contact/', '/privacy/'];
 await writeFile(
   path.join(dist, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls
