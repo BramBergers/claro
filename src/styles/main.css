@@ -717,3 +717,6 @@ main > .mod.hero.grid-in > .wrap::before, main > .mod.hero.grid-in > .wrap::afte
 .gl-dot--tl, .gl-dot--tr { top: calc(var(--gl-off) * -1.4 + 1px); }
 .gl-dot--bl, .gl-dot--br { top: calc(100% + var(--gl-off) * 1.4 - 1px); }
 .grid-in .gl-dot { opacity: 1; transform: none; }
+
+/* Over ons: "Waar staat Claro voor?" altijd groen */
+.page-about main > .mod.values { --bg: var(--c-lime); }
