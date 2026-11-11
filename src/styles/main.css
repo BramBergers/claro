@@ -720,3 +720,35 @@ main > .mod.hero.grid-in > .wrap::before, main > .mod.hero.grid-in > .wrap::afte
 
 /* Over ons: "Waar staat Claro voor?" altijd groen */
 .page-about main > .mod.values { --bg: var(--c-lime); }
+
+/* ---------- Projecten: scherpstel-effect bij hover (desktop) ---------- */
+@media (hover: hover) and (pointer: fine) {
+  .pcard__media::after {
+    content: ''; position: absolute; inset: 14%; z-index: 2; pointer-events: none; opacity: 0;
+    --c: rgba(255, 239, 206, 0.95); --l: 28px; --t: 2px;
+    background:
+      linear-gradient(var(--c), var(--c)) top left / var(--l) var(--t), linear-gradient(var(--c), var(--c)) top left / var(--t) var(--l),
+      linear-gradient(var(--c), var(--c)) top right / var(--l) var(--t), linear-gradient(var(--c), var(--c)) top right / var(--t) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--t), linear-gradient(var(--c), var(--c)) bottom left / var(--t) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--t), linear-gradient(var(--c), var(--c)) bottom right / var(--t) var(--l);
+    background-repeat: no-repeat;
+  }
+  .pcard:hover .pcard__asset { animation: pc-focus 1.1s cubic-bezier(0.3, 0.7, 0.2, 1) forwards; transition: none; }
+  .pcard:hover .pcard__media::after { animation: pc-frame 1.1s cubic-bezier(0.3, 0.7, 0.2, 1) forwards; }
+}
+@keyframes pc-focus {
+  0% { filter: blur(0); transform: scale(1.001); }
+  30% { filter: blur(9px) brightness(1.06); transform: scale(1.07); }
+  60% { filter: blur(2.5px); transform: scale(1.035); }
+  78% { filter: blur(0.6px) brightness(1.02); transform: scale(1.045); }
+  100% { filter: blur(0); transform: scale(1.04); }
+}
+@keyframes pc-frame {
+  0% { inset: 16%; opacity: 0; }
+  25% { opacity: 1; }
+  60% { inset: 5%; opacity: 1; }
+  72% { inset: 6.5%; }
+  85% { opacity: 1; }
+  100% { inset: 6%; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .pcard:hover .pcard__asset, .pcard:hover .pcard__media::after { animation: none; } }
