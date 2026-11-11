@@ -720,3 +720,17 @@ main > .mod.hero.grid-in > .wrap::before, main > .mod.hero.grid-in > .wrap::afte
 
 /* Over ons: "Waar staat Claro voor?" altijd groen */
 .page-about main > .mod.values { --bg: var(--c-lime); }
+
+/* ---------- Bewegende achtergrondvormen ---------- */
+main > .mod { isolation: isolate; }
+.bgfx { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; color: var(--ink); }
+.bgfx__s { position: absolute; width: var(--sz); height: var(--sz); opacity: 0.09; translate: calc(var(--mx, 0) * var(--dp) * -60px) calc(var(--my, 0) * var(--dp) * -60px); }
+.bgfx__s svg { width: 100%; height: 100%; overflow: visible; animation: bgfx-float var(--dur) ease-in-out var(--del) infinite alternate; }
+main > .mod:nth-of-type(even) .bgfx__s, .page-home main > .mod:nth-of-type(odd) .bgfx__s { opacity: 0.16; }
+@keyframes bgfx-float {
+  0% { transform: translate(0, 0) rotate(var(--rot)); }
+  50% { transform: translate(18px, -26px) rotate(calc(var(--rot) + 50deg)); }
+  100% { transform: translate(-14px, 14px) rotate(calc(var(--rot) + 110deg)); }
+}
+@media (max-width: 720px) { .bgfx__s { --sz: 40px !important; opacity: 0.07; } }
+@media (prefers-reduced-motion: reduce) { .bgfx__s svg { animation: none; } }

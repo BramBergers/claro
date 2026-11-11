@@ -101,6 +101,46 @@
     gridMods.forEach((m) => gio.observe(m));
   } else gridMods.forEach((m) => m.classList.add('grid-in'));
 
+  /* ---------- Bewegende achtergrondvormen ---------- */
+  const SHAPES = [
+    '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="5"/></svg>',
+    '<svg viewBox="0 0 100 100"><path d="M50 12v76M12 50h76" stroke="currentColor" stroke-width="9" stroke-linecap="round"/></svg>',
+    '<svg viewBox="0 0 120 40"><path d="M6 20c12-16 24-16 36 0s24 16 36 0 24-16 36 0" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/></svg>',
+    '<svg viewBox="0 0 100 100"><path d="M10 90A40 40 0 0 1 90 90" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/></svg>',
+    '<svg viewBox="0 0 100 100"><rect x="18" y="18" width="64" height="64" rx="10" fill="none" stroke="currentColor" stroke-width="6"/></svg>',
+    '<svg viewBox="0 0 100 100">' + [0, 1, 2].map((r) => [0, 1, 2].map((k) => `<circle cx="${20 + k * 30}" cy="${20 + r * 30}" r="6" fill="currentColor"/>`).join('')).join('') + '</svg>'
+  ];
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+  const fxMods = $$('main > .mod').filter((m) => !m.matches('.cta, .values'));
+  fxMods.forEach((m, mi) => {
+    const box = d.createElement('div');
+    box.className = 'bgfx';
+    box.setAttribute('aria-hidden', 'true');
+    const n = 4;
+    for (let i = 0; i < n; i++) {
+      const s = d.createElement('span');
+      const side = i % 2 === 0 ? rnd() * 14 + 1 : 85 + rnd() * 12;
+      s.className = 'bgfx__s';
+      s.style.cssText = `left:${side}%;top:${(i / n) * 80 + rnd() * 15 + 2}%;--sz:${Math.round(46 + rnd() * 70)}px;--dur:${(14 + rnd() * 14).toFixed(1)}s;--del:${(-rnd() * 20).toFixed(1)}s;--rot:${Math.round(rnd() * 360)}deg;--dp:${(0.4 + rnd() * 0.9).toFixed(2)}`;
+      s.innerHTML = SHAPES[(mi * 2 + i) % SHAPES.length];
+      box.appendChild(s);
+    }
+    m.prepend(box);
+  });
+  if (!reduced && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    let px = 0, py = 0, tx = 0, ty = 0, raf = 0;
+    const step = () => {
+      px += (tx - px) * 0.06; py += (ty - py) * 0.06;
+      root.style.setProperty('--mx', px.toFixed(3)); root.style.setProperty('--my', py.toFixed(3));
+      raf = Math.abs(tx - px) + Math.abs(ty - py) > 0.002 ? requestAnimationFrame(step) : 0;
+    };
+    addEventListener('pointermove', (e) => {
+      tx = e.clientX / innerWidth - 0.5; ty = e.clientY / innerHeight - 0.5;
+      if (!raf) raf = requestAnimationFrame(step);
+    }, { passive: true });
+  }
+
   /* ---------- In beeld komen ---------- */
   const revealEls = $$('[data-reveal], [data-split], .pcard, .process__track');
   let revealIO = null;
