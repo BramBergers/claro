@@ -70,6 +70,14 @@ function sectionHead({ sub, heading, text = '', link = null, h = 'h2', center = 
 </div>`;
 }
 
+/** E-mailadres dat niet als platte tekst in de HTML staat: pas in de browser wordt het in elkaar gezet. */
+function mailLink(email) {
+  const [user, domain] = String(email).split('@');
+  const rev = (s) => [...s].reverse().join('');
+  const shown = `${user} [at] ${domain.replace(/\./g, ' [punt] ')}`;
+  return `<a class="js-mail" href="/contact/" data-u="${esc(rev(user))}" data-d="${esc(rev(domain))}">${esc(shown)}</a>`;
+}
+
 const CTA_LABEL = 'Neem contact op';
 
 /** "Klaar om iets [wisselend woord] te maken?" */
@@ -111,7 +119,7 @@ function menu(ctx, path) {
       <ul>${links.map(([href, label], i) => `<li style="--i:${i}"><a class="menu__link" href="${href}"${cur(href)}><span class="menu__arrow" aria-hidden="true"><svg viewBox="0 0 64 24"><path class="menu__arrow-line" d="M2,12 Q8,4 14,12 T26,12 T38,12 T50,12 L58,12"/><path class="menu__arrow-head" d="M50,4 L60,12 L50,20"/></svg></span><span class="menu__label">${label}</span></a></li>`).join('')}</ul>
     </nav>
     <div class="menu__foot">
-      ${site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : ''}
+      ${site.email ? `${mailLink(site.email)}` : ''}
       <span class="menu__social"><a href="${esc(site.instagram)}" target="_blank" rel="noopener">Instagram</a><a href="${esc(site.linkedin)}" target="_blank" rel="noopener">LinkedIn</a></span>
     </div>
   </div>
@@ -126,7 +134,7 @@ function footer(ctx) {
   <div class="wrap foot__inner">
     <a class="foot__logo" href="/" aria-label="Claro, naar de homepage">${renderLogo(logo, { variant: 'mono' })}</a>
     <div class="foot__contact">
-      ${site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : ''}
+      ${site.email ? `${mailLink(site.email)}` : ''}
       <a href="${esc(site.instagram)}" target="_blank" rel="noopener">Instagram</a>
       <a href="${esc(site.linkedin)}" target="_blank" rel="noopener">LinkedIn</a>
     </div>
@@ -488,7 +496,7 @@ export function contactPage(ctx) {
       ${ctaTitle(site, 'h1', 'cta__title--left', false)}
       <p class="lead">${esc(contact.intro)}</p>
       <ul class="contact__details">
-        ${site.email ? `<li><span>E-mail</span><a href="mailto:${esc(site.email)}">${esc(site.email)}</a></li>` : ''}
+        ${site.email ? `<li><span>E-mail</span>${mailLink(site.email)}</li>` : ''}
         ${site.phone ? `<li><span>Telefoon</span><a href="tel:${esc(site.phone.replace(/[^\d+]/g, ''))}">${esc(site.phone)}</a></li>` : ''}
         <li><span>Instagram</span><a href="${esc(site.instagram)}" target="_blank" rel="noopener">@wijzijnclaro</a></li>
         <li><span>LinkedIn</span><a href="${esc(site.linkedin)}" target="_blank" rel="noopener">Claro op LinkedIn</a></li>

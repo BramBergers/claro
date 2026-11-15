@@ -12,6 +12,14 @@
   const $ = (s, r = d) => r.querySelector(s);
   const $$ = (s, r = d) => [...r.querySelectorAll(s)];
 
+  /* ---------- E-mailadres pas in de browser samenstellen (tegen spamrobots) ---------- */
+  $$('.js-mail').forEach((el) => {
+    const r = (s) => [...(s || '')].reverse().join('');
+    const addr = `${r(el.dataset.u)}${String.fromCharCode(64)}${r(el.dataset.d)}`;
+    el.href = `mailto:${addr}`;
+    el.textContent = addr;
+  });
+
   /* ---------- Knoppen: letters flippen in 3D bij hover ---------- */
   $$('.btn > span').forEach((s) => {
     const t = s.textContent.trim();
