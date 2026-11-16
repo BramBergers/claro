@@ -109,6 +109,57 @@
     gridMods.forEach((m) => gio.observe(m));
   } else gridMods.forEach((m) => m.classList.add('grid-in'));
 
+  /* ---------- Rand-effect: beelden lopen onderaan het venster uit naar de randen ---------- */
+  const flareEls = $$('.pcard__media, .gal__item');
+  if (flareEls.length && !reduced) {
+    const cv = d.createElement('canvas');
+    cv.className = 'flare';
+    cv.setAttribute('aria-hidden', 'true');
+    body.appendChild(cv);
+    const cx = cv.getContext('2d');
+    let W = 0, H = 0, B = 0;
+    const size = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      W = innerWidth; H = innerHeight; B = Math.round(Math.min(220, Math.max(120, H * 0.22)));
+      cv.width = Math.round(W * dpr); cv.height = Math.round(B * dpr);
+      cv.style.height = `${B}px`;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    size();
+    addEventListener('resize', size);
+    const ease = (t) => t * t * t;
+    const frame = () => {
+      cx.clearRect(0, 0, W, B);
+      const top = H - B;
+      for (const el of flareEls) {
+        const r = el.getBoundingClientRect();
+        if (r.bottom <= top || r.top >= H || !r.width) continue;
+        const a = el.querySelector('img, video');
+        if (!a) continue;
+        const isV = a.tagName === 'VIDEO';
+        const nw = isV ? a.videoWidth : a.naturalWidth, nh = isV ? a.videoHeight : a.naturalHeight;
+        if (!nw || !nh || (isV ? a.readyState < 2 : !a.complete)) continue;
+        const op = parseFloat(getComputedStyle(el).opacity);
+        if (op < 0.02) continue;
+        cx.globalAlpha = op;
+        const s = Math.max(r.width / nw, r.height / nh);
+        const sw = r.width / s, sx0 = (nw - sw) / 2, sy0 = (nh - r.height / s) / 2;
+        const y0 = Math.max(top, r.top), y1 = Math.min(H, r.bottom);
+        // naar de schermrand als die dichtbij is, anders maar een klein stukje (zodat beelden naast elkaar niet botsen)
+        const reachL = r.left < 140 ? r.left : Math.min(r.left, 26), reachR = W - r.right < 140 ? W - r.right : Math.min(W - r.right, 26);
+        for (let y = y0; y < y1; y += 1) {
+          const h = Math.min(1, y1 - y);
+          const f = ease(Math.min(1, Math.max(0, (y + h / 2 - top) / B)));
+          const dx0 = r.left - reachL * f, dx1 = r.right + reachR * f;
+          try { cx.drawImage(a, sx0, sy0 + (y - r.top) / s, sw, h / s, dx0, y - top, dx1 - dx0, h + 0.6); } catch (_) { /* nog niet klaar */ }
+        }
+      }
+      cx.globalAlpha = 1;
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }
+
   /* ---------- In beeld komen ---------- */
   const revealEls = $$('[data-reveal], [data-split], .pcard, .process__track');
   let revealIO = null;
