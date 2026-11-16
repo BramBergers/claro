@@ -109,55 +109,55 @@
     gridMods.forEach((m) => gio.observe(m));
   } else gridMods.forEach((m) => m.classList.add('grid-in'));
 
-  /* ---------- Rand-effect: beelden lopen onderaan het venster uit naar de randen ---------- */
-  const flareEls = $$('.pcard__media, .gal__item');
-  if (flareEls.length && !reduced) {
-    const cv = d.createElement('canvas');
-    cv.className = 'flare';
-    cv.setAttribute('aria-hidden', 'true');
-    body.appendChild(cv);
-    const cx = cv.getContext('2d');
+  /* ---------- Rand-effect: de hele pagina rekt onderaan het venster uit naar de randen ---------- */
+  const morph = $('.morph');
+  if (morph && !reduced) {
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = d.createElementNS(NS, 'svg');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('width', '0'); svg.setAttribute('height', '0');
+    svg.style.position = 'absolute';
+    svg.innerHTML = '<filter id="morph-f" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">' +
+      '<feFlood flood-color="rgb(128,128,128)" result="base"/>' +
+      '<feImage preserveAspectRatio="none" result="map"/>' +
+      '<feComposite in="map" in2="base" operator="over" result="disp"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="disp" xChannelSelector="R" yChannelSelector="G"/></filter>';
+    body.appendChild(svg);
+    const f = $('#morph-f', svg), img = $('feImage', svg), dm = $('feDisplacementMap', svg);
     let W = 0, H = 0, B = 0;
-    const size = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      W = innerWidth; H = innerHeight; B = Math.round(Math.min(220, Math.max(120, H * 0.22)));
-      cv.width = Math.round(W * dpr); cv.height = Math.round(B * dpr);
-      cv.style.height = `${B}px`;
-      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    size();
-    addEventListener('resize', size);
-    const ease = (t) => t * t * t;
-    const frame = () => {
-      cx.clearRect(0, 0, W, B);
-      const top = H - B;
-      for (const el of flareEls) {
-        const r = el.getBoundingClientRect();
-        if (r.bottom <= top || r.top >= H || !r.width) continue;
-        const a = el.querySelector('img, video');
-        if (!a) continue;
-        const isV = a.tagName === 'VIDEO';
-        const nw = isV ? a.videoWidth : a.naturalWidth, nh = isV ? a.videoHeight : a.naturalHeight;
-        if (!nw || !nh || (isV ? a.readyState < 2 : !a.complete)) continue;
-        const op = parseFloat(getComputedStyle(el).opacity);
-        if (op < 0.02) continue;
-        cx.globalAlpha = op;
-        const s = Math.max(r.width / nw, r.height / nh);
-        const sw = r.width / s, sx0 = (nw - sw) / 2, sy0 = (nh - r.height / s) / 2;
-        const y0 = Math.max(top, r.top), y1 = Math.min(H, r.bottom);
-        // naar de schermrand als die dichtbij is, anders maar een klein stukje (zodat beelden naast elkaar niet botsen)
-        const reachL = r.left < 140 ? r.left : Math.min(r.left, 26), reachR = W - r.right < 140 ? W - r.right : Math.min(W - r.right, 26);
-        for (let y = y0; y < y1; y += 1) {
-          const h = Math.min(1, y1 - y);
-          const f = ease(Math.min(1, Math.max(0, (y + h / 2 - top) / B)));
-          const dx0 = r.left - reachL * f, dx1 = r.right + reachR * f;
-          try { cx.drawImage(a, sx0, sy0 + (y - r.top) / s, sw, h / s, dx0, y - top, dx1 - dx0, h + 0.6); } catch (_) { /* nog niet klaar */ }
+    const build = () => {
+      W = innerWidth; H = innerHeight; B = Math.round(Math.min(240, Math.max(130, H * 0.24)));
+      // verplaatsingskaart: rood codeert hoe ver elke pixel naar binnen kijkt, sterker naarmate hij lager staat
+      const cw = 256, ch = 64, cv = d.createElement('canvas');
+      cv.width = cw; cv.height = ch;
+      const g = cv.getContext('2d'), id = g.createImageData(cw, ch);
+      for (let y = 0; y < ch; y++) {
+        const t = y / (ch - 1), k = t * t * t;
+        for (let x = 0; x < cw; x++) {
+          const u = (x + 0.5) / cw * 2 - 1; // -1 links … 1 rechts
+          const i = (y * cw + x) * 4;
+          id.data[i] = Math.round(255 * (0.5 - 0.5 * u * k));
+          id.data[i + 1] = 128; id.data[i + 2] = 128; id.data[i + 3] = 255;
         }
       }
-      cx.globalAlpha = 1;
-      requestAnimationFrame(frame);
+      g.putImageData(id, 0, 0);
+      img.setAttribute('href', cv.toDataURL());
+      img.setAttribute('width', W); img.setAttribute('height', B); img.setAttribute('x', 0);
+      dm.setAttribute('scale', Math.round(W * 0.12));
+      morph.style.filter = 'url(#morph-f)';
+      place();
     };
-    requestAnimationFrame(frame);
+    const place = () => {
+      const r = morph.getBoundingClientRect();
+      f.setAttribute('x', -2); f.setAttribute('width', W + 4);
+      f.setAttribute('y', -2); f.setAttribute('height', Math.ceil(r.height) + 4);
+      img.setAttribute('y', Math.round(H - B - r.top));
+    };
+    let ticking = false;
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { place(); ticking = false; }); } }, { passive: true });
+    addEventListener('resize', build);
+    addEventListener('load', place);
+    build();
   }
 
   /* ---------- In beeld komen ---------- */

@@ -721,5 +721,3 @@ main > .mod.hero.grid-in > .wrap::before, main > .mod.hero.grid-in > .wrap::afte
 /* Over ons: "Waar staat Claro voor?" altijd groen */
 .page-about main > .mod.values { --bg: var(--c-lime); }
 
-/* ---------- Rand-effect onderaan het venster ---------- */
-.flare { position: fixed; left: 0; bottom: 0; z-index: 60; width: 100%; pointer-events: none; }
